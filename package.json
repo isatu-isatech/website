@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint && npx prettier --write src/"
   },
   "dependencies": {
     "next": "15.4.2",
