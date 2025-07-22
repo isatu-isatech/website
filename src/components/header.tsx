@@ -88,7 +88,22 @@ export default function Header() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <Button asChild variant={"default"} size={"lg"}>
+            <Button
+              asChild
+              variant={"default"}
+              size={"lg"}
+              className="hidden md:flex"
+            >
+              <Link href="/">
+                <p className="text-caption">Join Now</p>
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant={"default"}
+              size={"sm"}
+              className="md:hidden"
+            >
               <Link href="/">
                 <p className="text-caption">Join Now</p>
               </Link>
