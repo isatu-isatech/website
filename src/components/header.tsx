@@ -71,7 +71,7 @@ export default function Header() {
       <div className="flex w-full max-w-6xl items-center justify-between">
         <Link href="/">
           <Image
-            src="/assets/isatech-dark.svg"
+            src="/assets/isatech-icon-dark.svg"
             alt="Logo"
             width={24}
             height={40}

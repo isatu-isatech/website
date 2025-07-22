@@ -190,6 +190,22 @@
   border: 1px solid red;
 }
 
+.text-body {
+  @apply text-base sm:text-lg lg:text-xl;
+}
+
+.text-body-bold {
+  @apply text-base font-bold sm:text-lg lg:text-xl;
+}
+
 .text-caption {
   @apply text-sm sm:text-base;
+}
+
+.text-micro {
+  @apply text-xs sm:text-sm lg:text-base;
+}
+
+.text-label {
+  @apply text-sm font-medium md:text-base lg:text-lg;
 }
