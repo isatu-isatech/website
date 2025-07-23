@@ -42,14 +42,14 @@ const Footer = () => {
           alt="ISATech Society Decoration"
           width={190}
           height={75}
-          className="absolute right-0 bottom-0 w-fit md:top-0 md:h-full"
+          className="pointer-events-none absolute right-0 bottom-0 w-fit md:top-0 md:h-full"
         />
         <Image
           src="/assets/footer-decoration-1.svg"
           alt="Footer Decoration"
           width={190}
           height={75}
-          className="absolute right-0 bottom-0 h-fit w-fit"
+          className="pointer-events-none absolute right-0 bottom-0 h-fit w-fit"
         />
         <div className="absolute right-0 bottom-0 h-fit w-1/2 lg:w-1/3 xl:w-1/4">
           <Image
@@ -57,7 +57,7 @@ const Footer = () => {
             alt="4H Footer Decoration"
             width={190}
             height={75}
-            className="h-full w-full object-cover"
+            className="pointer-events-none h-full w-full object-cover"
           />
         </div>
         <div className="flex max-w-6xl flex-col items-center justify-center gap-6 self-stretch pt-8 pb-32">
