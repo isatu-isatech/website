@@ -79,7 +79,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
   // Ref to the container div where the YouTube player will be mounted.
   const containerRef = useRef<HTMLDivElement>(null);
   // State to track if an error occurred.
-  const [error, setError] = React.useState(false);
+  // const [error, setError] = React.useState(false);
 
   // Memoize the playerVars object to avoid unnecessary re-renders.
   const mergedPlayerVars = useMemo<YT.PlayerVars>(
@@ -114,7 +114,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
             // Handle player errors.
             onError: (e) => {
               console.error("YouTube Player Error:", e);
-              setError(true);
+              // setError(true);
               events?.onError?.(e);
             },
           },
@@ -123,7 +123,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
       .catch((err: Error) => {
         // Handle API loading errors.
         console.error("YouTube API failed to load:", err);
-        setError(true);
+        // setError(true);
       });
 
     // Cleanup: destroy the player instance on unmount.
@@ -133,14 +133,14 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
     };
   }, [videoId, height, width, mergedPlayerVars, events]);
 
-  // Render a fallback UI if an error occurred.
-  if (error) {
-    return (
-      <>
-        <div className="h-fit w-fit bg-black"></div>
-      </>
-    );
-  }
+  // // Render a fallback UI if an error occurred.
+  // if (error) {
+  //   return (
+  //     <>
+  //       <div className="h-fit w-fit bg-black"></div>
+  //     </>
+  //   );
+  // }
 
   // Render the container div for the YouTube player.
   return (
