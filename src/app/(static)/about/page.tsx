@@ -2,13 +2,14 @@ import {
   ISATechDecorationLeft,
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
+import PerlinNoiseTexture from "@/components/shaders/perlin";
 import { RocketIcon, TargetIcon } from "lucide-react";
 import Image from "next/image";
 
 function AboutUsHeroSection() {
   return (
     <section
-      className="flex w-full items-center justify-center px-6 py-12 md:py-6"
+      className="flex w-full items-center justify-center px-6 py-12 md:px-16 md:py-6"
       id="hero"
     >
       <div className="relative flex w-full max-w-6xl items-center justify-between py-8 lg:py-16">
@@ -48,10 +49,10 @@ function AboutUsHeroSection() {
 function AboutUsDescriptionSection() {
   return (
     <section
-      className="debug flex w-full items-center justify-center px-6"
+      className="flex w-full items-center justify-center px-6 py-6 md:px-16"
       id="description"
     >
-      <div className="debug relative flex w-full max-w-7xl flex-col items-center">
+      <div className="relative flex w-full max-w-7xl flex-col items-center">
         {/* Decorations */}
         <ISATechDecorationLeft className="absolute top-0 left-0 hidden h-auto w-fit opacity-10 lg:block" />
         <ISATechDecorationRight className="absolute right-0 bottom-0 h-auto w-fit opacity-10" />
@@ -80,8 +81,8 @@ function AboutUsDescriptionSection() {
           </div>
         </div>
         {/* Mission and Vission */}
-        <div className="debug grid w-full max-w-6xl grid-cols-1 gap-6 py-5 lg:grid-cols-2 lg:py-8">
-          <div className="debug flex flex-col justify-start gap-4">
+        <div className="grid w-full max-w-6xl grid-cols-1 gap-6 py-5 lg:grid-cols-2 lg:py-8">
+          <div className="flex flex-col justify-start gap-4">
             <TargetIcon size={42} />
             <div className="flex flex-col gap-2">
               <h3>Mission</h3>
@@ -95,7 +96,7 @@ function AboutUsDescriptionSection() {
               </p>
             </div>
           </div>
-          <div className="debug flex flex-col justify-start gap-4">
+          <div className="flex flex-col justify-start gap-4">
             <RocketIcon size={42} />
             <div className="flex flex-col gap-2">
               <h3>Vision</h3>
@@ -113,13 +114,34 @@ function AboutUsDescriptionSection() {
   );
 }
 
-function AboutUsOfferEmpowermentSection() {
+function AboutUsEmpowermentSection() {
   return (
-    <section className="offer-empowerment-section">
-      <h2>Empowerment Through Knowledge</h2>
-      <p>
-        We believe in empowering our customers with knowledge and resources.
-      </p>
+    <section
+      className="bg-primary relative flex w-full items-center justify-center px-6 py-14 md:py-6 lg:px-16"
+      id="empowerment"
+    >
+      <PerlinNoiseTexture className="absolute h-full w-full opacity-10" />
+      <div className="flex w-full max-w-6xl grid-cols-1 flex-col-reverse gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
+        <div className="w-fill flex items-center justify-center">
+          <h5 className="text-justify text-white">
+            We empower students with practical skills, an entrepreneurial
+            mindset, and a passion for innovation. Through workshops, training,
+            and mentorship, ISATech fosters idea generation, design thinking,
+            and startup development. We connect members with mentors, industry
+            experts, and potential investors, while also serving as a gateway to
+            ISAT U’s technology business incubator, Kwadra TBI.
+          </h5>
+        </div>
+        <div className="w-fill flex items-center justify-center">
+          <Image
+            src="/assets/isatech-decoration-aboutus-1.png"
+            alt="Empowerment"
+            width={436}
+            height={346}
+            className="z-1 h-full w-auto lg:h-96"
+          />
+        </div>
+      </div>
     </section>
   );
 }
@@ -147,7 +169,7 @@ export default function AboutUsPage() {
     <div className="flex flex-col items-center justify-center">
       <AboutUsHeroSection />
       <AboutUsDescriptionSection />
-      <AboutUsOfferEmpowermentSection />
+      <AboutUsEmpowermentSection />
       <AboutUsInitiativesSection />
       <AboutUsAdvisersSection />
     </div>
