@@ -135,7 +135,7 @@ function AboutUsEmpowermentSection() {
         <div className="w-fill flex items-center justify-center">
           <Image
             src="/assets/isatech-decoration-aboutus-1.png"
-            alt="Empowerment"
+            alt="ISATech Society Reseach Hub Stamp"
             width={436}
             height={346}
             className="z-1 h-full w-auto lg:h-96"
@@ -148,9 +148,31 @@ function AboutUsEmpowermentSection() {
 
 function AboutUsInitiativesSection() {
   return (
-    <section className="initiatives-section">
-      <h2>Our Initiatives</h2>
-      <p>We are involved in various initiatives to support our community.</p>
+    <section
+      className="flex w-full items-center justify-center px-6 py-14 md:py-6 lg:px-16"
+      id="initiatives"
+    >
+      <div className="flex w-full max-w-6xl grid-cols-1 flex-col gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
+        <div className="w-fill flex items-center justify-center">
+          <Image
+            src="/assets/isatech-decoration-aboutus-2.png"
+            alt="Dream Innovate Succeed Sticker"
+            width={436}
+            height={303}
+            className="z-1 h-full w-auto lg:h-80"
+          />
+        </div>
+        <div className="w-fill flex items-center justify-center">
+          <h5 className="text-justify">
+            We empower students with practical skills, an entrepreneurial
+            mindset, and a passion for innovation. Through workshops, training,
+            and mentorship, ISATech fosters idea generation, design thinking,
+            and startup development. We connect members with mentors, industry
+            experts, and potential investors, while also serving as a gateway to
+            ISAT U’s technology business incubator, Kwadra TBI.
+          </h5>
+        </div>
+      </div>
     </section>
   );
 }
