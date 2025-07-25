@@ -187,17 +187,17 @@ function TeamSection() {
   return (
     <>
       <div className="bg-primary flex w-full max-w-7xl flex-col px-6 py-20 lg:px-8 xl:px-16">
-        <div className="flex w-full flex-col items-center justify-center gap-6">
+        <div className="debug flex w-full flex-col items-center justify-center gap-6">
           <div className="flex w-full flex-col items-center justify-center gap-2 text-center">
             <h2 className="text-secondary">Are You One of the 4H?</h2>
-            <h5 className="text-primary-foreground">
+            <h5 className="debug text-primary-foreground flex lg:w-5/6 xl:w-2/3">
               At ISATech Society, we believe every great innovation starts with
               a diverse team. Whether you&apos;re a creative, a coder, a
               go-getter, or a researcher — there&apos;s a place for you here.
               Which one are you?
             </h5>
           </div>
-          <div className="grid grid-cols-2 gap-6 md:flex md:items-center md:justify-center md:gap-6">
+          <div className="debug grid grid-cols-2 gap-6 sm:flex sm:items-center sm:justify-center sm:gap-6">
             {members.map((member, key) => (
               <div
                 key={key}
