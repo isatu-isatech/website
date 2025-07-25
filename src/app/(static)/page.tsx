@@ -10,6 +10,7 @@ export default function Home() {
         <AboutSection />
         <PartnersSection />
         <KwadraSection />
+        <TeamSection />
       </div>
     </>
   );
@@ -157,6 +158,76 @@ function KwadraSection() {
               <Link href="/">Learn More</Link>
             </Button>
           </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function TeamSection() {
+  const members = [
+    {
+      role: "Hustler",
+      path: "/assets/hustler.svg",
+    },
+    {
+      role: "Hacker",
+      path: "/assets/hacker.svg",
+    },
+    {
+      role: "Hipster",
+      path: "/assets/hipster.svg",
+    },
+    {
+      role: "Hound",
+      path: "/assets/hound.svg",
+    },
+  ];
+
+  return (
+    <>
+      <div className="bg-primary flex w-full max-w-7xl flex-col px-6 py-20 lg:px-8 xl:px-16">
+        <div className="flex w-full flex-col items-center justify-center gap-6">
+          <div className="flex w-full flex-col items-center justify-center gap-2 text-center">
+            <h2 className="text-secondary">Are You One of the 4H?</h2>
+            <h5 className="text-primary-foreground">
+              At ISATech Society, we believe every great innovation starts with
+              a diverse team. Whether you&apos;re a creative, a coder, a
+              go-getter, or a researcher — there&apos;s a place for you here.
+              Which one are you?
+            </h5>
+          </div>
+          <div className="grid grid-cols-2 gap-6 md:flex md:items-center md:justify-center md:gap-6">
+            {members.map((member, key) => (
+              <div
+                key={key}
+                className="flex flex-col items-center justify-center gap-4 rounded-2xl border-white bg-gradient-to-b from-white to-gray-500 p-[1px] backdrop-blur-md lg:rounded-4xl"
+              >
+                <div className="bg-primary flex flex-col items-center justify-center gap-4 rounded-2xl lg:rounded-4xl">
+                  <div className="bg-card/25 flex flex-col flex-wrap items-center justify-center gap-4 rounded-2xl px-6 py-8 lg:rounded-4xl lg:px-8 lg:py-10">
+                    <div className="bg-secondary flex items-center justify-center rounded-2xl p-2 lg:rounded-3xl lg:p-6 xl:size-40">
+                      <Image
+                        src={member.path}
+                        alt={member.role}
+                        width={500}
+                        height={500}
+                        className="size-20 rounded-2xl sm:size-16 md:size-24 lg:size-28"
+                      />
+                    </div>
+                    <h6 className="text-primary-foreground font-bold">
+                      {member.role}
+                    </h6>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <Button asChild variant={"secondary"} size={"lg"}>
+            <Link href="">
+              <h6>Join Now</h6>
+            </Link>
+          </Button>
         </div>
       </div>
     </>
