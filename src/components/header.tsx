@@ -126,7 +126,7 @@ export default function Header() {
                       className="w-full px-2 py-1"
                       key={link.label}
                     >
-                      <p className="text-2xl">{link.label}</p>
+                      <p className="text-caption">{link.label}</p>
                     </Link>
                   ))}
                 </div>
