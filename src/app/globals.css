@@ -154,8 +154,10 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-ring/50 leading-normal; /* leading-normal for typography line height. */
+    box-sizing: border-box;
   }
+
   body {
     @apply bg-background text-foreground;
   }
