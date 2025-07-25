@@ -1,3 +1,8 @@
+import {
+  ISATechDecorationLeft,
+  ISATechDecorationRight,
+} from "@/components/assets/decorations";
+import { RocketIcon, TargetIcon } from "lucide-react";
 import Image from "next/image";
 
 function AboutUsHeroSection() {
@@ -42,9 +47,68 @@ function AboutUsHeroSection() {
 
 function AboutUsDescriptionSection() {
   return (
-    <section className="description-section">
-      <h2>Our Mission</h2>
-      <p>We strive to provide the best services to our customers.</p>
+    <section
+      className="debug flex w-full items-center justify-center px-6"
+      id="description"
+    >
+      <div className="debug relative flex w-full max-w-7xl flex-col items-center">
+        {/* Decorations */}
+        <ISATechDecorationLeft className="absolute top-0 left-0 hidden h-auto w-fit opacity-10 lg:block" />
+        <ISATechDecorationRight className="absolute right-0 bottom-0 h-auto w-fit opacity-10" />
+        {/* Text Content */}
+        <div className="bg-accent relative flex w-full max-w-6xl flex-col items-center justify-between gap-4 rounded-3xl px-6 lg:px-20">
+          <Image
+            src="/assets/isatech-group-photo-1.jpg"
+            alt="About Us"
+            width={1695}
+            height={706}
+            className="absolute h-full w-auto rounded-3xl object-cover opacity-30"
+          />
+          <div className="flex flex-col items-center justify-center gap-4 py-16 lg:py-32">
+            <Image
+              src="/assets/isatech-icon-dark.svg"
+              alt="About Us"
+              width={100}
+              height={100}
+            />
+            <p className="body text-center">
+              ISATech Society (ISAT U Innovators and Technopreneurs Society) is
+              a student-led organization at Iloilo Science and Technology
+              University dedicated to nurturing innovation, creativity, and
+              entrepreneurship.
+            </p>
+          </div>
+        </div>
+        {/* Mission and Vission */}
+        <div className="debug grid w-full max-w-6xl grid-cols-1 gap-6 py-5 lg:grid-cols-2 lg:py-8">
+          <div className="debug flex flex-col justify-start gap-4">
+            <TargetIcon size={42} />
+            <div className="flex flex-col gap-2">
+              <h3>Mission</h3>
+              <p className="body text-justify">
+                To empower ISAT U students with the mindset, skills, and
+                opportunities to become future-ready innovators and
+                technopreneurs. We provide a platform for students to grow
+                through training, mentorship, and community engagement —
+                connecting them with industry leaders and supporting their
+                journey from ideas to impactful ventures.
+              </p>
+            </div>
+          </div>
+          <div className="debug flex flex-col justify-start gap-4">
+            <RocketIcon size={42} />
+            <div className="flex flex-col gap-2">
+              <h3>Vision</h3>
+              <p className="body text-justify">
+                Our Vision is to be the premier platform for students across
+                ISAT U system wide, raising awareness about startups, providing
+                skills and resources for innovations, producing student
+                technopreneurs.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
