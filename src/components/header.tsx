@@ -24,50 +24,7 @@ const navLinks: { label: string; href: string }[] = [
 
 export default function Header() {
   return (
-    // <div className="border-b-grey-100 sticky top-0 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
-    //   <div className="flex w-full max-w-6xl items-center justify-between">
-    //     <Link href="/">
-    //       <Image
-    //         src="/assets/isatech-dark.svg"
-    //         alt="Logo"
-    //         width={24}
-    //         height={40}
-    //       />
-    //     </Link>
-    //     <div className="flex items-center gap-2 md:gap-2 lg:gap-4">
-    //       <div className="hidden items-center gap-1 md:flex">
-    //         <Button asChild variant={"ghost"} size={"sm"}>
-    //           <Link href="/">
-    //             <p className="text-caption">Achievements</p>
-    //           </Link>
-    //         </Button>
-    //         <Button asChild variant={"ghost"} size={"sm"}>
-    //           <Link href="/">
-    //             <p className="text-caption">Contact Us</p>
-    //           </Link>
-    //         </Button>
-    //         <Button asChild variant={"ghost"} size={"sm"}>
-    //           <Link href="/">
-    //             <p className="text-caption">About Us</p>
-    //           </Link>
-    //         </Button>
-    //       </div>
-    //       <div className="flex items-center gap-2">
-    //         <Button asChild variant={"default"} size={"lg"}>
-    //           <Link href="/">
-    //             <p className="text-caption">Join Now</p>
-    //           </Link>
-    //         </Button>
-    //         <Button asChild className="md:hidden" variant={"outline"}>
-    //           <Link href="/">
-    //             <Menu />
-    //           </Link>
-    //         </Button>
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
-    <div className="border-b-grey-100 sticky top-0 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
+    <div className="border-b-grey-100 sticky top-0 z-99 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
       <div className="flex w-full max-w-6xl items-center justify-between">
         <Link href="/">
           <Image
