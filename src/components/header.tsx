@@ -24,6 +24,7 @@ const navLinks: { label: string; href: string }[] = [
 
 export default function Header() {
   return (
+<<<<<<< HEAD
     // <div className="border-b-grey-100 sticky top-0 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
     //   <div className="flex w-full max-w-6xl items-center justify-between">
     //     <Link href="/">
@@ -68,6 +69,9 @@ export default function Header() {
     //   </div>
     // </div>
     <div className="border-b-grey-100 sticky top-0 z-90 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
+=======
+    <div className="border-b-grey-100 sticky top-0 z-99 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
+>>>>>>> bd134f2265533a2d6a5a8e9324b6f4f2721f4fb9
       <div className="flex w-full max-w-6xl items-center justify-between">
         <Link href="/">
           <Image
