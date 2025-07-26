@@ -170,6 +170,7 @@
   h4,
   h5,
   h6 {
+    @apply leading-normal;
     font-family: var(--font-poppins), sans-serif;
   }
 

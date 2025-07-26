@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { GraduationCap, NotepadText, Rocket, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -11,6 +12,8 @@ export default function Home() {
         <PartnersSection />
         <KwadraSection />
         <TeamSection />
+        <OfferSection />
+        <ContactSection />
       </div>
     </>
   );
@@ -65,8 +68,8 @@ function AboutSection() {
                 Technology Business Incubator (Kwadra-TBI).
               </h5>
             </div>
-            <Button asChild>
-              <Link href="/">Learn More</Link>
+            <Button>
+              <Link href="/about">Learn More</Link>
             </Button>
           </div>
         </div>
@@ -154,7 +157,7 @@ function KwadraSection() {
                 nurture deep technology startups.
               </h5>
             </div>
-            <Button asChild>
+            <Button>
               <Link href="/">Learn More</Link>
             </Button>
           </div>
@@ -186,46 +189,122 @@ function TeamSection() {
 
   return (
     <>
-      <div className="bg-primary flex w-full max-w-7xl flex-col px-6 py-20 lg:px-8 xl:px-16">
-        <div className="debug flex w-full flex-col items-center justify-center gap-6">
-          <div className="flex w-full flex-col items-center justify-center gap-2 text-center">
-            <h2 className="text-secondary">Are You One of the 4H?</h2>
-            <h5 className="debug text-primary-foreground flex lg:w-5/6 xl:w-2/3">
-              At ISATech Society, we believe every great innovation starts with
-              a diverse team. Whether you&apos;re a creative, a coder, a
-              go-getter, or a researcher — there&apos;s a place for you here.
-              Which one are you?
-            </h5>
-          </div>
-          <div className="debug grid grid-cols-2 gap-6 sm:flex sm:items-center sm:justify-center sm:gap-6">
-            {members.map((member, key) => (
-              <div
-                key={key}
-                className="flex flex-col items-center justify-center gap-4 rounded-2xl border-white bg-gradient-to-b from-white to-gray-500 p-[1px] backdrop-blur-md lg:rounded-4xl"
-              >
-                <div className="bg-primary flex flex-col items-center justify-center gap-4 rounded-2xl lg:rounded-4xl">
-                  <div className="bg-card/25 flex flex-col flex-wrap items-center justify-center gap-4 rounded-2xl px-6 py-8 lg:rounded-4xl lg:px-8 lg:py-10">
-                    <div className="bg-secondary flex items-center justify-center rounded-2xl p-2 lg:rounded-3xl lg:p-6 xl:size-40">
-                      <Image
-                        src={member.path}
-                        alt={member.role}
-                        width={500}
-                        height={500}
-                        className="size-20 rounded-2xl sm:size-16 md:size-24 lg:size-28"
-                      />
+      <div className="bg-primary flex w-full justify-center">
+        <div className="flex w-full max-w-7xl flex-col px-6 py-20 lg:px-8 xl:px-16">
+          <div className="flex w-full flex-col items-center justify-center gap-6">
+            <div className="flex w-full flex-col items-center justify-center gap-2 text-center">
+              <h2 className="text-secondary">Are You One of the 4H?</h2>
+              <h5 className="text-primary-foreground flex lg:w-5/6 xl:w-2/3">
+                At ISATech Society, we believe every great innovation starts
+                with a diverse team. Whether you&apos;re a creative, a coder, a
+                go-getter, or a researcher — there&apos;s a place for you here.
+                Which one are you?
+              </h5>
+            </div>
+            <div className="grid grid-cols-2 gap-6 sm:flex sm:items-center sm:justify-center sm:gap-6">
+              {members.map((member, key) => (
+                <div
+                  key={key}
+                  className="flex flex-col items-center justify-center gap-4 rounded-2xl border-white bg-gradient-to-b from-white to-gray-500 p-[1px] backdrop-blur-md lg:rounded-4xl"
+                >
+                  <div className="bg-primary flex flex-col items-center justify-center gap-4 rounded-2xl lg:rounded-4xl">
+                    <div className="bg-card/25 flex flex-col flex-wrap items-center justify-center gap-4 rounded-2xl px-6 py-8 lg:rounded-4xl lg:px-8 lg:py-10">
+                      <div className="bg-secondary flex items-center justify-center rounded-2xl p-2 lg:rounded-3xl lg:p-6 xl:size-40">
+                        <Image
+                          src={member.path}
+                          alt={member.role}
+                          width={500}
+                          height={500}
+                          className="size-20 rounded-2xl sm:size-16 md:size-24 lg:size-28"
+                        />
+                      </div>
+                      <h6 className="text-primary-foreground font-bold">
+                        {member.role}
+                      </h6>
                     </div>
-                    <h6 className="text-primary-foreground font-bold">
-                      {member.role}
-                    </h6>
                   </div>
+                </div>
+              ))}
+            </div>
+
+            <Button variant={"secondary"} size={"lg"}>
+              <Link href="">
+                <h5>Join Now</h5>
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}
+
+function OfferSection() {
+  const features = [
+    {
+      icon: Rocket,
+      title: "Hackathons",
+      description:
+        "A race of innovation where ideas thrive and take shape. Hackathons challenge students to build creative tech solutions under pressure.",
+    },
+    {
+      icon: NotepadText,
+      title: "Seminars",
+      description:
+        "Insightful talks from industry leaders. Seminars offer fresh perspectives, discuss emerging trends, and share valuable knowledge beyond the classroom.",
+    },
+    {
+      icon: GraduationCap,
+      title: "Trainings",
+      description:
+        "Skill-up sessions to help you stay ahead. Whether it's coding, design, or entrepreneurship — our trainings empower members with hands-on experience and practical tools.",
+    },
+
+    {
+      icon: Users,
+      title: "Cohorts",
+      description:
+        "Focused learning communities designed for growth. Cohorts bring members together to explore specific skills, to build real-world projects, and to support one another in a collaborative environment.",
+    },
+  ];
+
+  return (
+    <>
+      <div className="flex w-full max-w-7xl flex-col px-6 py-16 lg:px-8 xl:px-16">
+        <div className="flex flex-col items-center justify-center gap-6 text-center">
+          <h2 className="text-primary">What do we offer?</h2>
+          <div className="flex flex-col gap-6 md:grid md:grid-cols-2">
+            {features.map((item, index) => (
+              <div
+                key={index}
+                className="flex flex-col gap-4 rounded-2xl bg-gray-300/50 px-6 py-4"
+              >
+                <item.icon size={32} />
+                <div className="flex flex-col gap-2 text-start">
+                  <p className="text-body-bold">{item.title}</p>
+                  <p className="text-label">{item.description}</p>
                 </div>
               </div>
             ))}
           </div>
+        </div>
+      </div>
+    </>
+  );
+}
 
-          <Button asChild variant={"secondary"} size={"lg"}>
-            <Link href="">
-              <h6>Join Now</h6>
+export function ContactSection() {
+  return (
+    <>
+      <div className="flex w-full max-w-7xl flex-col px-6 py-16 lg:px-8 xl:px-16">
+        <div className="bg-primary flex flex-col items-center justify-center gap-4 rounded-2xl px-4 py-8 sm:gap-6 sm:rounded-3xl">
+          <div className="text-primary-foreground flex flex-col text-center">
+            <h2>Let&apos;s dream big!</h2>
+            <h6>Got an idea? Let&apos;s make it happen.</h6>
+          </div>
+          <Button variant={"secondary"} size={"lg"}>
+            <Link href="/">
+              <h5>Contact Us</h5>
             </Link>
           </Button>
         </div>
