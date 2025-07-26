@@ -4,7 +4,17 @@ import React, { useRef, useMemo } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 
-const TextureMesh = () => {
+interface TextureMeshProps {
+  aaPasses?: number;
+  planeSize?: [number, number];
+  useMouse?: boolean;
+}
+
+const TextureMesh = ({
+  aaPasses = 2,
+  planeSize = [100, 100],
+  useMouse = true,
+}: TextureMeshProps) => {
   const mesh = useRef<THREE.Mesh>(null);
   const { gl, mouse } = useThree();
 
@@ -363,7 +373,7 @@ const TextureMesh = () => {
           u_lacunarity: { value: 1 },
           u_factor: { value: 1 },
           u_width: { value: 0.1 },
-          u_aa_passes: { value: 2 },
+          u_aa_passes: { value: aaPasses },
           u_color: {
             value: new THREE.Vector3(
               1,
@@ -381,36 +391,77 @@ const TextureMesh = () => {
         side: THREE.DoubleSide,
         glslVersion: THREE.GLSL1,
       }),
-    [fragmentShader, vertexShader],
+    [fragmentShader, vertexShader, aaPasses],
   );
 
-  // This hook runs on every frame and updates the uniforms.
+  // Store the current width and height in refs to avoid unnecessary updates
+  const resolutionRef = useRef<{ width: number; height: number }>({
+    width: 100,
+    height: 100,
+  });
+
+  // Update resolution uniform only when the canvas size changes
+  React.useEffect(() => {
+    if (
+      !mesh.current ||
+      !(mesh.current.material instanceof THREE.ShaderMaterial)
+    )
+      return;
+    const material = mesh.current.material;
+    const canvas = gl.domElement;
+    const updateResolution = () => {
+      const { width, height } = canvas.getBoundingClientRect();
+      if (
+        resolutionRef.current.width !== width ||
+        resolutionRef.current.height !== height
+      ) {
+        resolutionRef.current = { width, height };
+        material.uniforms.u_resolution.value.set(width, height);
+      }
+    };
+    updateResolution();
+    const resizeObserver = new window.ResizeObserver(updateResolution);
+    resizeObserver.observe(canvas);
+    return () => resizeObserver.disconnect();
+  }, [gl, mesh]);
+
+  // This hook runs on every frame and updates the time and mouse uniforms.
   useFrame(({ clock }) => {
     if (mesh.current && mesh.current.material instanceof THREE.ShaderMaterial) {
       const material = mesh.current.material;
-      const { width, height } = gl.domElement.getBoundingClientRect();
-
-      // Update uniforms based on time, mouse position, and resolution
       material.uniforms.u_time.value = clock.getElapsedTime();
-      material.uniforms.u_mouse.value.set(mouse.x / 2 + 0.5, mouse.y / 2 + 0.5);
-      material.uniforms.u_resolution.value.set(width, height);
+      if (useMouse) {
+        material.uniforms.u_mouse.value.set(
+          mouse.x / 2 + 0.5,
+          mouse.y / 2 + 0.5,
+        );
+      }
+      // u_resolution is updated by ResizeObserver effect
     }
   });
 
   return (
     <mesh ref={mesh} position={[0, 0, 0]} scale={1} rotation={[0, 0, 0]}>
-      <planeGeometry args={[100, 100]} />
+      <planeGeometry args={planeSize} />
       <primitive object={material} attach="material" />
     </mesh>
   );
 };
 
 // Main component that renders the Canvas.
+interface PerlinNoiseTextureProps {
+  className?: string;
+  aaPasses?: number;
+  planeSize?: [number, number];
+  useMouse?: boolean;
+}
+
 export default function PerlinNoiseTexture({
   className,
-}: {
-  className?: string;
-}) {
+  aaPasses,
+  planeSize,
+  useMouse,
+}: PerlinNoiseTextureProps) {
   return (
     <div className={className}>
       <Canvas
@@ -436,7 +487,11 @@ export default function PerlinNoiseTexture({
         }}
         style={{ width: "100%", height: "100%" }}
       >
-        <TextureMesh />
+        <TextureMesh
+          aaPasses={aaPasses}
+          planeSize={planeSize}
+          useMouse={useMouse}
+        />
       </Canvas>
     </div>
   );
