@@ -153,11 +153,24 @@
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  *,
+  ::before,
+  ::after {
+    @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-chivo), sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-poppins), sans-serif;
   }
 
   h1 {
@@ -176,18 +189,17 @@
     @apply text-lg font-semibold md:text-xl lg:text-2xl;
   }
 
-  h5,
-  h6 {
+  h5 {
     @apply text-lg font-medium md:text-xl;
   }
 
-  p {
-    font-family: var(--font-chivo);
+  h6 {
+    @apply text-lg font-normal md:text-xl;
   }
 }
 
 .debug {
-  border: 1px solid red;
+  @apply border border-red-500;
 }
 
 .text-body {
