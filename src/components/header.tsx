@@ -67,7 +67,7 @@ export default function Header() {
     //     </div>
     //   </div>
     // </div>
-    <div className="border-b-grey-100 sticky top-0 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
+    <div className="border-b-grey-100 sticky top-0 z-90 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
       <div className="flex w-full max-w-6xl items-center justify-between">
         <Link href="/">
           <Image
@@ -114,7 +114,7 @@ export default function Header() {
                   <Menu />
                 </Button>
               </SheetTrigger>
-              <SheetContent>
+              <SheetContent className="z-100">
                 <SheetHeader>
                   {/* This title is hidden but can be used for accessibility; Error occurs without this, don't ask why lol */}
                   <SheetTitle className="hidden">Navigation Menu</SheetTitle>
