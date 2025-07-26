@@ -25,9 +25,9 @@ export default function ContactPage() {
 
 export function PartnerSection() {
   return (
-    <div className="flex flex-col justify-start gap-4 py-16">
+    <div className="flex flex-col justify-start gap-4 mb-16 xl:mt-16">
       <header className="flex flex-col gap-2 text-center">
-        <h1 className="text-primary">Partner with Us</h1>
+        <h1 className="text-primary text-4xl xl:text-5xl" style={{ fontFamily: "var(--font-poppins)" }}>Partner with Us</h1>
         <h4 style={{ fontFamily: "var(--font-poppins)" }}>We're seeking:</h4>
       </header>
       <ul className="mt-4 grid grid-cols-1 gap-4 xl:grid-cols-2">
@@ -49,16 +49,16 @@ export function SeekCard({
   text: string;
 }) {
   return (
-    <div className="flex flex-row gap-4 rounded-lg bg-[rgba(230,230,231,0.5)] px-6 py-4">
+    <div className="flex flex-row gap-4 rounded-lg bg-[rgba(230,230,231,0.5)] px-6 py-4 items-center">
       <Emoji />
-      <p className="text-xl">{text}</p>
+      <h6 className="text-sm xl:text-xl" style={{ fontFamily: "var(--font-poppins)"}}>{text}</h6>
     </div>
   );
 }
 
 export function ContactForm() {
   return (
-    <section className="flex h-full w-full flex-col justify-start gap-9 rounded-lg bg-[rgba(230,230,231,0.5)] px-8 py-16">
+    <section className="flex h-full w-full flex-col justify-start gap-9 rounded-lg bg-[rgba(230,230,231,0.5)] px-8 py-8 xl:py-16 lg:py-16 md:py-16">
       <ContactFormHeader />
       {/* form separator */}
       <div className="h-[1px] bg-gray-300"></div>
@@ -70,12 +70,12 @@ export function ContactForm() {
 export function ContactFormHeader() {
   return (
     <header className="flex flex-col items-center gap-6 text-center">
-      <h2 className="text-secondary">Contact Us</h2>
-      <p className="text-lg" style={{ fontFamily: "var(--font-poppins)" }}>
+      <h2 className="text-secondary text-3xl xl:text-4xl" style={{ fontFamily: "var(--font-poppins)" }}>Contact Us</h2>
+      <h5 className="text-sm xl:text-xl font-medium" style={{ fontFamily: "var(--font-poppins)" }}>
         We thrive on connections! Reach out for partnerships, event ideas,
         feedback, or just to geek out over tech. Your voice shapes our
         community.
-      </p>
+      </h5>
     </header>
   );
 }
@@ -84,17 +84,19 @@ export function ContactFormContent() {
   return (
     <form className="flex flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <div className="flex flex-col gap-4">
-          <p className="text-caption">Full Name</p>
-          <Input placeholder="Your Name" />
+        <div className="flex flex-col gap-2">
+          <label htmlFor="name" className="text-caption" style={{ fontFamily: "var(--font-poppins)" }}>Full Name</label>
+          <Input placeholder="Your Name" className="border-black"/>
         </div>
-        <div className="flex flex-col gap-4">
-          <p className="text-caption">Email</p>
-          <Input placeholder="youremail@example.com" type="email" />
+        <div className="flex flex-col gap-2">
+          <label htmlFor="email" className="text-caption" style={{ fontFamily: "var(--font-poppins)" }}>Email</label>
+          <Input placeholder="youremail@example.com" type="email" className="border-black" />
         </div>
       </div>
-      <p className="text-caption">Subject</p>
-      <Textarea placeholder="Your Message" className="field-sizing-fixed" />
+      <div className="flex flex-col gap-2">
+        <label htmlFor="message" className="text-caption" style={{ fontFamily: "var(--font-poppins)" }}>Message</label>
+        <Textarea placeholder="Your Message" className="field-sizing-fixed border-black" />
+      </div>
       <div className="flex flex-col items-end gap-4">
         <Button type="submit" className="mt-4 h-fit px-6 py-3">
           Send Message
