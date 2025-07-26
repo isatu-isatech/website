@@ -94,7 +94,7 @@ export function ContactFormContent() {
         </div>
       </div>
       <p className="text-caption">Subject</p>
-      <Textarea placeholder="Your Message" />
+      <Textarea placeholder="Your Message" className="field-sizing-fixed" />
       <div className="flex flex-col items-end gap-4">
         <Button type="submit" className="mt-4 h-fit px-6 py-3">
           Send Message
