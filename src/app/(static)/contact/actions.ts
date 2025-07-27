@@ -10,7 +10,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Define the form data schema for validation
 const contactFormSchema = z.object({
   name: z.string(),
-  email: z.string().email(),
+  email: z.email(),
   message: z.string(),
 });
 

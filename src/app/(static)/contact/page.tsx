@@ -142,10 +142,15 @@ function ContactUsForm() {
   async function onSubmit(values: z.infer<typeof contactFormSchema>) {
     startTransition(async () => {
       //form submission
-      sendContactEmail(values);
-      // Simulate successful form submission
-      contactForm.reset();
-      alert("Form submitted successfully!");
+      const res = await sendContactEmail(values);
+
+      if (res.success) {
+        // Simulate successful form submission
+        contactForm.reset();
+        alert("Form submitted successfully!");
+      } else {
+        alert("Failed to submit form. Try again later.");
+      }
     });
   }
 
