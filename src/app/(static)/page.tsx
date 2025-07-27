@@ -7,21 +7,51 @@ import PerlinNoiseTexture from "@/components/shaders/perlin";
 import VoronoiTexture from "@/components/shaders/voronoi ";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
+import YouTubePlayer from "@/components/ui/youtube-player";
 import { GraduationCap, NotepadText, Rocket, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Homepage() {
+function HomepageHeroSection() {
   return (
-    <div className="debug flex w-full flex-col items-center justify-center">
-      <HomepageStatsSection />
-      <HomepageAboutSection />
-      <HomepagePartnersSection />
-      <HomepageKwadraSection />
-      <HomepageTeamSection />
-      <HomepageOfferSection />
-      <HomepageContactSection />
-    </div>
+    <section
+      className="relative flex w-full flex-col items-center justify-center overflow-hidden bg-black/50"
+      id="hero"
+    >
+      <div className="debug absolute -z-1 flex h-full w-full items-center justify-center">
+        <YouTubePlayer
+          videoId="ZsjQab_Rwo0"
+          autoPlay
+          loop
+          mute
+          hideControls
+          playerVars={{
+            disablekb: 1,
+            rel: 0,
+            autohide: 1,
+          }}
+          className="debug pointer-events-none absolute aspect-video h-auto w-5xl lg:h-screen lg:lg:w-[calc(100vw+10rem)]"
+        />
+      </div>
+      <div className="flex w-full items-center justify-center px-6 py-28 md:px-16">
+        <div className="flex w-full max-w-6xl">
+          <div className="flex w-full flex-col items-center gap-6 text-center lg:items-start lg:justify-start lg:text-start">
+            <div className="gap-2 px-4 md:px-0">
+              <div className="-gap-20">
+                <h1 className="text-white">Welcome to</h1>
+                <h1 className="text-secondary">ISATech Society</h1>
+              </div>
+              <h5 className="text-white">
+                Empowering student founders to achieve their dreams.
+              </h5>
+            </div>
+            <Button variant={"secondary"} size={"lg"}>
+              <Link href="/about">Learn More</Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -34,10 +64,10 @@ function HomepageStatsSection() {
 
   return (
     <section
-      className="debug flex w-full flex-col items-center justify-center px-6 py-16 xl:px-16"
+      className="flex w-full flex-col items-center justify-center px-6 py-16 xl:px-16"
       id="stats"
     >
-      <div className="debug flex w-full max-w-6xl flex-wrap items-center justify-center gap-y-6">
+      <div className="flex w-full max-w-6xl flex-wrap items-center justify-center gap-y-6">
         {stats.map((stat, index) => (
           <div
             key={index}
@@ -69,18 +99,18 @@ function HomepageAboutSection() {
 
   return (
     <section
-      className="debug relative flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
+      className="relative flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
       id="about"
     >
       {/* Decorations */}
       <div className="absolute -z-1 flex h-full w-full items-center justify-center">
         <BlobsAnimatedBackground
-          className="debug absolute h-full w-full"
+          className="absolute h-full w-full"
           blobs={blobsConfig}
         />
         <ISATechDecorationRight className="absolute top-0 right-0 h-full w-auto opacity-10" />
       </div>
-      <div className="debug flex w-full max-w-6xl flex-col items-center justify-center gap-6 md:flex-row-reverse">
+      <div className="flex w-full max-w-6xl flex-col items-center justify-center gap-6 md:flex-row-reverse">
         <div className="flex w-full items-center justify-center md:w-1/2">
           <Image
             src="/assets/isatech-icon-dark.svg"
@@ -144,14 +174,14 @@ function HomepagePartnersSection() {
 
   return (
     <section
-      className="debug relative flex w-full flex-col items-center justify-center px-6 lg:px-16"
+      className="relative flex w-full flex-col items-center justify-center px-6 lg:px-16"
       id="partners"
     >
       <PerlinNoiseTexture
         color={"#ececec"}
         className="absolute top-0 left-0 -z-1 h-full w-full opacity-30"
       />
-      <div className="debug flex w-full max-w-6xl flex-col items-center justify-center gap-6 px-6 py-16 lg:px-8 xl:px-16">
+      <div className="flex w-full max-w-6xl flex-col items-center justify-center gap-6 px-6 py-16 lg:px-8 xl:px-16">
         <h3 className="text-primary">Our Partners</h3>
         <div className="flex w-full flex-wrap items-center justify-center gap-x-10 gap-y-10 md:justify-center md:gap-20">
           {partners.map((partner, key) => (
@@ -188,18 +218,18 @@ function HomepageKwadraSection() {
 
   return (
     <section
-      className="debug relative flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
+      className="relative flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
       id="kwadra"
     >
       {/* Decorations */}
       <div className="absolute -z-1 flex h-full w-full items-center justify-center">
         <BlobsAnimatedBackground
-          className="debug absolute h-full w-full"
+          className="absolute h-full w-full"
           blobs={blobsConfig}
         />
         <ISATechDecorationLeft className="absolute top-0 left-0 h-auto w-full opacity-10 md:h-full md:w-auto" />
       </div>
-      <div className="debug flex w-full max-w-6xl flex-col items-center justify-center gap-6 md:flex-row">
+      <div className="flex w-full max-w-6xl flex-col items-center justify-center gap-6 md:flex-row">
         <div className="flex w-full items-center justify-center md:w-1/2">
           <Image
             src="/assets/kwadra-tbi-logo-dark.png"
@@ -253,17 +283,17 @@ function HomepageTeamSection() {
 
   return (
     <section
-      className="bg-primary debug relative flex w-full flex-col items-center justify-center"
+      className="bg-primary relative flex w-full flex-col items-center justify-center"
       id="4h"
     >
       {/* Decorations */}
       <div className="absolute flex h-full w-full items-center justify-center">
         <PerlinNoiseTexture
           color={"#ececec"}
-          className="debug absolute h-full w-full opacity-5"
+          className="absolute h-full w-full opacity-5"
         />
       </div>
-      <div className="debug flex w-full max-w-6xl flex-col px-6 py-20 lg:px-8 xl:px-16">
+      <div className="flex w-full max-w-6xl flex-col px-6 py-20 lg:px-8 xl:px-16">
         <div className="flex w-full flex-col items-center justify-center gap-6">
           <div className="flex w-full flex-col items-center justify-center gap-2 text-center">
             <h2 className="text-secondary">Are You One of the 4H?</h2>
@@ -342,14 +372,14 @@ function HomepageOfferSection() {
 
   return (
     <section
-      className="debug relative flex w-full flex-col items-center justify-center overflow-hidden px-6 py-16 lg:px-16 lg:py-28"
+      className="relative flex w-full flex-col items-center justify-center overflow-hidden px-6 py-16 lg:px-16 lg:py-28"
       id="offers"
     >
       {/* Decoration */}
       <div className="absolute -z-1 flex h-full w-full items-center justify-center">
         <ISATechDecorationCenter className="translate absolute top-1/2 left-1/2 h-11/12 w-auto -translate-x-1/2 -translate-y-1/2 opacity-5 lg:opacity-10" />
       </div>
-      <div className="debug flex max-w-6xl flex-col items-center justify-center gap-6 text-center">
+      <div className="flex max-w-6xl flex-col items-center justify-center gap-6 text-center">
         <h2 className="text-primary">What do we offer?</h2>
         <div className="flex flex-col gap-6 md:grid md:grid-cols-2">
           {features.map((item, index) => (
@@ -373,10 +403,10 @@ function HomepageOfferSection() {
 export function HomepageContactSection() {
   return (
     <section
-      className="debug flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
+      className="flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
       id="contact"
     >
-      <div className="bg-primary relative z-1 flex w-full max-w-6xl flex-col items-center justify-center gap-4 rounded-2xl px-4 py-8 sm:gap-6 sm:rounded-3xl">
+      <div className="bg-primary relative flex w-full max-w-6xl flex-col items-center justify-center gap-4 rounded-2xl px-4 py-8 sm:gap-6 sm:rounded-3xl">
         {/* Decorations */}
         <div className="absolute flex h-full w-full items-center justify-center">
           <VoronoiTexture className="absolute inset-0 h-full w-full opacity-10" />
@@ -385,12 +415,27 @@ export function HomepageContactSection() {
           <h2>Let&apos;s dream big!</h2>
           <h6>Got an idea? Let&apos;s make it happen.</h6>
         </div>
-        <Button variant={"secondary"} size={"lg"}>
-          <Link href="/">
+        <Button variant={"secondary"} size={"lg"} className="z-1">
+          <Link href="/contact">
             <h5>Contact Us</h5>
           </Link>
         </Button>
       </div>
     </section>
+  );
+}
+
+export default function Homepage() {
+  return (
+    <div className="flex w-full flex-col items-center justify-center">
+      <HomepageHeroSection />
+      <HomepageStatsSection />
+      <HomepageAboutSection />
+      <HomepagePartnersSection />
+      <HomepageKwadraSection />
+      <HomepageTeamSection />
+      <HomepageOfferSection />
+      <HomepageContactSection />
+    </div>
   );
 }
