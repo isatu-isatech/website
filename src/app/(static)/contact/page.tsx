@@ -30,6 +30,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useTransition } from "react";
+import { sendContactEmail } from "./actions";
 
 const partnerList = [
   { emoji: LucideCog, text: "Industry partners for real-world projects" },
@@ -140,10 +141,9 @@ function ContactUsForm() {
 
   async function onSubmit(values: z.infer<typeof contactFormSchema>) {
     startTransition(async () => {
-      // Simulate form submission
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      //form submission
+      sendContactEmail(values);
       // Simulate successful form submission
-      console.log("Submitted values:", values);
       contactForm.reset();
       alert("Form submitted successfully!");
     });
