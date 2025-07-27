@@ -14,7 +14,7 @@ import Link from "next/link";
 export default function Homepage() {
   return (
     <div className="debug flex w-full flex-col items-center justify-center">
-      <StatsSection />
+      <HomepageStatsSection />
       <HomepageAboutSection />
       <HomepagePartnersSection />
       <HomepageKwadraSection />
@@ -25,7 +25,7 @@ export default function Homepage() {
   );
 }
 
-function StatsSection() {
+function HomepageStatsSection() {
   const stats = [
     { quantity: "5+", description: "Startups Established" },
     { quantity: "25+", description: "Awards Earned" },
@@ -33,21 +33,22 @@ function StatsSection() {
   ];
 
   return (
-    <>
-      <div className="flex w-full max-w-7xl flex-col px-6 py-16 lg:px-8 xl:px-16">
-        <div className="flex w-full flex-wrap items-center justify-center gap-y-6">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="flex w-full flex-col items-center justify-center sm:w-1/2 md:w-1/3"
-            >
-              <h1>{stat.quantity}</h1>
-              <h3>{stat.description}</h3>
-            </div>
-          ))}
-        </div>
+    <section
+      className="debug flex w-full flex-col items-center justify-center px-6 py-16 xl:px-16"
+      id="stats"
+    >
+      <div className="debug flex w-full max-w-6xl flex-wrap items-center justify-center gap-y-6">
+        {stats.map((stat, index) => (
+          <div
+            key={index}
+            className="flex w-full flex-col items-center justify-center sm:w-1/2 md:w-1/3"
+          >
+            <h1>{stat.quantity}</h1>
+            <h3>{stat.description}</h3>
+          </div>
+        ))}
       </div>
-    </>
+    </section>
   );
 }
 
