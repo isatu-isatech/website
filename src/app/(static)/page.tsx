@@ -4,13 +4,14 @@ import {
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
 import PerlinNoiseTexture from "@/components/shaders/perlin";
+import VoronoiTexture from "@/components/shaders/voronoi ";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, NotepadText, Rocket, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export default function Home() {
+export default function Homepage() {
   return (
     <div className="debug flex w-full flex-col items-center justify-center">
       <StatsSection />
@@ -19,7 +20,7 @@ export default function Home() {
       <HomepageKwadraSection />
       <HomepageTeamSection />
       <HomepageOfferSection />
-      <ContactSection />
+      <HomepageContactSection />
     </div>
   );
 }
@@ -340,12 +341,12 @@ function HomepageOfferSection() {
 
   return (
     <section
-      className="debug relative flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
+      className="debug relative flex w-full flex-col items-center justify-center overflow-hidden px-6 py-16 lg:px-16 lg:py-28"
       id="offers"
     >
       {/* Decoration */}
       <div className="absolute -z-1 flex h-full w-full items-center justify-center">
-        <ISATechDecorationCenter className="translate absolute top-1/2 left-1/2 h-full w-auto -translate-x-1/2 -translate-y-1/2 opacity-5 lg:opacity-10" />
+        <ISATechDecorationCenter className="translate absolute top-1/2 left-1/2 h-11/12 w-auto -translate-x-1/2 -translate-y-1/2 opacity-5 lg:opacity-10" />
       </div>
       <div className="debug flex max-w-6xl flex-col items-center justify-center gap-6 text-center">
         <h2 className="text-primary">What do we offer?</h2>
@@ -368,22 +369,27 @@ function HomepageOfferSection() {
   );
 }
 
-export function ContactSection() {
+export function HomepageContactSection() {
   return (
-    <>
-      <div className="flex w-full max-w-7xl flex-col px-6 py-16 lg:px-8 xl:px-16">
-        <div className="bg-primary flex flex-col items-center justify-center gap-4 rounded-2xl px-4 py-8 sm:gap-6 sm:rounded-3xl">
-          <div className="text-primary-foreground flex flex-col text-center">
-            <h2>Let&apos;s dream big!</h2>
-            <h6>Got an idea? Let&apos;s make it happen.</h6>
-          </div>
-          <Button variant={"secondary"} size={"lg"}>
-            <Link href="/">
-              <h5>Contact Us</h5>
-            </Link>
-          </Button>
+    <section
+      className="debug flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
+      id="contact"
+    >
+      <div className="bg-primary relative z-1 flex w-full max-w-6xl flex-col items-center justify-center gap-4 rounded-2xl px-4 py-8 sm:gap-6 sm:rounded-3xl">
+        {/* Decorations */}
+        <div className="absolute flex h-full w-full items-center justify-center">
+          <VoronoiTexture className="absolute inset-0 h-full w-full opacity-10" />
         </div>
+        <div className="text-primary-foreground flex flex-col text-center">
+          <h2>Let&apos;s dream big!</h2>
+          <h6>Got an idea? Let&apos;s make it happen.</h6>
+        </div>
+        <Button variant={"secondary"} size={"lg"}>
+          <Link href="/">
+            <h5>Contact Us</h5>
+          </Link>
+        </Button>
       </div>
-    </>
+    </section>
   );
 }
