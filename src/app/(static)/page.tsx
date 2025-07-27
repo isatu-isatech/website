@@ -1,4 +1,5 @@
 import {
+  ISATechDecorationCenter,
   ISATechDecorationLeft,
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
@@ -17,7 +18,7 @@ export default function Home() {
       <HomepagePartnersSection />
       <HomepageKwadraSection />
       <HomepageTeamSection />
-      <OfferSection />
+      <HomepageOfferSection />
       <ContactSection />
     </div>
   );
@@ -308,7 +309,7 @@ function HomepageTeamSection() {
   );
 }
 
-function OfferSection() {
+function HomepageOfferSection() {
   const features = [
     {
       icon: Rocket,
@@ -338,27 +339,32 @@ function OfferSection() {
   ];
 
   return (
-    <>
-      <div className="flex w-full max-w-7xl flex-col px-6 py-16 lg:px-8 xl:px-16">
-        <div className="flex flex-col items-center justify-center gap-6 text-center">
-          <h2 className="text-primary">What do we offer?</h2>
-          <div className="flex flex-col gap-6 md:grid md:grid-cols-2">
-            {features.map((item, index) => (
-              <div
-                key={index}
-                className="flex flex-col gap-4 rounded-2xl bg-gray-300/50 px-6 py-4"
-              >
-                <item.icon size={32} />
-                <div className="flex flex-col gap-2 text-start">
-                  <p className="text-body-bold">{item.title}</p>
-                  <p className="text-label">{item.description}</p>
-                </div>
+    <section
+      className="debug relative flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
+      id="offers"
+    >
+      {/* Decoration */}
+      <div className="absolute -z-1 flex h-full w-full items-center justify-center">
+        <ISATechDecorationCenter className="translate absolute top-1/2 left-1/2 h-full w-auto -translate-x-1/2 -translate-y-1/2 opacity-5 lg:opacity-10" />
+      </div>
+      <div className="debug flex max-w-6xl flex-col items-center justify-center gap-6 text-center">
+        <h2 className="text-primary">What do we offer?</h2>
+        <div className="flex flex-col gap-6 md:grid md:grid-cols-2">
+          {features.map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-col gap-4 rounded-2xl bg-gray-300/50 px-6 py-4 backdrop-blur-xs"
+            >
+              <item.icon size={32} />
+              <div className="flex flex-col gap-2 text-start">
+                <p className="text-body-bold">{item.title}</p>
+                <p className="text-label">{item.description}</p>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
-    </>
+    </section>
   );
 }
 
