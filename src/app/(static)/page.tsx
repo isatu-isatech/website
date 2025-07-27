@@ -1,4 +1,7 @@
-import { ISATechDecorationRight } from "@/components/assets/decorations";
+import {
+  ISATechDecorationLeft,
+  ISATechDecorationRight,
+} from "@/components/assets/decorations";
 import PerlinNoiseTexture from "@/components/shaders/perlin";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
@@ -10,9 +13,9 @@ export default function Home() {
   return (
     <div className="debug flex w-full flex-col items-center justify-center">
       <StatsSection />
-      <AboutSection />
+      <HomepageAboutSection />
       <HomepagePartnersSection />
-      <KwadraSection />
+      <HomepageKwadraSection />
       <TeamSection />
       <OfferSection />
       <ContactSection />
@@ -46,7 +49,7 @@ function StatsSection() {
   );
 }
 
-function AboutSection() {
+function HomepageAboutSection() {
   const blobsConfig: BlobsConfig[] = [
     {
       id: "default-blob-2",
@@ -66,7 +69,8 @@ function AboutSection() {
       className="debug relative flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
       id="about"
     >
-      <div className="absolute flex h-full w-full items-center justify-center">
+      {/* Decorations */}
+      <div className="absolute -z-1 flex h-full w-full items-center justify-center">
         <BlobsAnimatedBackground
           className="debug absolute h-full w-full"
           blobs={blobsConfig}
@@ -146,9 +150,9 @@ function HomepagePartnersSection() {
       />
       <div className="debug flex w-full max-w-6xl flex-col items-center justify-center gap-6 px-6 py-16 lg:px-8 xl:px-16">
         <h3 className="text-primary">Our Partners</h3>
-        <div className="flex w-full flex-wrap items-center justify-center gap-y-10 px-12 sm:justify-between md:justify-center md:gap-20">
+        <div className="flex w-full flex-wrap items-center justify-center gap-x-10 gap-y-10 md:justify-center md:gap-20">
           {partners.map((partner, key) => (
-            <div className="flex w-1/2 justify-center sm:w-auto" key={key}>
+            <div className="w-fit justify-center" key={key}>
               <Image
                 src={partner.src}
                 alt={partner.alt}
@@ -164,36 +168,63 @@ function HomepagePartnersSection() {
   );
 }
 
-function KwadraSection() {
+function HomepageKwadraSection() {
+  const blobsConfig: BlobsConfig[] = [
+    {
+      id: "default-blob-2",
+      top: "-10rem",
+      right: "-10rem",
+      animateX: [0, -30, 0],
+      animateY: [0, -40, 0],
+      duration: 6,
+      colorClass: "bg-secondary/60",
+      sizeClass: "h-96 w-96",
+      blurClass: "blur-[100px]",
+    },
+  ];
+
   return (
-    <>
-      <div className="flex w-full max-w-7xl flex-col px-6 py-16 lg:px-8 xl:px-16">
-        <div className="flex w-full flex-col items-center justify-center gap-6 md:flex-row">
-          <div className="flex w-full items-center justify-center md:w-1/2">
-            <Image
-              src="/assets/kwadra-tbi-logo-dark.png"
-              alt="ISATech Icon"
-              width={1080}
-              height={1080}
-              className="h-[150px] w-[150px] md:h-[290px] md:w-[290px]"
-            />
+    <section
+      className="debug relative flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
+      id="kwadra"
+    >
+      {/* Decorations */}
+      <div className="absolute -z-1 flex h-full w-full items-center justify-center">
+        <BlobsAnimatedBackground
+          className="debug absolute h-full w-full"
+          blobs={blobsConfig}
+        />
+        <ISATechDecorationLeft className="absolute top-0 left-0 h-auto w-full opacity-10 md:h-full md:w-auto" />
+      </div>
+      <div className="debug flex w-full max-w-6xl flex-col items-center justify-center gap-6 md:flex-row">
+        <div className="flex w-full items-center justify-center md:w-1/2">
+          <Image
+            src="/assets/kwadra-tbi-logo-dark.png"
+            alt="ISATech Icon"
+            width={1080}
+            height={1080}
+            className="h-[150px] w-[150px] md:h-[290px] md:w-[290px]"
+          />
+        </div>
+        <div className="flex w-full flex-col items-center justify-center gap-4 md:w-1/2 md:gap-6">
+          <div className="flex w-full flex-col items-center justify-center gap-2 text-center md:items-start md:text-start">
+            <h2>What is Kwadra-TBI?</h2>
+            <h5>
+              The Kwadra-TBI functions as a technology business incubator,
+              aiming to commercialize university research into startups and to
+              nurture deep technology startups.
+            </h5>
           </div>
-          <div className="flex w-full flex-col items-center justify-center gap-4 md:w-1/2 md:gap-6">
-            <div className="flex w-full flex-col items-center justify-center gap-2 text-center md:items-start md:text-start">
-              <h2>What is Kwadra-TBI?</h2>
-              <h5>
-                The Kwadra-TBI functions as a technology business incubator,
-                aiming to commercialize university research into startups and to
-                nurture deep technology startups.
-              </h5>
-            </div>
-            <Button>
-              <Link href="/">Learn More</Link>
+          <div className="flex w-full items-center justify-center md:justify-start">
+            <Button variant={"default"} size={"lg"}>
+              <Link href="https://www.facebook.com/KwadraTBI" target="_blank">
+                Learn More
+              </Link>
             </Button>
           </div>
         </div>
       </div>
-    </>
+    </section>
   );
 }
 
