@@ -175,7 +175,10 @@ function AboutUsEmpowermentSection() {
       className="bg-primary relative flex w-full items-center justify-center px-6 py-14 md:py-6 lg:px-16"
       id="empowerment"
     >
-      <PerlinNoiseTexture className="absolute h-full w-full opacity-10" />
+      <PerlinNoiseTexture
+        color="#FFAC03"
+        className="absolute h-full w-full opacity-20"
+      />
       <div className="flex w-full max-w-6xl grid-cols-1 flex-col-reverse gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
         <div className="w-fill flex items-center justify-center">
           <h5 className="text-justify text-white">
