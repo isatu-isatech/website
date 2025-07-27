@@ -31,6 +31,8 @@ import {
 } from "@/components/ui/form";
 import { useTransition } from "react";
 import { sendContactEmail } from "./actions";
+import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner"
 
 const partnerList = [
   { emoji: LucideCog, text: "Industry partners for real-world projects" },
@@ -147,9 +149,9 @@ function ContactUsForm() {
       if (res.success) {
         // Simulate successful form submission
         contactForm.reset();
-        alert("Form submitted successfully!");
+        toast("Form submitted successfully!");
       } else {
-        alert("Failed to submit form. Try again later.");
+        toast("Failed to submit form. Try again later.");
       }
     });
   }
@@ -293,6 +295,7 @@ export default function ContactPage() {
       <ContactUsPartnerSection />
       <ContactUsFormSection />
       <ContactUsSocialLinksSection />
+      <Toaster />
     </main>
   );
 }
