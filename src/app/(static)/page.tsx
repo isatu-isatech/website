@@ -1,4 +1,6 @@
+import { ISATechDecorationRight } from "@/components/assets/decorations";
 import PerlinNoiseTexture from "@/components/shaders/perlin";
+import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, NotepadText, Rocket, Users } from "lucide-react";
 import Image from "next/image";
@@ -45,35 +47,59 @@ function StatsSection() {
 }
 
 function AboutSection() {
+  const blobsConfig: BlobsConfig[] = [
+    {
+      id: "default-blob-2",
+      top: "-10rem",
+      left: "-10rem",
+      animateX: [0, -30, 0],
+      animateY: [0, -40, 0],
+      duration: 6,
+      colorClass: "bg-secondary/60",
+      sizeClass: "h-96 w-96",
+      blurClass: "blur-[100px]",
+    },
+  ];
+
   return (
-    <>
-      <div className="flex w-full max-w-7xl flex-col px-6 py-16 lg:px-8 xl:px-16">
-        <div className="flex w-full flex-col items-center justify-center gap-6 md:flex-row-reverse">
-          <div className="flex w-full items-center justify-center md:w-1/2">
-            <Image
-              src="/assets/isatech-icon-dark.svg"
-              alt="ISATech Icon"
-              width={0}
-              height={0}
-              className="h-[150px] w-[100px] md:h-[270px] md:w-[185px]"
-            />
+    <section
+      className="debug relative flex w-full flex-col items-center justify-center px-6 py-16 lg:px-16 lg:py-28"
+      id="about"
+    >
+      <div className="absolute flex h-full w-full items-center justify-center">
+        <BlobsAnimatedBackground
+          className="debug absolute h-full w-full"
+          blobs={blobsConfig}
+        />
+        <ISATechDecorationRight className="absolute top-0 right-0 h-full w-auto opacity-10" />
+      </div>
+      <div className="debug flex w-full max-w-6xl flex-col items-center justify-center gap-6 md:flex-row-reverse">
+        <div className="flex w-full items-center justify-center md:w-1/2">
+          <Image
+            src="/assets/isatech-icon-dark.svg"
+            alt="ISATech Icon"
+            width={0}
+            height={0}
+            className="z-1 h-[150px] w-[100px] md:h-[270px] md:w-[185px]"
+          />
+        </div>
+        <div className="flex w-full flex-col items-center justify-center gap-4 md:w-1/2 md:gap-6">
+          <div className="flex w-full flex-col items-center justify-center gap-2 text-center md:items-end md:text-end">
+            <h2>What is ISATech Society?</h2>
+            <h5 className="text-center lg:text-right">
+              ISATech is a special interest organization operating under the
+              Intellectual Property Management Office (IPMO) and the Kwadra
+              Technology Business Incubator (Kwadra-TBI).
+            </h5>
           </div>
-          <div className="flex w-full flex-col items-center justify-center gap-4 md:w-1/2 md:gap-6">
-            <div className="flex w-full flex-col items-center justify-center gap-2 text-center md:items-end md:text-end">
-              <h2>What is ISATech Society?</h2>
-              <h5>
-                ISATech is a special interest organization operating under the
-                Intellectual Property Management Office (IPMO) and the Kwadra
-                Technology Business Incubator (Kwadra-TBI).
-              </h5>
-            </div>
-            <Button>
+          <div className="flex w-full items-center justify-center md:justify-end">
+            <Button variant={"default"} size={"lg"}>
               <Link href="/about">Learn More</Link>
             </Button>
           </div>
         </div>
       </div>
-    </>
+    </section>
   );
 }
 
