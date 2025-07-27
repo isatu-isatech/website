@@ -1,3 +1,4 @@
+import PerlinNoiseTexture from "@/components/shaders/perlin";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, NotepadText, Rocket, Users } from "lucide-react";
 import Image from "next/image";
@@ -5,17 +6,15 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <>
-      <div className="flex w-full flex-col items-center justify-center">
-        <StatsSection />
-        <AboutSection />
-        <PartnersSection />
-        <KwadraSection />
-        <TeamSection />
-        <OfferSection />
-        <ContactSection />
-      </div>
-    </>
+    <div className="debug flex w-full flex-col items-center justify-center">
+      <StatsSection />
+      <AboutSection />
+      <HomepagePartnersSection />
+      <KwadraSection />
+      <TeamSection />
+      <OfferSection />
+      <ContactSection />
+    </div>
   );
 }
 
@@ -78,7 +77,7 @@ function AboutSection() {
   );
 }
 
-function PartnersSection() {
+function HomepagePartnersSection() {
   const partners = [
     {
       src: "/assets/isatu-logo.png",
@@ -111,26 +110,31 @@ function PartnersSection() {
   ];
 
   return (
-    <>
-      <div className="flex w-full max-w-7xl flex-col px-6 py-16 lg:px-8 xl:px-16">
-        <div className="flex w-full flex-col items-center justify-center gap-6">
-          <h3 className="text-primary">Our Partners</h3>
-          <div className="flex w-full flex-wrap items-center justify-center gap-y-10 px-12 sm:justify-between md:justify-center md:gap-20">
-            {partners.map((partner, key) => (
-              <div className="flex w-1/2 justify-center sm:w-auto" key={key}>
-                <Image
-                  src={partner.src}
-                  alt={partner.alt}
-                  width={partner.width}
-                  height={partner.height}
-                  className={partner.className}
-                />
-              </div>
-            ))}
-          </div>
+    <section
+      className="debug relative flex w-full flex-col items-center justify-center px-6 lg:px-16"
+      id="partners"
+    >
+      <PerlinNoiseTexture
+        color={"#ececec"}
+        className="absolute top-0 left-0 -z-1 h-full w-full opacity-30"
+      />
+      <div className="debug flex w-full max-w-6xl flex-col items-center justify-center gap-6 px-6 py-16 lg:px-8 xl:px-16">
+        <h3 className="text-primary">Our Partners</h3>
+        <div className="flex w-full flex-wrap items-center justify-center gap-y-10 px-12 sm:justify-between md:justify-center md:gap-20">
+          {partners.map((partner, key) => (
+            <div className="flex w-1/2 justify-center sm:w-auto" key={key}>
+              <Image
+                src={partner.src}
+                alt={partner.alt}
+                width={partner.width}
+                height={partner.height}
+                className={partner.className}
+              />
+            </div>
+          ))}
         </div>
       </div>
-    </>
+    </section>
   );
 }
 
