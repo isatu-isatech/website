@@ -4,7 +4,7 @@ import {
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
 import PerlinNoiseTexture from "@/components/shaders/perlin";
-import VoronoiTexture from "@/components/shaders/voronoi ";
+import VoronoiTexture from "@/components/shaders/voronoi";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
 import YouTubePlayer from "@/components/ui/youtube-player";
