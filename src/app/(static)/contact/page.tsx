@@ -17,7 +17,6 @@ import {
   MailIcon,
 } from "lucide-react";
 import Link from "next/link";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -32,8 +31,9 @@ import {
 import { useTransition } from "react";
 import { sendContactEmail } from "./actions";
 import { Toaster } from "@/components/ui/sonner";
-import { toast } from "sonner"
+import { toast } from "sonner";
 
+// Contact Page Configurations
 const partnerList = [
   { emoji: LucideCog, text: "Industry partners for real-world projects" },
   { emoji: LucideRocket, text: "Startups for hackathon sponsorships" },
@@ -43,7 +43,13 @@ const partnerList = [
   },
   { emoji: LucideHandshake, text: "Student clubs for cross-campus events" },
 ];
+const socialLinks = [
+  { emoji: LucideFacebook, text: "Facebook", href: "https://facebook.com" },
+  { emoji: LucideLinkedin, text: "LinkedIn", href: "https://linkedin.com" },
+  { emoji: MailIcon, text: "Email", href: "mailto:info@isatech.com" },
+];
 
+// Contact Page Sections Components
 function ContactUsPartnerSection() {
   return (
     <section
@@ -250,39 +256,20 @@ function ContactUsSocialLinksSection() {
           </p>
         </div>
         <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
-          <Link
-            href="mailto:isatech@isatu.edu.ph"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:bg-primary/20 bg-primary/10 flex w-full flex-col items-center justify-center gap-2 rounded-lg px-4 py-6 text-center md:flex-row"
-          >
-            <div className="bg-primary aspect-square rounded-full p-3">
-              <MailIcon className="text-white" />
-            </div>
-            <p className="text-label">Email</p>
-          </Link>
-          <Link
-            href="https://www.facebook.com/ISATech.ISATU"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:bg-primary/20 bg-primary/10 flex w-full flex-col items-center justify-center gap-2 rounded-lg px-4 py-6 text-center md:flex-row"
-          >
-            <div className="bg-primary aspect-square rounded-full p-3">
-              <LucideFacebook className="text-white" />
-            </div>
-            <p className="text-label">Facebook Page</p>
-          </Link>
-          <Link
-            href="https://www.linkedin.com/company/isatech-society"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:bg-primary/20 bg-primary/10 flex w-full flex-col items-center justify-center gap-2 rounded-lg px-4 py-6 text-center md:flex-row"
-          >
-            <div className="bg-primary aspect-square rounded-full p-3">
-              <LucideLinkedin className="text-white" />
-            </div>
-            <p className="text-label">LinkedIn</p>
-          </Link>
+          {socialLinks.map((link) => (
+            <Link
+              key={link.text}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:bg-primary/20 bg-primary/10 flex w-full flex-col items-center justify-center gap-2 rounded-lg px-4 py-6 text-center md:flex-row"
+            >
+              <div className="bg-primary aspect-square rounded-full p-3">
+                <link.emoji className="text-white" />
+              </div>
+              <p className="text-label">{link.text}</p>
+            </Link>
+          ))}
         </div>
       </div>
     </section>
