@@ -12,15 +12,54 @@ import { GraduationCap, NotepadText, Rocket, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
+// Homepage Configurations
+const HeroYoutubeVideoId = "ZsjQab_Rwo0"; // YouTube video ID for the hero section
+const heroStats: { quantity: string; description: string }[] = [
+  { quantity: "5+", description: "Startups Established" },
+  { quantity: "25+", description: "Awards Earned" },
+  { quantity: "50+", description: "Events Participated" },
+];
+const homepagePartners = [
+  {
+    src: "/assets/isatu-logo.png",
+    alt: "About Us",
+    width: 800,
+    height: 800,
+    className: "h-[75px] w-[75px] lg:h-[100px] lg:w-[100px]",
+  },
+  {
+    src: "/assets/kwadra-tbi-logo-dark.png",
+    alt: "About Us",
+    width: 1080,
+    height: 1080,
+    className: "h-[75px] w-[75px] lg:h-[100px] lg:w-[100px]",
+  },
+  {
+    src: "/assets/umwad-logo-dark.png",
+    alt: "About Us",
+    width: 1632,
+    height: 1381,
+    className: "h-[75px] w-[90px] lg:h-[100px] lg:w-[120px]",
+  },
+  {
+    src: "/assets/cci-sc-logo.png",
+    alt: "About Us",
+    width: 1080,
+    height: 1080,
+    className: "h-[75px] w-[75px] lg:h-[100px] lg:w-[100px]",
+  },
+];
+
+// Homepage Components
 function HomepageHeroSection() {
   return (
     <section
       className="relative flex w-full flex-col items-center justify-center overflow-hidden bg-black/50"
       id="hero"
     >
-      <div className="debug absolute -z-1 flex h-full w-full items-center justify-center">
+      <div className="absolute -z-1 flex h-full w-full items-center justify-center">
         <YouTubePlayer
-          videoId="ZsjQab_Rwo0"
+          videoId={HeroYoutubeVideoId}
           autoPlay
           loop
           mute
@@ -30,10 +69,10 @@ function HomepageHeroSection() {
             rel: 0,
             autohide: 1,
           }}
-          className="debug pointer-events-none absolute aspect-video h-auto w-5xl lg:h-screen lg:lg:w-[calc(100vw+10rem)]"
+          className="pointer-events-none absolute aspect-video h-auto w-5xl lg:h-screen lg:lg:w-[calc(100vw+10rem)]"
         />
       </div>
-      <div className="flex w-full items-center justify-center px-6 py-28 md:px-16">
+      <div className="flex w-full items-center justify-center px-6 py-36 md:px-16">
         <div className="flex w-full max-w-6xl">
           <div className="flex w-full flex-col items-center gap-6 text-center lg:items-start lg:justify-start lg:text-start">
             <div className="gap-2 px-4 md:px-0">
@@ -56,19 +95,13 @@ function HomepageHeroSection() {
 }
 
 function HomepageStatsSection() {
-  const stats = [
-    { quantity: "5+", description: "Startups Established" },
-    { quantity: "25+", description: "Awards Earned" },
-    { quantity: "50+", description: "Events Participated" },
-  ];
-
   return (
     <section
       className="flex w-full flex-col items-center justify-center px-6 py-16 xl:px-16"
       id="stats"
     >
       <div className="flex w-full max-w-6xl flex-wrap items-center justify-center gap-y-6">
-        {stats.map((stat, index) => (
+        {heroStats.map((stat, index) => (
           <div
             key={index}
             className="flex w-full flex-col items-center justify-center sm:w-1/2 md:w-1/3"
@@ -83,6 +116,7 @@ function HomepageStatsSection() {
 }
 
 function HomepageAboutSection() {
+  // Configuration for the animated blobs in the background
   const blobsConfig: BlobsConfig[] = [
     {
       id: "default-blob-2",
@@ -111,6 +145,7 @@ function HomepageAboutSection() {
         <ISATechDecorationRight className="absolute top-0 right-0 h-full w-auto opacity-10" />
       </div>
       <div className="flex w-full max-w-6xl flex-col items-center justify-center gap-6 md:flex-row-reverse">
+        {/* Main Image Container */}
         <div className="flex w-full items-center justify-center md:w-1/2">
           <Image
             src="/assets/isatech-icon-dark.svg"
@@ -120,6 +155,7 @@ function HomepageAboutSection() {
             className="z-1 h-[150px] w-[100px] md:h-[270px] md:w-[185px]"
           />
         </div>
+        {/* Section Content Container */}
         <div className="flex w-full flex-col items-center justify-center gap-4 md:w-1/2 md:gap-6">
           <div className="flex w-full flex-col items-center justify-center gap-2 text-center md:items-end md:text-end">
             <h2>What is ISATech Society?</h2>
@@ -141,37 +177,6 @@ function HomepageAboutSection() {
 }
 
 function HomepagePartnersSection() {
-  const partners = [
-    {
-      src: "/assets/isatu-logo.png",
-      alt: "About Us",
-      width: 800,
-      height: 800,
-      className: "h-[75px] w-[75px] lg:h-[100px] lg:w-[100px]",
-    },
-    {
-      src: "/assets/kwadra-tbi-logo-dark.png",
-      alt: "About Us",
-      width: 1080,
-      height: 1080,
-      className: "h-[75px] w-[75px] lg:h-[100px] lg:w-[100px]",
-    },
-    {
-      src: "/assets/umwad-logo-dark.png",
-      alt: "About Us",
-      width: 1632,
-      height: 1381,
-      className: "h-[75px] w-[90px] lg:h-[100px] lg:w-[120px]",
-    },
-    {
-      src: "/assets/cci-sc-logo.png",
-      alt: "About Us",
-      width: 1080,
-      height: 1080,
-      className: "h-[75px] w-[75px] lg:h-[100px] lg:w-[100px]",
-    },
-  ];
-
   return (
     <section
       className="relative flex w-full flex-col items-center justify-center px-6 lg:px-16"
@@ -184,7 +189,7 @@ function HomepagePartnersSection() {
       <div className="flex w-full max-w-6xl flex-col items-center justify-center gap-6 px-6 py-16 lg:px-8 xl:px-16">
         <h3 className="text-primary">Our Partners</h3>
         <div className="flex w-full flex-wrap items-center justify-center gap-x-10 gap-y-10 md:justify-center md:gap-20">
-          {partners.map((partner, key) => (
+          {homepagePartners.map((partner, key) => (
             <div className="w-fit justify-center" key={key}>
               <Image
                 src={partner.src}
@@ -202,6 +207,7 @@ function HomepagePartnersSection() {
 }
 
 function HomepageKwadraSection() {
+  // Configuration for the animated blobs in the background
   const blobsConfig: BlobsConfig[] = [
     {
       id: "default-blob-2",
@@ -230,6 +236,7 @@ function HomepageKwadraSection() {
         <ISATechDecorationLeft className="absolute top-0 left-0 h-auto w-full opacity-10 md:h-full md:w-auto" />
       </div>
       <div className="flex w-full max-w-6xl flex-col items-center justify-center gap-6 md:flex-row">
+        {/* Main Image Container */}
         <div className="flex w-full items-center justify-center md:w-1/2">
           <Image
             src="/assets/kwadra-tbi-logo-dark.png"
@@ -239,6 +246,7 @@ function HomepageKwadraSection() {
             className="h-[150px] w-[150px] md:h-[290px] md:w-[290px]"
           />
         </div>
+        {/* Section Content Container */}
         <div className="flex w-full flex-col items-center justify-center gap-4 md:w-1/2 md:gap-6">
           <div className="flex w-full flex-col items-center justify-center gap-2 text-center md:items-start md:text-start">
             <h2>What is Kwadra-TBI?</h2>
@@ -262,7 +270,7 @@ function HomepageKwadraSection() {
 }
 
 function HomepageTeamSection() {
-  const members = [
+  const Team4HMembers = [
     {
       role: "Hustler",
       path: "/assets/hustler.svg",
@@ -295,6 +303,7 @@ function HomepageTeamSection() {
       </div>
       <div className="flex w-full max-w-6xl flex-col px-6 py-20 lg:px-8 xl:px-16">
         <div className="flex w-full flex-col items-center justify-center gap-6">
+          {/* Header Container */}
           <div className="flex w-full flex-col items-center justify-center gap-2 text-center">
             <h2 className="text-secondary">Are You One of the 4H?</h2>
             <h5 className="text-primary-foreground flex lg:w-5/6 xl:w-2/3">
@@ -304,8 +313,9 @@ function HomepageTeamSection() {
               Which one are you?
             </h5>
           </div>
+          {/* Cards Container */}
           <div className="grid grid-cols-2 gap-6 sm:flex sm:items-center sm:justify-center sm:gap-6">
-            {members.map((member, key) => (
+            {Team4HMembers.map((member, key) => (
               <div
                 key={key}
                 className="flex flex-col items-center justify-center gap-4 rounded-2xl border-white bg-gradient-to-b from-white to-gray-500 p-[1px] backdrop-blur-md lg:rounded-4xl"
@@ -331,7 +341,7 @@ function HomepageTeamSection() {
           </div>
 
           <Button variant={"secondary"} size={"lg"}>
-            <Link href="">
+            <Link href="/membership">
               <h5>Join Now</h5>
             </Link>
           </Button>
@@ -342,7 +352,7 @@ function HomepageTeamSection() {
 }
 
 function HomepageOfferSection() {
-  const features = [
+  const isatechOffers = [
     {
       icon: Rocket,
       title: "Hackathons",
@@ -382,7 +392,7 @@ function HomepageOfferSection() {
       <div className="flex max-w-6xl flex-col items-center justify-center gap-6 text-center">
         <h2 className="text-primary">What do we offer?</h2>
         <div className="flex flex-col gap-6 md:grid md:grid-cols-2">
-          {features.map((item, index) => (
+          {isatechOffers.map((item, index) => (
             <div
               key={index}
               className="flex flex-col gap-4 rounded-2xl bg-gray-300/50 px-6 py-4 backdrop-blur-xs"
