@@ -369,7 +369,10 @@ const TextureMesh = ({
       u_time: { value: 0 },
       u_mouse: { value: new THREE.Vector2(0, 0) },
       u_resolution: {
-        value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+        value:
+          typeof window !== "undefined"
+            ? new THREE.Vector2(window.innerWidth, window.innerHeight)
+            : new THREE.Vector2(1, 1),
       },
     };
   }, [color, size, phase, gain, octaves, lacunarity, factor, width, aaPasses]);
