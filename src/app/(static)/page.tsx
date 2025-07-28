@@ -69,7 +69,7 @@ function HomepageHeroSection() {
             rel: 0,
             autohide: 1,
           }}
-          className="pointer-events-none absolute aspect-video h-auto w-5xl lg:h-screen lg:lg:w-[calc(100vw+10rem)]"
+          className="pointer-events-none absolute aspect-video h-auto w-5xl lg:h-screen lg:w-[calc(100vw+10rem)]"
         />
       </div>
       <div className="flex w-full items-center justify-center px-6 py-36 md:px-16">
