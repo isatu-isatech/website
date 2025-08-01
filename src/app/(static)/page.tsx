@@ -4,6 +4,8 @@ import {
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
 import { ISATechLogoMark } from "@/components/assets/logos";
+import CountUpComponent from "@/components/count-up";
+import ScrollVelocityComponent from "@/components/scroll-velocity";
 import PerlinNoiseTexture from "@/components/shaders/perlin";
 import VoronoiTexture from "@/components/shaders/voronoi";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
@@ -113,7 +115,7 @@ function HomepageHeroSection() {
           className="pointer-events-none absolute aspect-video h-auto w-5xl lg:h-screen lg:w-[calc(100vw+10rem)]"
         />
       </div>
-      <div className="flex w-full items-center justify-center px-6 py-36 md:px-16">
+      <div className="flex w-full items-center justify-center px-6 py-28 md:px-16">
         <div className="flex w-full max-w-6xl">
           <div className="flex w-full flex-col items-center gap-6 text-center lg:items-start lg:justify-start lg:text-start">
             <div className="gap-2 px-4 md:px-0">
@@ -126,7 +128,9 @@ function HomepageHeroSection() {
               </h5>
             </div>
             <Button variant={"secondary"} size={"lg"}>
-              <Link href="/about">Learn More</Link>
+              <Link href="/about" className="text-caption">
+                Learn More
+              </Link>
             </Button>
           </div>
         </div>
@@ -138,16 +142,18 @@ function HomepageHeroSection() {
 function HomepageStatsSection() {
   return (
     <section
-      className="flex w-full flex-col items-center justify-center px-6 py-16 xl:px-16"
+      className="flex w-full flex-col items-center justify-center px-6 py-4 lg:py-16 xl:px-16"
       id="stats"
     >
-      <div className="flex w-full max-w-6xl flex-wrap items-center justify-center gap-y-6">
+      <div className="flex w-full max-w-6xl flex-wrap items-center justify-center gap-y-4 lg:gap-y-6">
         {heroStats.map((stat, index) => (
           <div
             key={index}
             className="flex w-full flex-col items-center justify-center sm:w-1/2 md:w-1/3"
           >
-            <h1>{stat.quantity}</h1>
+            <h1>
+              <CountUpComponent from={0} to={parseInt(stat.quantity)} />+
+            </h1>
             <h3>{stat.description}</h3>
           </div>
         ))}
@@ -202,7 +208,9 @@ function HomepageAboutSection() {
           </div>
           <div className="flex w-full items-center justify-center md:justify-end">
             <Button variant={"default"} size={"lg"}>
-              <Link href="/about">Learn More</Link>
+              <Link href="/about" className="text-caption">
+                Learn More
+              </Link>
             </Button>
           </div>
         </div>
@@ -295,7 +303,11 @@ function HomepageKwadraSection() {
           </div>
           <div className="flex w-full items-center justify-center md:justify-start">
             <Button variant={"default"} size={"lg"}>
-              <Link href="https://www.facebook.com/KwadraTBI" target="_blank">
+              <Link
+                href="https://www.facebook.com/KwadraTBI"
+                target="_blank"
+                className="text-caption"
+              >
                 Learn More
               </Link>
             </Button>
@@ -378,9 +390,9 @@ function HomepageTeamSection() {
             ))}
           </div>
 
-          <Button variant={"secondary"} size={"lg"}>
-            <Link href="/membership">
-              <h5>Join Now</h5>
+          <Button variant={"secondary"} size={"lg"} className="z-1">
+            <Link href="/membership" className="text-caption">
+              Join Now
             </Link>
           </Button>
         </div>
@@ -464,8 +476,8 @@ export function HomepageContactSection() {
           <h6>Got an idea? Let&apos;s make it happen.</h6>
         </div>
         <Button variant={"secondary"} size={"lg"} className="z-1">
-          <Link href="/contact">
-            <h5>Contact Us</h5>
+          <Link href="/contact" className="text-caption">
+            Contact Us
           </Link>
         </Button>
       </div>
@@ -487,6 +499,14 @@ export default function Homepage() {
       <HomepagePartnersSection />
       <HomepageKwadraSection />
       <HomepageTeamSection />
+      <div className="flex w-full items-center justify-center overflow-hidden">
+        <ScrollVelocityComponent
+          texts={["DREAM • INNOVATE • SUCCEED •"]}
+          velocity={50}
+          numCopies={5}
+          className="opacity-10"
+        />
+      </div>
       <HomepageOfferSection />
       <HomepageContactSection />
     </div>
