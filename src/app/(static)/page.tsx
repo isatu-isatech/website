@@ -119,9 +119,11 @@ function HomepageHeroSection() {
         <div className="flex w-full max-w-6xl">
           <div className="flex w-full flex-col items-center gap-6 text-center lg:items-start lg:justify-start lg:text-start">
             <div className="gap-2 px-4 md:px-0">
-              <div className="-gap-20">
-                <h1 className="text-white">Welcome to</h1>
-                <h1 className="text-secondary">ISATech Society</h1>
+              <div>
+                <h1 className="leading-tight text-white">Welcome to</h1>
+                <h1 className="text-secondary leading-tight">
+                  ISATech Society
+                </h1>
               </div>
               <h5 className="text-white">
                 Empowering student founders to achieve their dreams.
