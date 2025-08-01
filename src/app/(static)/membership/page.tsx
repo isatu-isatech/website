@@ -88,7 +88,7 @@ function MembershipPageHeroSection() {
             </div>
           </div>
 
-          <div className="debug relative flex w-full items-start justify-end">
+          <div className="relative flex w-full items-start justify-end">
             {/* Decoration */}
             <ISATechDecoration
               color="#FFAC03"
@@ -101,7 +101,7 @@ function MembershipPageHeroSection() {
               width={1168}
               height={1260}
               sizes="(min-width: 1360px) 562px, (min-width: 1040px) calc(40.33vw + 22px), calc(99.86vw - 51px)"
-              className="debug h-auto w-full object-contain"
+              className="h-auto w-full object-contain"
             />
           </div>
         </div>
@@ -115,7 +115,7 @@ function MembershipPageReasonSection() {
   return (
     <section
       id="reason"
-      className="debug bg-primary relative flex w-full items-center justify-center overflow-hidden px-6 lg:px-16"
+      className="bg-primary relative flex w-full items-center justify-center overflow-hidden px-6 lg:px-16"
     >
       <PerlinNoiseTexture
         color="#FFAC03"
@@ -123,9 +123,9 @@ function MembershipPageReasonSection() {
       />
       <LanyardComponent
         position={[0, 0, 11]}
-        className="debug absolute h-full w-full -translate-x-1/2 touch-none md:h-[calc(100%+45%)] md:w-[calc(200%)] md:-translate-x-1/12 md:-translate-y-[15%]"
+        className="absolute h-full w-full -translate-x-1/2 touch-none md:h-[calc(100%+45%)] md:w-[calc(200%)] md:-translate-x-1/12 md:-translate-y-[15%]"
       />
-      <div className="z-1 flex w-full max-w-6xl items-center justify-center gap-8 py-20 md:justify-end">
+      <div className="flex w-full max-w-6xl items-center justify-center gap-8 py-20 md:justify-end">
         <div className="bg-accent/25 flex items-center justify-center rounded-3xl px-4 py-12 backdrop-blur-md md:w-1/2 md:px-8 md:py-20">
           <div className="flex h-full flex-col items-center justify-center gap-2">
             <h4 className="text-secondary text-center">Why choose ISATech?</h4>
