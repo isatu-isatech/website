@@ -246,12 +246,11 @@ function AboutUsInitiativesSection() {
         </div>
         <div className="w-fill flex items-center justify-center">
           <h5 className="text-justify">
-            We empower students with practical skills, an entrepreneurial
-            mindset, and a passion for innovation. Through workshops, training,
-            and mentorship, ISATech fosters idea generation, design thinking,
-            and startup development. We connect members with mentors, industry
-            experts, and potential investors, while also serving as a gateway to
-            ISAT U’s technology business incubator, Kwadra TBI.
+            Our initiatives emphasize community impact, continuous learning, and
+            sustainable growth. From interdisciplinary problem-solving and IP
+            protection to hosting project showcases and supporting ethical
+            innovation, ISATech Society is building a future-ready community of
+            student innovators and technopreneurs.
           </h5>
         </div>
       </div>
