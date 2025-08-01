@@ -144,7 +144,7 @@ function HomepageHeroSection() {
 function HomepageStatsSection() {
   return (
     <section
-      className="flex w-full flex-col items-center justify-center px-6 py-4 lg:py-16 xl:px-16"
+      className="flex w-full flex-col items-center justify-center px-6 py-6 lg:py-16 xl:px-16"
       id="stats"
     >
       <div className="flex w-full max-w-6xl flex-wrap items-center justify-center gap-y-4 lg:gap-y-6">
