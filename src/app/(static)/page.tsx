@@ -3,16 +3,49 @@ import {
   ISATechDecorationLeft,
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
+import { ISATechLogoMark } from "@/components/assets/logos";
 import PerlinNoiseTexture from "@/components/shaders/perlin";
 import VoronoiTexture from "@/components/shaders/voronoi";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
 import YouTubePlayer from "@/components/ui/youtube-player";
 import { GraduationCap, NotepadText, Rocket, Users } from "lucide-react";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
-// Homepage Configurations
+/**
+ * ################################################################################
+ * ################################### METADATA ###################################
+ * ################################################################################
+ */
+export const metadata: Metadata = {
+  title: "ISATech Society - Homepage",
+  description:
+    "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+  openGraph: {
+    title: "ISATech Society - Homepage",
+    description:
+      "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+    url: "https://isatech.club/",
+    siteName: "ISATech Society",
+    // images: [
+    //   {
+    //     url: "/assets/og-image.png",
+    //     width: 1200,
+    //     height: 630,
+    //     alt: "ISATech Society OG Image",
+    //   },
+    // ],
+    type: "website",
+  },
+};
+
+/**
+ * ################################################################################
+ * #################################### CONFIG ####################################
+ * ################################################################################
+ */
 const HeroYoutubeVideoId = "ZsjQab_Rwo0"; // YouTube video ID for the hero section
 const heroStats: { quantity: string; description: string }[] = [
   { quantity: "5+", description: "Startups Established" },
@@ -21,36 +54,44 @@ const heroStats: { quantity: string; description: string }[] = [
 ];
 const homepagePartners = [
   {
-    src: "/assets/isatu-logo.png",
-    alt: "About Us",
-    width: 800,
-    height: 800,
+    src: "/assets/logos/isatu.png",
+    alt: "ISATU Logo",
+    width: 500,
+    height: 500,
     className: "h-[75px] w-[75px] lg:h-[100px] lg:w-[100px]",
+    sizes: "(min-width: 1040px) 100px, 75px",
   },
   {
-    src: "/assets/kwadra-tbi-logo-dark.png",
-    alt: "About Us",
-    width: 1080,
-    height: 1080,
+    src: "/assets/logos/kwadra-tbi.png",
+    alt: "KWADRA TBI Logo",
+    width: 500,
+    height: 500,
     className: "h-[75px] w-[75px] lg:h-[100px] lg:w-[100px]",
+    sizes: "(min-width: 1040px) 100px, 75px",
   },
   {
-    src: "/assets/umwad-logo-dark.png",
-    alt: "About Us",
-    width: 1632,
-    height: 1381,
+    src: "/assets/logos/umwad.png",
+    alt: "UMWAD Logo",
+    width: 816,
+    height: 690,
     className: "h-[75px] w-[90px] lg:h-[100px] lg:w-[120px]",
+    sizes: "(min-width: 1040px) 120px, 90px",
   },
   {
-    src: "/assets/cci-sc-logo.png",
-    alt: "About Us",
-    width: 1080,
-    height: 1080,
+    src: "/assets/logos/cci.png",
+    alt: "CCI Logo",
+    width: 500,
+    height: 500,
     className: "h-[75px] w-[75px] lg:h-[100px] lg:w-[100px]",
+    sizes: "(min-width: 1040px) 100px, 75px",
   },
 ];
 
-// Homepage Components
+/**
+ * ################################################################################
+ * ################################## COMPONENTS ##################################
+ * ################################################################################
+ */
 function HomepageHeroSection() {
   return (
     <section
@@ -147,13 +188,7 @@ function HomepageAboutSection() {
       <div className="flex w-full max-w-6xl flex-col items-center justify-center gap-6 md:flex-row-reverse">
         {/* Main Image Container */}
         <div className="flex w-full items-center justify-center md:w-1/2">
-          <Image
-            src="/assets/isatech-icon-dark.svg"
-            alt="ISATech Icon"
-            width={0}
-            height={0}
-            className="z-1 h-[150px] w-[100px] md:h-[270px] md:w-[185px]"
-          />
+          <ISATechLogoMark className="z-1 h-[150px] w-[100px] md:h-[270px] md:w-[185px]" />
         </div>
         {/* Section Content Container */}
         <div className="flex w-full flex-col items-center justify-center gap-4 md:w-1/2 md:gap-6">
@@ -197,6 +232,7 @@ function HomepagePartnersSection() {
                 width={partner.width}
                 height={partner.height}
                 className={partner.className}
+                sizes={partner.sizes}
               />
             </div>
           ))}
@@ -239,11 +275,12 @@ function HomepageKwadraSection() {
         {/* Main Image Container */}
         <div className="flex w-full items-center justify-center md:w-1/2">
           <Image
-            src="/assets/kwadra-tbi-logo-dark.png"
-            alt="ISATech Icon"
+            src="/assets/logos/kwadra-tbi.png"
+            alt="KWADRA TBI Icon"
             width={1080}
             height={1080}
             className="h-[150px] w-[150px] md:h-[290px] md:w-[290px]"
+            sizes="(min-width: 780px) 290px, 150px"
           />
         </div>
         {/* Section Content Container */}
@@ -273,19 +310,19 @@ function HomepageTeamSection() {
   const Team4HMembers = [
     {
       role: "Hustler",
-      path: "/assets/hustler.svg",
+      path: "/assets/decorations/hustler.png",
     },
     {
       role: "Hacker",
-      path: "/assets/hacker.svg",
+      path: "/assets/decorations/hacker.png",
     },
     {
       role: "Hipster",
-      path: "/assets/hipster.svg",
+      path: "/assets/decorations/hipster.png",
     },
     {
       role: "Hound",
-      path: "/assets/hound.svg",
+      path: "/assets/decorations/hound.png",
     },
   ];
 
@@ -326,9 +363,10 @@ function HomepageTeamSection() {
                       <Image
                         src={member.path}
                         alt={member.role}
-                        width={500}
-                        height={500}
+                        width={1000}
+                        height={1000}
                         className="size-20 rounded-2xl sm:size-16 md:size-24 lg:size-28"
+                        sizes="(min-width: 1040px) 112px, (min-width: 780px) 96px, (min-width: 640px) 64px, (min-width: 380px) 80px, calc(46.67vw - 90px)"
                       />
                     </div>
                     <h6 className="text-primary-foreground font-bold">
@@ -435,6 +473,11 @@ export function HomepageContactSection() {
   );
 }
 
+/**
+ * ################################################################################
+ * ##################################### PAGE #####################################
+ * ################################################################################
+ */
 export default function Homepage() {
   return (
     <div className="flex w-full flex-col items-center justify-center">
