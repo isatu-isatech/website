@@ -37,6 +37,11 @@
   --sidebar-border: oklch(0.9288 0.0126 255.5078);
   --sidebar-ring: oklch(0.3893 0.1431 265.8963);
   --radius: 0.5rem;
+
+  --font-sans: var(--font-poppins);
+  --font-serif: var(--font-poppins);
+  --font-mono: var(--font-chivo);
+
   --shadow-2xs: 0px 3px 17px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0px 3px 17px 0px hsl(0 0% 0% / 0.05);
   --shadow-sm:
