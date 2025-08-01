@@ -66,7 +66,7 @@ export default function HeaderComponent() {
               size={"sm"}
               className="md:hidden"
             >
-              <Link href="/">
+              <Link href="/membership">
                 <p className="text-caption">Join Now</p>
               </Link>
             </Button>
