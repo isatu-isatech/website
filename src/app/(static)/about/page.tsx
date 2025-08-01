@@ -9,6 +9,7 @@ import { RocketIcon, TargetIcon } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import AboutUsAdvisersSection, { AdviserProps } from "./carousel";
+import { HomepageContactSection } from "../page";
 
 /**
  * ################################################################################
@@ -271,6 +272,7 @@ export default function AboutUsPage() {
       <AboutUsEmpowermentSection />
       <AboutUsInitiativesSection />
       <AboutUsAdvisersSection advisers={advisers} />
+      <HomepageContactSection />
     </div>
   );
 }
