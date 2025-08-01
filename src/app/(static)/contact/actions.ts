@@ -1,18 +1,11 @@
 "use server";
 
-import { z } from "zod";
 import { Resend } from "resend";
 import { EmailTemplate } from "@/components/email-template";
+import { contactFormSchema } from "./form";
 
 // Initialize Resend with the API key from your .env file
 const resend = new Resend(process.env.RESEND_API_KEY);
-
-// Define the form data schema for validation
-const contactFormSchema = z.object({
-  name: z.string(),
-  email: z.email(),
-  message: z.string(),
-});
 
 export async function sendContactEmail(formData: unknown) {
   // Validate the incoming form data
