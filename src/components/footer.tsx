@@ -1,9 +1,24 @@
-import React from "react";
+"use client";
+
+import React, { ForwardRefExoticComponent, RefAttributes } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { Facebook, Linkedin, Mail } from "lucide-react";
+import {
+  Facebook,
+  Linkedin,
+  LucideIcon,
+  LucideProps,
+  Mail,
+} from "lucide-react";
 import Image from "next/image";
+import { FooterArchDecoration, ISATechDecoration } from "./assets/decorations";
+import { ISATechLogoType } from "./assets/logos";
 
+/**
+ * ################################################################################
+ * #################################### CONFIG ####################################
+ * ################################################################################
+ */
 // List of navigation links
 // This can be extended or modified as needed; Max of 4 columns, 5 items each.
 // If more links are needed, consider redesigning the footer layout.
@@ -15,60 +30,77 @@ const navLinks: {
     section: "Sitemap",
     links: [
       { label: "Homepage", href: "/" },
-      { label: "Achievements", href: "/" },
-      { label: "About Us", href: "/" },
-      { label: "Contact Us", href: "/" },
+      // { label: "Achievements", href: "/" },
+      { label: "About Us", href: "/about" },
+      { label: "Contact Us", href: "/contact" },
     ],
   },
   {
     section: "Membership",
     links: [
-      { label: "Member Application", href: "/" },
-      { label: "Core Member Application", href: "/" },
+      { label: "Member Application", href: "/membership#member" },
+      { label: "Core Member Application", href: "/membership#core" },
     ],
   },
   {
     section: "Legal",
-    links: [{ label: "Privacy Policy", href: "/" }],
+    links: [
+      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Cookie Policy", href: "/cookies" },
+    ],
+  },
+];
+// List of social links
+// This can be extended or modified as needed; Max of 5.
+// If more links are needed, consider redesigning the footer layout.
+const socialLinks: {
+  emoji: ForwardRefExoticComponent<
+    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
+  >;
+  href: string;
+}[] = [
+  { emoji: Mail, href: "mailto:isatech@isatu.edu.ph" },
+  { emoji: Facebook, href: "https://www.facebook.com/ISATech.ISATU" },
+  {
+    emoji: Linkedin,
+    href: "https://www.linkedin.com/company/isatech-society/",
   },
 ];
 
-const Footer = () => {
+/**
+ * ################################################################################
+ * ################################### COMPONENT ##################################
+ * ################################################################################
+ */
+export default function FooterComponent() {
   return (
-    <>
+    <footer>
       <div className="bg-primary relative flex w-full items-center justify-center px-6 lg:px-8 xl:px-16">
-        <Image
-          src="/assets/isatech-decoration-1.svg"
-          alt="ISATech Society Decoration"
-          width={190}
-          height={75}
-          className="pointer-events-none absolute right-0 bottom-0 w-fit md:top-0 md:h-full"
+        <ISATechDecoration
+          className="pointer-events-none absolute right-0 bottom-0 w-fit opacity-10 md:top-0 md:h-full"
+          color="#ffffff"
         />
-        <Image
-          src="/assets/footer-decoration-1.svg"
-          alt="Footer Decoration"
-          width={190}
-          height={75}
-          className="pointer-events-none absolute right-0 bottom-0 h-fit w-fit"
+        <FooterArchDecoration
+          className="pointer-events-none absolute right-0 -bottom-0.5 h-fit w-fit"
+          color="#FFAC03"
         />
         <div className="absolute right-0 bottom-0 h-fit w-1/2 lg:w-1/3 xl:w-1/4">
           <Image
-            src="/assets/footer-decoration-2.png"
+            src="/assets/decorations/4h-horizontal.png"
             alt="4H Footer Decoration"
-            width={190}
-            height={75}
+            width={1060}
+            height={385}
+            sizes="(min-width: 1280px) 25.06vw, (min-width: 1040px) 33.64vw, 50.14vw"
             className="pointer-events-none h-full w-full object-cover"
           />
         </div>
+
         <div className="flex max-w-6xl flex-col items-center justify-center gap-6 self-stretch pt-8 pb-32">
           <div className="flex w-full flex-col gap-6 lg:flex-row lg:justify-between">
-            <div className="flex w-full flex-col items-start justify-center gap-2 self-stretch sm:gap-4 lg:max-w-1/3">
-              <Image
-                src="/assets/isatech-logo-light.svg"
-                alt="ISATech Society Logo"
-                width={190}
-                height={75}
-              />
+            <div className="flex w-full flex-col items-start justify-start gap-2 self-stretch sm:gap-4 lg:max-w-1/3">
+              <div className="flex max-h-28">
+                <ISATechLogoType lightMode className="h-20 w-auto md:h-28" />
+              </div>
               <p className="text-label text-primary-foreground">
                 Breeding innovation, awareness on startups, intellectual
                 property, and technology—molding students to become
@@ -102,21 +134,16 @@ const Footer = () => {
             </div>
           </div>
           <div className="flex w-full items-center gap-3">
-            <Button asChild size={"icon"} variant={"accent"}>
-              <Link href="/">
-                <Mail />
-              </Link>
-            </Button>
-            <Button asChild size={"icon"} variant={"accent"}>
-              <Link href="/">
-                <Facebook />
-              </Link>
-            </Button>
-            <Button asChild size={"icon"} variant={"accent"}>
-              <Link href="/">
-                <Linkedin />
-              </Link>
-            </Button>
+            {socialLinks.map((social, key) => {
+              const Icon: LucideIcon = social.emoji;
+              return (
+                <Button asChild size={"icon"} variant={"accent"} key={key}>
+                  <Link href={social.href} target="_blank">
+                    <Icon />
+                  </Link>
+                </Button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -129,8 +156,6 @@ const Footer = () => {
           </p>
         </div>
       </div>
-    </>
+    </footer>
   );
-};
-
-export default Footer;
+}

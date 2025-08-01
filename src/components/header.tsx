@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Button } from "./ui/button";
@@ -12,27 +11,33 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./ui/sheet";
+import { ISATechLogoMark } from "./assets/logos";
 
+/**
+ * ################################################################################
+ * #################################### CONFIG ####################################
+ * ################################################################################
+ */
 // List of navigation links
 // This can be extended or modified as needed; Max of 5.
 // If more links are needed, consider redesigning the header layout.
 const navLinks: { label: string; href: string }[] = [
-  { label: "Achievements", href: "/" },
-  { label: "Contact Us", href: "/" },
-  { label: "About Us", href: "/" },
+  // { label: "Achievements", href: "/" },
+  { label: "About Us", href: "/about" },
+  { label: "Contact Us", href: "/contact" },
 ];
 
-export default function Header() {
+/**
+ * ################################################################################
+ * ################################### COMPONENT ##################################
+ * ################################################################################
+ */
+export default function HeaderComponent() {
   return (
-    <div className="border-b-grey-100 sticky top-0 z-90 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
+    <header className="border-b-grey-100 sticky top-0 z-90 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
       <div className="flex w-full max-w-6xl items-center justify-between">
         <Link href="/">
-          <Image
-            src="/assets/isatech-icon-dark.svg"
-            alt="Logo"
-            width={24}
-            height={40}
-          />
+          <ISATechLogoMark />
         </Link>
         <div className="flex items-center gap-2 md:gap-2 lg:gap-4">
           <div className="hidden items-center gap-1 md:flex">
@@ -51,7 +56,7 @@ export default function Header() {
               size={"lg"}
               className="hidden md:flex"
             >
-              <Link href="/">
+              <Link href="/membership">
                 <p className="text-caption">Join Now</p>
               </Link>
             </Button>
@@ -92,6 +97,6 @@ export default function Header() {
           </div>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
