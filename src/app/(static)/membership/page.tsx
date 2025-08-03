@@ -1,8 +1,12 @@
-import { ISATechDecoration } from "@/components/assets/decorations";
+import {
+  ISATechDecoration,
+  ISATechDecorationCenter,
+} from "@/components/assets/decorations";
 import LanyardComponent from "@/components/lanyard";
 import PerlinNoiseTexture from "@/components/shaders/perlin";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
+import { GraduationCap, NotepadText, Rocket, Users } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -188,7 +192,7 @@ function MembershipPageTeamSection() {
               className="flex w-full rounded-2xl bg-gradient-to-b from-white to-gray-500 p-0.25 md:rounded-4xl"
             >
               <div className="bg-card flex w-full rounded-2xl md:rounded-4xl">
-                <div className="w-full rounded-2xl bg-gray-200/75 md:rounded-4xl">
+                <div className="w-full rounded-2xl bg-gray-300/50 md:rounded-4xl">
                   <div className="flex w-full flex-col items-center justify-start gap-4 rounded-2xl px-2 py-6 backdrop-blur-2xl md:rounded-4xl lg:py-8">
                     <div className="bg-secondary flex aspect-square w-3/4 items-center justify-center rounded-2xl p-4 md:rounded-3xl">
                       <Image
@@ -216,6 +220,115 @@ function MembershipPageTeamSection() {
   );
 }
 
+function MembershipPageOfferSection() {
+  const isatechOffers = [
+    {
+      icon: Rocket,
+      title: "Hackathons",
+      description:
+        "A race of innovation where ideas thrive and take shape. Hackathons challenge students to build creative tech solutions under pressure.",
+    },
+    {
+      icon: NotepadText,
+      title: "Seminars",
+      description:
+        "Insightful talks from industry leaders. Seminars offer fresh perspectives, discuss emerging trends, and share valuable knowledge beyond the classroom.",
+    },
+    {
+      icon: GraduationCap,
+      title: "Trainings",
+      description:
+        "Skill-up sessions to help you stay ahead. Whether it's coding, design, or entrepreneurship — our trainings empower members with hands-on experience and practical tools.",
+    },
+
+    {
+      icon: Users,
+      title: "Cohorts",
+      description:
+        "Focused learning communities designed for growth. Cohorts bring members together to explore specific skills, to build real-world projects, and to support one another in a collaborative environment.",
+    },
+  ];
+
+  return (
+    <section
+      className="relative flex w-full flex-col items-center justify-center overflow-hidden px-6 py-16 lg:px-16 lg:py-28"
+      id="offers"
+    >
+      {/* Decoration */}
+      <div className="absolute -z-1 flex h-full w-full items-center justify-center">
+        <ISATechDecorationCenter className="translate absolute top-1/2 left-1/2 h-11/12 w-auto -translate-x-1/2 -translate-y-1/2 opacity-5 lg:opacity-10" />
+      </div>
+      <div className="flex max-w-6xl flex-col items-center justify-center gap-6 text-center">
+        <h2 className="text-primary">What do we offer?</h2>
+        <div className="flex flex-col gap-6 md:grid md:grid-cols-2">
+          {isatechOffers.map((item, index) => (
+            <div
+              key={index}
+              className="flex flex-col gap-4 rounded-2xl bg-gray-300/50 px-6 py-4 backdrop-blur-xs"
+            >
+              <item.icon size={32} />
+              <div className="flex flex-col gap-2 text-start">
+                <p className="text-body-bold">{item.title}</p>
+                <p className="text-label">{item.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MembershipPageRequirementsSection() {
+  const requirements = [
+    {
+      title: "Requirements to Apply:",
+      items: [
+        "Must be a bonafide ISAT-U student",
+        "Have working knowledge of preferred role",
+        "Submit updated CV/resume",
+        "Be committed to participate in org activities",
+      ],
+    },
+    {
+      title: "Prepare the following:",
+      items: [
+        "Updated CV/Resume (PDF or DOCX)",
+        "Formal 2x2 ID Photo (JPG/PNG)",
+      ],
+    },
+  ];
+
+  return (
+    <section className="flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
+      <div className="flex w-full max-w-6xl flex-col items-center gap-8">
+        <h2 className="text-primary text-center">
+          Requirements for Membership Application
+        </h2>
+        <div className="flex w-full flex-col gap-6">
+          <div className="flex w-full flex-wrap gap-6">
+            {requirements.map((requirement, index) => (
+              <div
+                key={index}
+                className="flex w-full flex-col md:w-[calc(50%-12px)]"
+              >
+                <h4>{requirement.title}</h4>
+
+                {requirement.items.map((item, i) => (
+                  <li key={i}>{item}</li>
+                ))}
+              </div>
+            ))}
+          </div>
+          <p className="text-caption text-gray-700">
+            Note: All data is confidential and used only for official onboarding
+          </p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /**
  * ################################################################################
  * ##################################### PAGE #####################################
@@ -227,6 +340,8 @@ export default function MembershipPage() {
       <MembershipPageHeroSection />
       <MembershipPageReasonSection />
       <MembershipPageTeamSection />
+      <MembershipPageOfferSection />
+      <MembershipPageRequirementsSection />
     </div>
   );
 }
