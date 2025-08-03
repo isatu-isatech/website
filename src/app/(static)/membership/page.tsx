@@ -142,6 +142,80 @@ function MembershipPageReasonSection() {
   );
 }
 
+function MembershipPageTeamSection() {
+  const members = [
+    {
+      role: "Hustler",
+      path: "/assets/decorations/hustler.png",
+      subtitle:
+        "The strategic brain who drives momentum and turns vision into action.",
+    },
+    {
+      role: "Hacker",
+      path: "/assets/decorations/hacker.png",
+      subtitle: "The builder, coder, and architect who makes ideas real.",
+    },
+    {
+      role: "Hipster",
+      path: "/assets/decorations/hipster.png",
+      subtitle:
+        "The creative who shapes innovation with design, branding, and vibe.",
+    },
+    {
+      role: "Hound",
+      path: "/assets/decorations/hound.png",
+      subtitle:
+        "The researcher and analyst who keeps the team grounded and informed.",
+    },
+  ];
+
+  return (
+    <section className="flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
+      <div className="flex w-full max-w-6xl flex-col items-center gap-6">
+        <div className="flex w-full flex-col items-center text-center lg:w-2/3">
+          <h2 className="text-primary">
+            Meet the 4H:<br></br>The Core of Every Great Team!
+          </h2>
+          <h5>
+            Whether you&apos;e a creative, a coder, a strategist, or a
+            researcher—<br></br>there&apos;s a role for you in ISATech Society.
+          </h5>
+        </div>
+        <div className="grid w-full grid-cols-2 gap-6 sm:flex sm:items-center sm:justify-center sm:gap-6">
+          {members.map((member, key) => (
+            <div
+              key={key}
+              className="flex w-full rounded-2xl bg-gradient-to-b from-white to-gray-500 p-0.25 md:rounded-4xl"
+            >
+              <div className="bg-card flex w-full rounded-2xl md:rounded-4xl">
+                <div className="w-full rounded-2xl bg-gray-200/75 md:rounded-4xl">
+                  <div className="flex w-full flex-col items-center justify-start gap-4 rounded-2xl px-2 py-6 backdrop-blur-2xl md:rounded-4xl lg:py-8">
+                    <div className="bg-secondary flex aspect-square w-3/4 items-center justify-center rounded-2xl p-4 md:rounded-3xl">
+                      <Image
+                        src={member.path}
+                        alt={member.role}
+                        height={1000}
+                        width={1000}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                    <div className="flex flex-col items-center gap-2 text-center">
+                      <h6>Meet the {member.role}!</h6>
+                      <p className="text-micro min-h-[6em]">
+                        {member.subtitle}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /**
  * ################################################################################
  * ##################################### PAGE #####################################
@@ -152,6 +226,7 @@ export default function MembershipPage() {
     <div>
       <MembershipPageHeroSection />
       <MembershipPageReasonSection />
+      <MembershipPageTeamSection />
     </div>
   );
 }
