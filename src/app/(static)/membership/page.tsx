@@ -6,7 +6,14 @@ import LanyardComponent from "@/components/lanyard";
 import PerlinNoiseTexture from "@/components/shaders/perlin";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, NotepadText, Rocket, Users } from "lucide-react";
+import {
+  GraduationCap,
+  Handshake,
+  NotepadText,
+  Rocket,
+  Target,
+  Users,
+} from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -329,6 +336,75 @@ function MembershipPageRequirementsSection() {
   );
 }
 
+function MembershipPageCoreSection() {
+  const benefits = [
+    {
+      icon: NotepadText,
+      title: "Facilitate ISATech Events",
+      description:
+        "Co-create workshops, hackathons, and speaker sessions to gain real-world event management and project execution skills, impacting hundreds of peers.",
+    },
+    {
+      icon: Users,
+      title: "Be Part of the ISATech Leadership Team",
+      description:
+        "Join our innovator circle: your ideas shape strategy through high-trust collaboration with faculty and industry.",
+    },
+    {
+      icon: Target,
+      title: "Drive the ISATech Mission Forward",
+      description:
+        "Own initiatives to advance campus technopreneurship, creating measurable impact in our tech ecosystem.",
+    },
+    {
+      icon: Handshake,
+      title: "Build Strategic Networks",
+      description:
+        "Gain exclusive access to student organizations and industry pros, fostering meaningful connections through collaborations.",
+    },
+    {
+      icon: GraduationCap,
+      title: "Master Leadership in Action",
+      description:
+        "Lead hands-on teams with personalized mentorship, honing crisis management, communication, and agile decision-making.",
+    },
+  ];
+
+  return (
+    <section className="flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
+      <div className="flex w-full max-w-6xl flex-col items-center gap-8">
+        <div className="flex w-full flex-col items-center gap-6">
+          <div className="flex w-full flex-col items-center gap-2 text-center lg:w-2/3">
+            <h2 className="text-primary">How about as a Core Member?</h2>
+            <h5>
+              By joining ISATech as a core member, you gain access to more
+              opportunities to develop leadership and creativity while
+              contributing to our mission of innovation and entrepreneurship.
+            </h5>
+          </div>
+          <div className="flex w-full flex-wrap items-center justify-center gap-6">
+            {benefits.map((benefit, key) => (
+              <div
+                key={key}
+                className="bg-accent/50 flex w-full flex-col items-start gap-2 rounded-2xl px-4 py-4 md:px-6 lg:min-h-[18em] lg:w-[calc(33.33%-16px)] xl:min-h-auto"
+              >
+                <benefit.icon size={32} />
+                <p className="text-body-bold">{benefit.title}</p>
+                <p className="text-label">{benefit.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <Button variant={"default"} size={"lg"}>
+          <Link href="/" className="text-caption">
+            Apply as Core Member
+          </Link>
+        </Button>
+      </div>
+    </section>
+  );
+}
+
 /**
  * ################################################################################
  * ##################################### PAGE #####################################
@@ -342,6 +418,7 @@ export default function MembershipPage() {
       <MembershipPageTeamSection />
       <MembershipPageOfferSection />
       <MembershipPageRequirementsSection />
+      <MembershipPageCoreSection />
     </div>
   );
 }
