@@ -336,6 +336,65 @@ function MembershipPageRequirementsSection() {
   );
 }
 
+function MembershipPageMemberSection() {
+  const benefits = [
+    {
+      title: "Connect with Industry Leaders",
+      subtitle:
+        "Gain direct access to seasoned mentors, startup founders, and business leaders who can guide your journey in innovation and technopreneurship.",
+    },
+    {
+      title: "Represent ISAT U in Local and National Events",
+      subtitle:
+        "Be part of a select group of students who travel to compete and collaborate in hackathons, startup competitions, and pitching events.",
+    },
+    {
+      title: "Unlock Startup Grants and Incubation Support",
+      subtitle:
+        "Get a chance to turn your ideas into real ventures through exclusive access to funding opportunities, pitch training, and startup incubation programs like Kwadra TBI.",
+    },
+    {
+      title: "Grow in a Community of Innovators",
+      subtitle:
+        "Join a dynamic, like-minded network of student technopreneurs and creatives — where collaboration, learning, and growth never stop.",
+    },
+  ];
+
+  return (
+    <section className="flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
+      <div className="flex w-full max-w-6xl flex-col items-center gap-8">
+        <div className="flex w-full flex-col items-center gap-2 text-center lg:w-2/3">
+          <h2 className="text-primary">What&apos;s in Store for You?</h2>
+          <h5>
+            By joining ISATech, you&apos;ll gain access to exclusive
+            opportunities all while being part of a vibrant, 4H-powered
+            community.
+          </h5>
+        </div>
+        <div className="grid w-full gap-6 xl:grid-cols-2">
+          <div className="flex w-full flex-col gap-6">
+            {benefits.map((benefit, key) => (
+              <div
+                key={key}
+                className="bg-accent/50 flex w-full flex-col gap-2 rounded-2xl px-6 py-4 backdrop-blur-md"
+              >
+                <p className="text-body-bold">{benefit.title}</p>
+                <p className="text-label">{benefit.subtitle}</p>
+              </div>
+            ))}
+          </div>
+          <div className="bg-accent/50 hidden size-full rounded-2xl backdrop-blur-md xl:flex"></div>
+        </div>
+        <Button variant={"default"} size={"lg"}>
+          <Link href="/" className="text-caption">
+            Apply as Core Member
+          </Link>
+        </Button>
+      </div>
+    </section>
+  );
+}
+
 function MembershipPageCoreSection() {
   const benefits = [
     {
@@ -418,6 +477,7 @@ export default function MembershipPage() {
       <MembershipPageTeamSection />
       <MembershipPageOfferSection />
       <MembershipPageRequirementsSection />
+      <MembershipPageMemberSection />
       <MembershipPageCoreSection />
     </div>
   );
