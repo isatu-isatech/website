@@ -1,4 +1,6 @@
 import {
+  GradientBlob1Decoration,
+  GradientBlob2Decoration,
   ISATechDecoration,
   ISATechDecorationCenter,
 } from "@/components/assets/decorations";
@@ -180,8 +182,40 @@ function MembershipPageTeamSection() {
     },
   ];
 
+  const blobsConfig: BlobsConfig[] = [
+    {
+      id: "blob-1",
+      top: "-10rem",
+      left: "-10rem",
+      animateX: [0, -30, 0],
+      animateY: [0, -40, 0],
+      duration: 6,
+      colorClass: "bg-secondary/60",
+      sizeClass: "h-96 w-96",
+      blurClass: "blur-[100px]",
+    },
+    {
+      id: "blob-2",
+      bottom: "-10rem",
+      right: "-10rem",
+      animateX: [0, -30, 0],
+      animateY: [0, -40, 0],
+      duration: 6,
+      colorClass: "bg-secondary/60",
+      sizeClass: "h-96 w-96",
+      blurClass: "blur-[100px]",
+    },
+  ];
+
   return (
-    <section className="flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
+    <section className="relative flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
+      {/* Decorations */}
+      <div className="absolute flex h-full w-full items-center justify-center">
+        <BlobsAnimatedBackground
+          blobs={blobsConfig}
+          className="absolute h-full w-full"
+        />
+      </div>
       <div className="flex w-full max-w-6xl flex-col items-center gap-6">
         <div className="flex w-full flex-col items-center text-center lg:w-2/3">
           <h2 className="text-primary">
@@ -200,7 +234,7 @@ function MembershipPageTeamSection() {
             >
               <div className="bg-card flex w-full rounded-2xl md:rounded-4xl">
                 <div className="w-full rounded-2xl bg-gray-300/50 md:rounded-4xl">
-                  <div className="flex w-full flex-col items-center justify-start gap-4 rounded-2xl px-2 py-6 backdrop-blur-2xl md:rounded-4xl lg:py-8">
+                  <div className="flex w-full flex-col items-center justify-start gap-4 rounded-2xl px-4 py-6 backdrop-blur-2xl md:rounded-4xl lg:py-8">
                     <div className="bg-secondary flex aspect-square w-3/4 items-center justify-center rounded-2xl p-4 md:rounded-3xl">
                       <Image
                         src={member.path}
@@ -211,7 +245,7 @@ function MembershipPageTeamSection() {
                       />
                     </div>
                     <div className="flex flex-col items-center gap-2 text-center">
-                      <h6>Meet the {member.role}!</h6>
+                      <h5 className="font-bold">Meet the {member.role}!</h5>
                       <p className="text-micro min-h-[6em]">
                         {member.subtitle}
                       </p>
@@ -307,7 +341,7 @@ function MembershipPageRequirementsSection() {
   ];
 
   return (
-    <section className="flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
+    <section className="bg-accent/50 flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
       <div className="flex w-full max-w-6xl flex-col items-center gap-8">
         <h2 className="text-primary text-center">
           Requirements for Membership Application
@@ -361,7 +395,15 @@ function MembershipPageMemberSection() {
   ];
 
   return (
-    <section className="flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
+    <section
+      className="relative flex w-full items-center justify-center overflow-hidden px-6 py-16 lg:px-8 xl:px-16"
+      id="member"
+    >
+      {/* Decorations */}
+      <div className="absolute -z-1 flex h-full w-full items-center justify-center opacity-80">
+        <GradientBlob1Decoration className="absolute right-0 bottom-0 h-full w-full translate-x-1/2 translate-y-1/2" />
+        <GradientBlob2Decoration className="absolute top-0 right-0 h-full w-full -translate-x-1/2 -translate-y-1/2" />
+      </div>
       <div className="flex w-full max-w-6xl flex-col items-center gap-8">
         <div className="flex w-full flex-col items-center gap-2 text-center lg:w-2/3">
           <h2 className="text-primary">What&apos;s in Store for You?</h2>
@@ -372,7 +414,7 @@ function MembershipPageMemberSection() {
           </h5>
         </div>
         <div className="grid w-full gap-6 xl:grid-cols-2">
-          <div className="flex w-full flex-col gap-6">
+          <div className="flex w-full flex-col gap-2">
             {benefits.map((benefit, key) => (
               <div
                 key={key}
@@ -430,7 +472,17 @@ function MembershipPageCoreSection() {
   ];
 
   return (
-    <section className="flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
+    <section
+      className="relative flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16"
+      id="core"
+    >
+      {/* Decorations */}
+      <div className="absolute -z-1 flex h-full w-full items-center justify-center opacity-80">
+        <PerlinNoiseTexture
+          color="#E6E6E7"
+          className="absolute h-full w-full opacity-20"
+        />
+      </div>
       <div className="flex w-full max-w-6xl flex-col items-center gap-8">
         <div className="flex w-full flex-col items-center gap-6">
           <div className="flex w-full flex-col items-center gap-2 text-center lg:w-2/3">
@@ -441,7 +493,7 @@ function MembershipPageCoreSection() {
               contributing to our mission of innovation and entrepreneurship.
             </h5>
           </div>
-          <div className="flex w-full flex-wrap items-center justify-center gap-6">
+          <div className="flex w-full flex-wrap items-center justify-center gap-2">
             {benefits.map((benefit, key) => (
               <div
                 key={key}

@@ -122,3 +122,183 @@ export function FooterArchDecoration({
     </svg>
   );
 }
+
+export function GradientBlob1Decoration({
+  ...props
+}: React.SVGProps<SVGSVGElement> & { color?: string }) {
+  return (
+    <svg
+      {...props}
+      width="562"
+      height="593"
+      viewBox="0 0 562 593"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g filter="url(#filter0_n_1717_2814)">
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M281.611 3.94148C189.72 0.313648 77.7216 -15.4249 21.682 57.4907C-33.3515 129.097 32.7932 227.454 40.686 317.42C47.3244 393.087 6.40195 485.452 63.6111 535.419C120.541 585.143 206.261 521.861 281.611 527.849C371.285 534.974 470.659 633.54 537.245 573.054C603.101 513.23 516.03 406.348 513.259 317.42C510.666 234.178 571.29 144.214 521.796 77.2351C470.08 7.25149 368.561 7.37427 281.611 3.94148Z"
+          fill="url(#paint0_linear_1717_2814)"
+        />
+      </g>
+      <defs>
+        <filter
+          id="filter0_n_1717_2814"
+          x="-0.000488281"
+          y="0"
+          width="561.816"
+          height="592.598"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          />
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="2 2"
+            stitchTiles="stitch"
+            numOctaves="3"
+            result="noise"
+            seed="3446"
+          />
+          <feColorMatrix
+            in="noise"
+            type="luminanceToAlpha"
+            result="alphaNoise"
+          />
+          <feComponentTransfer in="alphaNoise" result="coloredNoise1">
+            <feFuncA
+              type="discrete"
+              tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "
+            />
+          </feComponentTransfer>
+          <feComposite
+            operator="in"
+            in2="shape"
+            in="coloredNoise1"
+            result="noise1Clipped"
+          />
+          <feFlood floodColor="rgba(0, 0, 0, 0.25)" result="color1Flood" />
+          <feComposite
+            operator="in"
+            in2="noise1Clipped"
+            in="color1Flood"
+            result="color1"
+          />
+          <feMerge result="effect1_noise_1717_2814">
+            <feMergeNode in="shape" />
+            <feMergeNode in="color1" />
+          </feMerge>
+        </filter>
+        <linearGradient
+          id="paint0_linear_1717_2814"
+          x1="280.908"
+          y1="0"
+          x2="280.908"
+          y2="592.598"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0.25" stopColor="#FFAC03" />
+          <stop offset="1" stopColor="#203C90" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+export function GradientBlob2Decoration({
+  ...props
+}: React.SVGProps<SVGSVGElement> & { color?: string }) {
+  return (
+    <svg
+      {...props}
+      width="727"
+      height="695"
+      viewBox="0 0 727 695"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <g filter="url(#filter0_n_1719_2816)">
+        <path
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M385.905 694.974C467.387 693.858 541.126 658.78 599.842 609.071C659.881 558.242 695.736 493.155 709.656 420.885C727.141 330.106 745.885 232.116 687.123 155.922C619.254 67.9179 506.117 -10.1877 385.905 1.08766C269.607 11.9959 216.254 126.969 142.735 206.983C81.3375 273.805 -4.53915 335.067 0.186993 420.885C4.80749 504.784 90.9244 562.236 165.206 615.02C229.545 660.738 303.206 696.105 385.905 694.974Z"
+          fill="url(#paint0_linear_1719_2816)"
+        />
+      </g>
+      <defs>
+        <filter
+          id="filter0_n_1719_2816"
+          x="0"
+          y="0"
+          width="727"
+          height="695"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feBlend
+            mode="normal"
+            in="SourceGraphic"
+            in2="BackgroundImageFix"
+            result="shape"
+          />
+          <feTurbulence
+            type="fractalNoise"
+            baseFrequency="2 2"
+            stitchTiles="stitch"
+            numOctaves="3"
+            result="noise"
+            seed="5484"
+          />
+          <feColorMatrix
+            in="noise"
+            type="luminanceToAlpha"
+            result="alphaNoise"
+          />
+          <feComponentTransfer in="alphaNoise" result="coloredNoise1">
+            <feFuncA
+              type="discrete"
+              tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 "
+            />
+          </feComponentTransfer>
+          <feComposite
+            operator="in"
+            in2="shape"
+            in="coloredNoise1"
+            result="noise1Clipped"
+          />
+          <feFlood floodColor="rgba(0, 0, 0, 0.25)" result="color1Flood" />
+          <feComposite
+            operator="in"
+            in2="noise1Clipped"
+            in="color1Flood"
+            result="color1"
+          />
+          <feMerge result="effect1_noise_1719_2816">
+            <feMergeNode in="shape" />
+            <feMergeNode in="color1" />
+          </feMerge>
+        </filter>
+        <linearGradient
+          id="paint0_linear_1719_2816"
+          x1="363.5"
+          y1="695"
+          x2="363.5"
+          y2="0"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop offset="0.25" stopColor="#203C90" />
+          <stop offset="1" stopColor="#FFAC03" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
