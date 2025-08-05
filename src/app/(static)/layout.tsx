@@ -31,6 +31,14 @@ export const metadata: Metadata = {
     default: "ISATech Society",
     template: "%s | ISATech Society",
   },
+  icons: {
+    icon: [
+      {
+        url: "/assets/seo/favicon.ico",
+        type: "image/x-icon",
+      },
+    ],
+  },
   openGraph: {
     siteName: "ISATech Society",
     type: "website",
