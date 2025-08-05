@@ -25,20 +25,32 @@ export const metadata: Metadata = {
   title: "ISATech Society - Homepage",
   description:
     "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+  keywords: [
+    "philippines",
+    "iloilo",
+    "ISATU",
+    "startups",
+    "technopreneurship",
+    "ISATech Society",
+    "student founders",
+    "innovation",
+    "collaboration",
+    "community",
+  ],
   openGraph: {
     title: "ISATech Society - Homepage",
     description:
       "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
     url: "https://isatech.club/",
     siteName: "ISATech Society",
-    // images: [
-    //   {
-    //     url: "/assets/og-image.png",
-    //     width: 1200,
-    //     height: 630,
-    //     alt: "ISATech Society OG Image",
-    //   },
-    // ],
+    images: [
+      {
+        url: "/assets/seo/ogimage.jpg",
+        width: 1200,
+        height: 630,
+        alt: "ISATech Society Header Image",
+      },
+    ],
     type: "website",
   },
 };

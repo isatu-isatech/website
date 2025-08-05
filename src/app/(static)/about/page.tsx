@@ -17,15 +17,36 @@ import { HomepageContactSection } from "../page";
  * ################################################################################
  */
 export const metadata: Metadata = {
-  title: "About Us | ISATech Society",
+  title: "ISATech Society - About Us",
   description:
     "Learn more about ISATech Society, our mission, vision, and the team behind the innovation.",
+  keywords: [
+    "philippines",
+    "about",
+    "iloilo",
+    "ISATU",
+    "startups",
+    "technopreneurship",
+    "ISATech Society",
+    "student founders",
+    "innovation",
+    "collaboration",
+    "community",
+  ],
   openGraph: {
-    title: "About Us | ISATech Society",
+    title: "ISATech Society - About Us",
     description:
       "Learn more about ISATech Society, our mission, vision, and the team behind the innovation.",
     url: "https://isatech.club/about",
     siteName: "ISATech Society",
+    images: [
+      {
+        url: "/assets/seo/ogimage.jpg",
+        width: 1200,
+        height: 630,
+        alt: "ISATech Society Header Image",
+      },
+    ],
     type: "website",
   },
 };
