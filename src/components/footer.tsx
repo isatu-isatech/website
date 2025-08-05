@@ -46,7 +46,7 @@ const navLinks: {
     section: "Legal",
     links: [
       { label: "Privacy Policy", href: "/privacy" },
-      { label: "Cookie Policy", href: "/cookies" },
+      { label: "Cookie Preferences", href: "/privacy#manage-cookies" },
     ],
   },
 ];
