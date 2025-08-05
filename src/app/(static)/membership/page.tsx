@@ -34,11 +34,24 @@ const coreCommitteeFormLink = "https://forms.gle/n9XHgAm4SYZ7edMR8";
  * ################################################################################
  */
 export const metadata: Metadata = {
-  title: "Membership | ISATech Society",
+  title: "ISATech Society - Membership",
   description:
     "Join ISATech Society to enhance your skills, network with peers, and contribute to innovative projects.",
+  keywords: [
+    "philippines",
+    "membership",
+    "iloilo",
+    "ISATU",
+    "startups",
+    "technopreneurship",
+    "ISATech Society",
+    "student founders",
+    "innovation",
+    "collaboration",
+    "community",
+  ],
   openGraph: {
-    title: "Membership | ISATech Society",
+    title: "ISATech Society - Membership",
     description:
       "Join ISATech Society to enhance your skills, network with peers, and contribute to innovative projects.",
     url: "https://isatech.club/membership",
