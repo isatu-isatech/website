@@ -2,6 +2,8 @@ import { Poppins, Chivo } from "next/font/google";
 import "@/app/globals.css";
 import FooterComponent from "@/components/footer";
 import HeaderComponent from "@/components/header";
+import { Toaster } from "@/components/ui/sonner";
+import { CookieConsentProvider } from "@/components/cookie-consent";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -23,9 +25,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} ${chivo.variable} antialiased`}>
-        <HeaderComponent />
-        {children}
-        <FooterComponent />
+        <CookieConsentProvider>
+          <HeaderComponent />
+          {children}
+          <FooterComponent />
+          <Toaster />
+        </CookieConsentProvider>
       </body>
     </html>
   );
