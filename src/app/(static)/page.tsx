@@ -60,7 +60,16 @@ export const metadata: Metadata = {
  * #################################### CONFIG ####################################
  * ################################################################################
  */
-const HeroYoutubeVideoId = "ZsjQab_Rwo0"; // YouTube video ID for the hero section
+const HeroYoutubeVideos: string[] = [
+  // List of YouTube video IDs for the hero section
+  "Hy5PPhihZZc",
+  "ahHdHX80lYQ",
+  "qPGHid_8q2Q",
+  "k1vucCBXty8",
+  "wZgTdPMMve8",
+  "qUC_RJRLAnE",
+  "Z9VmqP2JvXA",
+];
 const heroStats: { quantity: string; description: string }[] = [
   { quantity: "5+", description: "Startups Established" },
   { quantity: "25+", description: "Awards Earned" },
@@ -114,7 +123,11 @@ function HomepageHeroSection() {
     >
       <div className="absolute -z-1 flex h-full w-full items-center justify-center">
         <YouTubePlayer
-          videoId={HeroYoutubeVideoId}
+          videoId={
+            HeroYoutubeVideos[
+              Math.floor(Math.random() * HeroYoutubeVideos.length)
+            ]
+          }
           autoPlay
           loop
           mute
@@ -123,8 +136,10 @@ function HomepageHeroSection() {
             disablekb: 1,
             rel: 0,
             autohide: 1,
+            fs: 0,
+            showinfo: 0,
           }}
-          className="pointer-events-none absolute aspect-video h-auto w-5xl lg:h-screen lg:w-[calc(100vw+10rem)]"
+          className="pointer-events-none absolute aspect-video h-auto w-5xl lg:w-lvw"
         />
       </div>
       <div className="flex w-full items-center justify-center px-6 py-28 md:px-16">
