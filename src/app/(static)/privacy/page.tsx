@@ -6,7 +6,7 @@ import { Metadata } from "next";
  * ################################################################################
  */
 export const metadata: Metadata = {
-  title: "ISATech Society - Privacy Policy",
+  title: "Privacy Policy",
   description:
     "This Privacy Policy outlines how ISATech Society collects, uses, and protects your information.",
   keywords: [

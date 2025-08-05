@@ -17,7 +17,7 @@ import { HomepageContactSection } from "../page";
  * ################################################################################
  */
 export const metadata: Metadata = {
-  title: "ISATech Society - About Us",
+  title: "About Us",
   description:
     "Learn more about ISATech Society, our mission, vision, and the team behind the innovation.",
   keywords: [

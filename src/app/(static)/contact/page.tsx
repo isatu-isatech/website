@@ -22,7 +22,7 @@ import ContactUsForm from "./form";
  * ################################################################################
  */
 export const metadata: Metadata = {
-  title: "ISATech Society - Contact Us",
+  title: "Contact Us",
   description:
     "Get in touch with ISATech Society for partnerships, inquiries, or feedback.",
   keywords: [

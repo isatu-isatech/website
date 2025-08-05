@@ -6,7 +6,7 @@ import { Metadata } from "next";
  * ################################################################################
  */
 export const metadata: Metadata = {
-  title: "ISATech Society - Cookie Policy",
+  title: "Cookie Policy",
   description:
     "This Cookie Policy outlines how ISATech Society uses cookies and similar technologies.",
   keywords: [

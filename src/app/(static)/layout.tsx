@@ -63,24 +63,24 @@ export default function RootLayout({
           <FooterComponent />
           <Toaster />
         </CookieConsentProvider>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "CollegeOrUniversity",
+              name: "ISATech Society",
+              url: "https://isatech.club",
+              logo: "https://isatech.club/assets/logos/isatech.png",
+              contactPoint: {
+                "@type": "ContactPoint",
+                email: "isatech@isatu.edu.ph",
+                contactType: "customer support",
+              },
+            }),
+          }}
+        />
       </body>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "CollegeOrUniversity",
-            name: "ISATech Society",
-            url: "https://isatech.club",
-            logo: "https://isatech.club/assets/logos/isatech.png",
-            contactPoint: {
-              "@type": "ContactPoint",
-              email: "isatech@isatu.edu.ph",
-              contactType: "customer support",
-            },
-          }),
-        }}
-      />
     </html>
   );
 }
