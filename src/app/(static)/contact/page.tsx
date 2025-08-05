@@ -22,15 +22,36 @@ import ContactUsForm from "./form";
  * ################################################################################
  */
 export const metadata: Metadata = {
-  title: "Contact Us | ISATech Society",
+  title: "ISATech Society - Contact Us",
   description:
     "Get in touch with ISATech Society for partnerships, inquiries, or feedback.",
+  keywords: [
+    "philippines",
+    "contact",
+    "iloilo",
+    "ISATU",
+    "startups",
+    "technopreneurship",
+    "ISATech Society",
+    "student founders",
+    "innovation",
+    "collaboration",
+    "community",
+  ],
   openGraph: {
-    title: "Contact Us | ISATech Society",
+    title: "ISATech Society - Contact Us",
     description:
       "Get in touch with ISATech Society for partnerships, inquiries, or feedback.",
     url: "https://isatech.club/contact",
     siteName: "ISATech Society",
+    images: [
+      {
+        url: "/assets/seo/ogimage.jpg",
+        width: 1200,
+        height: 630,
+        alt: "ISATech Society Header Image",
+      },
+    ],
     type: "website",
   },
 };
