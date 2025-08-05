@@ -4,6 +4,7 @@ import {
   ISATechDecoration,
   ISATechDecorationCenter,
 } from "@/components/assets/decorations";
+import ImageCycleComponent, { ImageCycleProps } from "@/components/image-cycle";
 import LanyardComponent from "@/components/lanyard";
 import PerlinNoiseTexture from "@/components/shaders/perlin";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
@@ -425,7 +426,24 @@ function MembershipPageMemberSection() {
         "Join a dynamic, like-minded network of student technopreneurs and creatives — where collaboration, learning, and growth never stop.",
     },
   ];
-
+  const images: ImageCycleProps["images"] = [
+    {
+      src: "/assets/decorations/seminar.jpg",
+      alt: "ISATech Member Benefits Image 1",
+    },
+    {
+      src: "/assets/decorations/competitions.jpg",
+      alt: "ISATech Member Benefits Image 2",
+    },
+    {
+      src: "/assets/decorations/leaders.jpg",
+      alt: "ISATech Member Benefits Image 3",
+    },
+    {
+      src: "/assets/decorations/community.jpg",
+      alt: "ISATech Member Benefits Image 4",
+    },
+  ];
   return (
     <section
       className="relative flex w-full items-center justify-center overflow-hidden px-6 py-16 lg:px-8 xl:px-16"
@@ -457,7 +475,11 @@ function MembershipPageMemberSection() {
               </div>
             ))}
           </div>
-          <div className="bg-accent/50 hidden size-full rounded-2xl backdrop-blur-md xl:flex"></div>
+          <ImageCycleComponent
+            images={images}
+            className="hidden size-full rounded-2xl backdrop-blur-md xl:flex"
+          />
+          {/* <div className="bg-accent/50 hidden size-full rounded-2xl backdrop-blur-md xl:flex"></div> */}
         </div>
         <Button variant={"default"} size={"lg"}>
           <Link
