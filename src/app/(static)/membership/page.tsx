@@ -22,6 +22,14 @@ import Link from "next/link";
 
 /**
  * ################################################################################
+ * #################################### CONFIG ####################################
+ * ################################################################################
+ */
+const membershipFormLink = "https://forms.gle/ViNChagDv6Xcfp3bA";
+const coreCommitteeFormLink = "https://forms.gle/n9XHgAm4SYZ7edMR8";
+
+/**
+ * ################################################################################
  * ################################### METADATA ###################################
  * ################################################################################
  */
@@ -341,7 +349,10 @@ function MembershipPageRequirementsSection() {
   ];
 
   return (
-    <section className="bg-accent/50 flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16">
+    <section
+      className="bg-accent/50 flex w-full items-center justify-center px-6 py-16 lg:px-8 xl:px-16"
+      id="apply"
+    >
       <div className="flex w-full max-w-6xl flex-col items-center gap-8">
         <h2 className="text-primary text-center">
           Requirements for Membership Application
@@ -428,7 +439,11 @@ function MembershipPageMemberSection() {
           <div className="bg-accent/50 hidden size-full rounded-2xl backdrop-blur-md xl:flex"></div>
         </div>
         <Button variant={"default"} size={"lg"}>
-          <Link href="/" className="text-caption">
+          <Link
+            href={membershipFormLink}
+            target="_blank"
+            className="text-caption"
+          >
             Apply as Core Member
           </Link>
         </Button>
@@ -507,7 +522,11 @@ function MembershipPageCoreSection() {
           </div>
         </div>
         <Button variant={"default"} size={"lg"}>
-          <Link href="/" className="text-caption">
+          <Link
+            href={coreCommitteeFormLink}
+            target="_blank"
+            className="text-caption"
+          >
             Apply as Core Member
           </Link>
         </Button>
