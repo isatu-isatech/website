@@ -1,9 +1,7 @@
 "use client";
 
-// If this file contains errors:
-// run `npm i` to install the necessary dependencies.
-
 import React, { useEffect, useRef, useMemo } from "react";
+import { useCookieConsent } from "../cookie-consent";
 
 declare global {
   interface Window {
@@ -15,27 +13,20 @@ declare global {
 let ytApiReady: Promise<typeof window.YT> | null = null;
 
 function loadYouTubeAPI(): Promise<typeof window.YT> {
-  // If the YouTube API is already loaded, resolve immediately.
   if (window.YT && window.YT.Player) {
     return Promise.resolve(window.YT);
   }
-  // If a loading process is already underway, return the existing promise.
   if (ytApiReady) {
     return ytApiReady;
   }
 
-  // Otherwise, start loading the YouTube IFrame API.
   ytApiReady = new Promise((resolve, reject) => {
-    // This global callback will be called by the YouTube API when it's ready.
     window.onYouTubeIframeAPIReady = () => {
       resolve(window.YT!);
     };
-    // Create a script tag to load the YouTube IFrame API.
     const tag = document.createElement("script");
     tag.src = "https://www.youtube.com/iframe_api";
-    // If the script fails to load, reject the promise.
     tag.onerror = () => reject(new Error("Failed to load YouTube API"));
-    // Add the script to the document to start loading.
     document.body.appendChild(tag);
   });
   return ytApiReady;
@@ -56,10 +47,8 @@ interface YouTubePlayerProps {
   >;
   events?: Partial<YT.Events>;
   className?: string;
-  style?: React.CSSProperties;
 }
 
-// The main YouTubePlayer component, typed with the YouTubePlayerProps interface.
 const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
   videoId,
   height = "390",
@@ -72,16 +61,14 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
   playerVars,
   events,
   className,
-  style,
 }) => {
-  // Ref to hold the YouTube Player instance.
-  const playerRef = useRef<YT.Player | null>(null);
-  // Ref to the container div where the YouTube player will be mounted.
-  const containerRef = useRef<HTMLDivElement>(null);
-  // State to track if an error occurred.
-  // const [error, setError] = React.useState(false);
+  const { acceptedCategories } = useCookieConsent();
+  const canPlayVideo = acceptedCategories.includes("analytics");
 
-  // Memoize the playerVars object to avoid unnecessary re-renders.
+  const playerRef = useRef<YT.Player | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [error, setError] = React.useState(false);
+
   const mergedPlayerVars = useMemo<YT.PlayerVars>(
     () => ({
       playsinline: 1,
@@ -89,21 +76,21 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
       controls: hideControls ? 0 : 1,
       mute: mute ? 1 : 0,
       loop: loop ? 1 : 0,
-      playlist: loop ? videoId : undefined, // Needed for looping a single video.
+      playlist: loop ? videoId : undefined,
       ...playerVars,
     }),
     [autoPlay, hideControls, mute, loop, playerVars, videoId],
   );
 
-  // Effect to load the YouTube API and initialize the player.
   useEffect(() => {
+    if (!canPlayVideo) return; // <-- Do not proceed if consent is not given
+
     let isMounted = true;
 
     loadYouTubeAPI()
       .then((YT) => {
         if (!isMounted || !containerRef.current) return;
 
-        // Create a new YouTube Player instance.
         playerRef.current = new YT.Player(containerRef.current, {
           height,
           width,
@@ -111,38 +98,38 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
           playerVars: mergedPlayerVars,
           events: {
             ...events,
-            // Handle player errors.
             onError: (e) => {
               console.error("YouTube Player Error:", e);
-              // setError(true);
+              setError(true);
               events?.onError?.(e);
             },
           },
         });
       })
       .catch((err: Error) => {
-        // Handle API loading errors.
         console.error("YouTube API failed to load:", err);
-        // setError(true);
+        if (isMounted) setError(true);
       });
 
-    // Cleanup: destroy the player instance on unmount.
     return () => {
       isMounted = false;
       playerRef.current?.destroy();
     };
-  }, [videoId, height, width, mergedPlayerVars, events]);
+  }, [videoId, height, width, mergedPlayerVars, events, canPlayVideo]);
 
-  // // Render a fallback UI if an error occurred.
-  // if (error) {
-  //   return (
-  //     <>
-  //       <div className="h-fit w-fit bg-black"></div>
-  //     </>
-  //   );
-  // }
+  if (!canPlayVideo || error) {
+    return (
+      <div className={`relative flex items-center justify-center ${className}`}>
+        <p className="text-gray-500">
+          {error
+            ? "Error loading video. Please try again later."
+            : "Video playback is disabled due to cookie consent settings."}
+        </p>
+        <div className="absolute inset-0 bg-gray-200 opacity-50" />
+      </div>
+    );
+  }
 
-  // Render the container div for the YouTube player.
   return (
     <div
       ref={containerRef}
@@ -150,7 +137,6 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
       role="region"
       aria-label={title}
       className={className}
-      style={style}
     />
   );
 };
