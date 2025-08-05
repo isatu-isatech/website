@@ -145,7 +145,7 @@ export default function ContactUsForm() {
             type="submit"
             size={"lg"}
             variant={"default"}
-            disabled={loading}
+            disabled={loading || true} // Temporarily disable form submission
           >
             {loading ? "Sending..." : "Send Message"}
           </Button>
