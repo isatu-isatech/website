@@ -42,34 +42,28 @@ export default function HeaderComponent() {
         <div className="flex items-center gap-2 md:gap-2 lg:gap-4">
           <div className="hidden items-center gap-1 md:flex">
             {navLinks.map((link) => (
-              <Button asChild variant={"ghost"} size={"sm"} key={link.label}>
-                <Link href={link.href}>
+              <Link href={link.href} key={link.label}>
+                <Button variant={"ghost"} size={"sm"}>
                   <p className="text-caption">{link.label}</p>
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              asChild
-              variant={"default"}
-              size={"lg"}
-              className="hidden md:flex"
-            >
-              <Link href="/membership">
+            <Link href="/membership">
+              <Button
+                variant={"default"}
+                size={"lg"}
+                className="hidden md:flex"
+              >
                 <p className="text-caption">Join Now</p>
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant={"default"}
-              size={"sm"}
-              className="md:hidden"
-            >
-              <Link href="/membership">
+              </Button>
+            </Link>
+            <Link href="/membership">
+              <Button variant={"default"} size={"sm"} className="md:hidden">
                 <p className="text-caption">Join Now</p>
-              </Link>
-            </Button>
+              </Button>
+            </Link>
             <Sheet>
               <SheetTrigger asChild className="md:hidden">
                 <Button variant={"outline"} size={"icon"}>

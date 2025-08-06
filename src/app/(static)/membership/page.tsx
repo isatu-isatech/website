@@ -115,11 +115,11 @@ function MembershipPageHeroSection() {
               </h5>
             </div>
             <div className="flex w-full justify-center md:justify-start">
-              <Button variant={"default"} size={"lg"}>
-                <Link href="#apply" className="text-caption">
+              <Link href="#apply" className="text-caption">
+                <Button variant={"default"} size={"lg"}>
                   Apply Now
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -481,15 +481,15 @@ function MembershipPageMemberSection() {
           />
           {/* <div className="bg-accent/50 hidden size-full rounded-2xl backdrop-blur-md xl:flex"></div> */}
         </div>
-        <Button variant={"default"} size={"lg"}>
-          <Link
-            href={membershipFormLink}
-            target="_blank"
-            className="text-caption"
-          >
-            Apply as Core Member
-          </Link>
-        </Button>
+        <Link
+          href={membershipFormLink}
+          target="_blank"
+          className="text-caption"
+        >
+          <Button variant={"default"} size={"lg"}>
+            Apply as Member
+          </Button>
+        </Link>
       </div>
     </section>
   );
@@ -564,15 +564,15 @@ function MembershipPageCoreSection() {
             ))}
           </div>
         </div>
-        <Button variant={"default"} size={"lg"}>
-          <Link
-            href={coreCommitteeFormLink}
-            target="_blank"
-            className="text-caption"
-          >
+        <Link
+          href={coreCommitteeFormLink}
+          target="_blank"
+          className="text-caption"
+        >
+          <Button variant={"default"} size={"lg"}>
             Apply as Core Member
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
     </section>
   );
