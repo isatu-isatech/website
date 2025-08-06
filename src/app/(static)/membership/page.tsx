@@ -137,6 +137,7 @@ function MembershipPageHeroSection() {
               height={1260}
               sizes="(min-width: 1360px) 562px, (min-width: 1040px) calc(40.33vw + 22px), calc(99.86vw - 51px)"
               className="h-auto w-full object-contain"
+              priority
             />
           </div>
         </div>
