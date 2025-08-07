@@ -67,6 +67,14 @@ export function CookieConsentProvider({
               label: "YouTube Videos",
               cookies: [{ name: "YSC" }, { name: "VISITOR_INFO1_LIVE" }],
             },
+            vercel_speed_insights: {
+              label: "Vercel Speed Insights",
+              cookies: [{ name: "_vercel_speed_insights" }],
+            },
+            vercel_analytics: {
+              label: "Vercel Analytics",
+              cookies: [{ name: "_vercel_analytics" }],
+            },
           },
         },
         preferences: {

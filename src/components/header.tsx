@@ -12,6 +12,7 @@ import {
   SheetTrigger,
 } from "./ui/sheet";
 import { ISATechLogoMark } from "./assets/logos";
+import { redirect } from "next/navigation";
 
 /**
  * ################################################################################
@@ -36,40 +37,40 @@ export default function HeaderComponent() {
   return (
     <header className="border-b-grey-100 sticky top-0 z-90 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
       <div className="flex w-full max-w-6xl items-center justify-between">
-        <Link href="/">
+        <Link
+          href="/"
+          onContextMenu={(e) => {
+            e.preventDefault();
+            redirect("/about");
+          }}
+        >
           <ISATechLogoMark />
         </Link>
         <div className="flex items-center gap-2 md:gap-2 lg:gap-4">
           <div className="hidden items-center gap-1 md:flex">
             {navLinks.map((link) => (
-              <Button asChild variant={"ghost"} size={"sm"} key={link.label}>
-                <Link href={link.href}>
+              <Link href={link.href} key={link.label}>
+                <Button variant={"ghost"} size={"sm"}>
                   <p className="text-caption">{link.label}</p>
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              asChild
-              variant={"default"}
-              size={"lg"}
-              className="hidden md:flex"
-            >
-              <Link href="/membership">
+            <Link href="/membership">
+              <Button
+                variant={"default"}
+                size={"lg"}
+                className="hidden md:flex"
+              >
                 <p className="text-caption">Join Now</p>
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant={"default"}
-              size={"sm"}
-              className="md:hidden"
-            >
-              <Link href="/membership">
+              </Button>
+            </Link>
+            <Link href="/membership">
+              <Button variant={"default"} size={"sm"} className="md:hidden">
                 <p className="text-caption">Join Now</p>
-              </Link>
-            </Button>
+              </Button>
+            </Link>
             <Sheet>
               <SheetTrigger asChild className="md:hidden">
                 <Button variant={"outline"} size={"icon"}>
@@ -81,14 +82,14 @@ export default function HeaderComponent() {
                   {/* This title is hidden but can be used for accessibility; Error occurs without this, don't ask why lol */}
                   <SheetTitle className="hidden">Navigation Menu</SheetTitle>
                 </SheetHeader>
-                <div className="flex flex-col items-start gap-1 px-2">
+                <div className="flex flex-col items-start gap-4 px-2">
                   {navLinks.map((link) => (
                     <Link
                       href={link.href}
                       className="w-full px-2 py-1"
                       key={link.label}
                     >
-                      <p className="text-caption">{link.label}</p>
+                      <h3>{link.label}</h3>
                     </Link>
                   ))}
                 </div>

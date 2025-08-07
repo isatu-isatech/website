@@ -5,6 +5,8 @@ import FooterComponent from "@/components/footer";
 import HeaderComponent from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -28,6 +30,14 @@ export const metadata: Metadata = {
   title: {
     default: "ISATech Society",
     template: "%s | ISATech Society",
+  },
+  icons: {
+    icon: [
+      {
+        url: "/assets/seo/favicon.ico",
+        type: "image/x-icon",
+      },
+    ],
   },
   openGraph: {
     siteName: "ISATech Society",
@@ -62,6 +72,8 @@ export default function RootLayout({
           {children}
           <FooterComponent />
           <Toaster />
+          <SpeedInsights />
+          <Analytics />
         </CookieConsentProvider>
         <script
           type="application/ld+json"

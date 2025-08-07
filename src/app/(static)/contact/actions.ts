@@ -15,7 +15,30 @@ export async function sendContactEmail(formData: unknown) {
     return { success: false, error: "Invalid form data." };
   }
 
-  const { name, email, message } = parsed.data;
+  const { name, email, message, turnstileToken } = parsed.data;
+
+  // Verify the Turnstile token
+  try {
+    const response = await fetch(
+      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          secret: process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY,
+          response: turnstileToken,
+        }),
+      },
+    );
+
+    const data = await response.json();
+    if (!data.success) {
+      return { success: false, error: "CAPTCHA verification failed." };
+    }
+  } catch (error) {
+    console.error("Turnstile verification error:", error);
+    return { success: false, error: "Failed to verify CAPTCHA." };
+  }
 
   try {
     const { data, error } = await resend.emails.send({

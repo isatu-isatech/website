@@ -135,6 +135,7 @@ function AboutUsHeroSection() {
             height={329}
             className="h-32 w-fit md:h-64"
             sizes="(min-width: 780px) 217px, 109px"
+            priority
           />
         </div>
         {/* ISATech Logo Decoration */}
@@ -168,6 +169,7 @@ function AboutUsDescriptionSection() {
             height={706}
             sizes="(min-width: 1360px) 1153px, (min-width: 1040px) calc(80.33vw + 78px), (min-width: 960px) 709px, (min-width: 740px) 751px, (min-width: 600px) calc(-47.5vw + 1091px), (min-width: 400px) calc(-63.89vw + 1179px), calc(-298.75vw + 2054px)"
             className="absolute h-full w-auto rounded-3xl object-cover opacity-30 lg:h-auto lg:w-full"
+            priority
           />
           <div className="flex flex-col items-center justify-center gap-4 py-16 lg:py-32">
             <ISATechLogoMark className="h-24 w-auto" />
@@ -240,8 +242,8 @@ function AboutUsEmpowermentSection() {
             alt="ISATech Society Reseach Hub Stamp"
             width={436}
             height={346}
-            sizes="(min-width: 1040px) 403px, calc(100vw - 48px)"
-            className="z-1 h-auto w-full lg:h-80 lg:w-auto"
+            sizes="(min-width: 1040px) 403px, (min-width: 540px) 448px, calc(89.09vw - 15px)"
+            className="z-1 h-auto w-full max-w-md lg:h-80 lg:w-auto"
           />
         </div>
       </div>
@@ -262,8 +264,8 @@ function AboutUsInitiativesSection() {
             alt="Dream Innovate Succeed Sticker"
             width={436}
             height={303}
-            sizes="(min-width: 1040px) 436px, calc(100vw - 48px)"
-            className="z-1 h-auto w-full lg:h-80 lg:w-auto"
+            sizes="(min-width: 540px) 448px, calc(89.09vw - 15px)"
+            className="z-1 h-auto w-full max-w-md lg:h-80 lg:w-auto"
           />
         </div>
         <div className="w-fill flex items-center justify-center">

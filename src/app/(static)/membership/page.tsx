@@ -5,7 +5,6 @@ import {
   ISATechDecorationCenter,
 } from "@/components/assets/decorations";
 import ImageCycleComponent, { ImageCycleProps } from "@/components/image-cycle";
-import LanyardComponent from "@/components/lanyard";
 import PerlinNoiseTexture from "@/components/shaders/perlin";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
@@ -20,6 +19,7 @@ import {
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import MembershipPageReasonSection from "./lanyard-section";
 
 /**
  * ################################################################################
@@ -107,7 +107,7 @@ function MembershipPageHeroSection() {
             {/* Hero Text Container */}
             <div className="flex w-full flex-col">
               <h1 className="text-secondary text-center md:text-left">
-                Do You Have It Takes to Lead?
+                Do You Have What It Takes to Lead?
               </h1>
               <h5 className="text-center font-mono md:text-left">
                 We&apos;re looking for passionate, purpose-driven students to
@@ -115,11 +115,11 @@ function MembershipPageHeroSection() {
               </h5>
             </div>
             <div className="flex w-full justify-center md:justify-start">
-              <Button variant={"default"} size={"lg"}>
-                <Link href="#apply" className="text-caption">
+              <Link href="#apply" className="text-caption">
+                <Button variant={"default"} size={"lg"}>
                   Apply Now
-                </Link>
-              </Button>
+                </Button>
+              </Link>
             </div>
           </div>
 
@@ -137,50 +137,12 @@ function MembershipPageHeroSection() {
               height={1260}
               sizes="(min-width: 1360px) 562px, (min-width: 1040px) calc(40.33vw + 22px), calc(99.86vw - 51px)"
               className="h-auto w-full object-contain"
+              priority
             />
           </div>
         </div>
       </div>
       {/* Content */}
-    </section>
-  );
-}
-
-function MembershipPageReasonSection() {
-  return (
-    <section
-      id="reason"
-      className="bg-primary relative flex w-full items-center justify-center overflow-hidden px-6 lg:px-16"
-    >
-      <PerlinNoiseTexture
-        color="#FFAC03"
-        className="absolute h-full w-full opacity-20"
-      />
-      <LanyardComponent
-        position={[0, 0, 11]}
-        className="absolute hidden h-full w-[calc(200%)] -translate-x-1/12 -translate-y-[15%] touch-none md:h-[calc(100%+45%)] lg:block"
-      />
-      <Image
-        src="/assets/decorations/idfallback.png"
-        alt="ISATech Member ID"
-        width={328}
-        height={511}
-        sizes="(min-width: 780px) calc(-8.33vw + 484px), (min-width: 720px) 303px, (min-width: 620px) calc(-25vw + 478px), (min-width: 400px) calc(-20vw + 443px), calc(78.75vw + 64px)"
-        className="absolute top-0 left-0 h-[calc(100%+30%)] w-auto -translate-x-1/2 -translate-y-1/5 md:translate-x-0 lg:hidden"
-      />
-      <div className="flex w-full max-w-6xl items-center justify-center gap-8 py-20 md:justify-end">
-        <div className="bg-accent/25 flex items-center justify-center rounded-3xl px-4 py-12 backdrop-blur-md md:w-1/2 md:px-8 md:py-20">
-          <div className="flex h-full flex-col items-center justify-center gap-2">
-            <h4 className="text-secondary text-center">Why choose ISATech?</h4>
-            <p className="body text-center text-white">
-              ISATech encourages students on participating events, competitions,
-              and hackathons, teaches students on innovations, start-ups and
-              intellectual property, and connects students with mentors and
-              experts in the field.
-            </p>
-          </div>
-        </div>
-      </div>
     </section>
   );
 }
@@ -481,15 +443,15 @@ function MembershipPageMemberSection() {
           />
           {/* <div className="bg-accent/50 hidden size-full rounded-2xl backdrop-blur-md xl:flex"></div> */}
         </div>
-        <Button variant={"default"} size={"lg"}>
-          <Link
-            href={membershipFormLink}
-            target="_blank"
-            className="text-caption"
-          >
-            Apply as Core Member
-          </Link>
-        </Button>
+        <Link
+          href={membershipFormLink}
+          target="_blank"
+          className="text-caption"
+        >
+          <Button variant={"default"} size={"lg"}>
+            Apply as Member
+          </Button>
+        </Link>
       </div>
     </section>
   );
@@ -564,15 +526,15 @@ function MembershipPageCoreSection() {
             ))}
           </div>
         </div>
-        <Button variant={"default"} size={"lg"}>
-          <Link
-            href={coreCommitteeFormLink}
-            target="_blank"
-            className="text-caption"
-          >
+        <Link
+          href={coreCommitteeFormLink}
+          target="_blank"
+          className="text-caption"
+        >
+          <Button variant={"default"} size={"lg"}>
             Apply as Core Member
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
     </section>
   );

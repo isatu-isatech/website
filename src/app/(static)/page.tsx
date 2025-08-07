@@ -156,11 +156,11 @@ function HomepageHeroSection() {
                 Empowering student founders to achieve their dreams.
               </h5>
             </div>
-            <Button variant={"secondary"} size={"lg"}>
-              <Link href="/about" className="text-caption">
+            <Link href="/about" className="text-caption">
+              <Button variant={"secondary"} size={"lg"}>
                 Learn More
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -236,11 +236,11 @@ function HomepageAboutSection() {
             </h5>
           </div>
           <div className="flex w-full items-center justify-center md:justify-end">
-            <Button variant={"default"} size={"lg"}>
-              <Link href="/about" className="text-caption">
+            <Link href="/about" className="text-caption">
+              <Button variant={"default"} size={"lg"}>
                 Learn More
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -331,15 +331,15 @@ function HomepageKwadraSection() {
             </h5>
           </div>
           <div className="flex w-full items-center justify-center md:justify-start">
-            <Button variant={"default"} size={"lg"}>
-              <Link
-                href="https://www.facebook.com/KwadraTBI"
-                target="_blank"
-                className="text-caption"
-              >
+            <Link
+              href="https://www.facebook.com/KwadraTBI"
+              target="_blank"
+              className="text-caption"
+            >
+              <Button variant={"default"} size={"lg"}>
                 Learn More
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
@@ -418,12 +418,11 @@ function HomepageTeamSection() {
               </div>
             ))}
           </div>
-
-          <Button variant={"secondary"} size={"lg"} className="z-1">
-            <Link href="/membership" className="text-caption">
+          <Link href="/membership" className="text-caption z-1">
+            <Button variant={"secondary"} size={"lg"}>
               Join Now
-            </Link>
-          </Button>
+            </Button>
+          </Link>
         </div>
       </div>
     </section>
@@ -504,11 +503,11 @@ export function HomepageContactSection() {
           <h2>Let&apos;s dream big!</h2>
           <h6>Got an idea? Let&apos;s make it happen.</h6>
         </div>
-        <Button variant={"secondary"} size={"lg"} className="z-1">
-          <Link href="/contact" className="text-caption">
+        <Link href="/contact" className="text-caption z-1">
+          <Button variant={"secondary"} size={"lg"}>
             Contact Us
-          </Link>
-        </Button>
+          </Button>
+        </Link>
       </div>
     </section>
   );
