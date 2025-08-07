@@ -107,7 +107,7 @@ function MembershipPageHeroSection() {
             {/* Hero Text Container */}
             <div className="flex w-full flex-col">
               <h1 className="text-secondary text-center md:text-left">
-                Do You Have It Takes to Lead?
+                Do You Have What It Takes to Lead?
               </h1>
               <h5 className="text-center font-mono md:text-left">
                 We&apos;re looking for passionate, purpose-driven students to
