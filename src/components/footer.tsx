@@ -91,7 +91,7 @@ export default function FooterComponent() {
             width={1060}
             height={385}
             sizes="(min-width: 1280px) 25.06vw, (min-width: 1040px) 33.64vw, 50.14vw"
-            className="pointer-events-none h-full w-full object-cover"
+            className="pointer-events-none h-auto w-full object-cover"
           />
         </div>
 
