@@ -242,8 +242,8 @@ function AboutUsEmpowermentSection() {
             alt="ISATech Society Reseach Hub Stamp"
             width={436}
             height={346}
-            sizes="(min-width: 1040px) 403px, calc(100vw - 48px)"
-            className="z-1 h-auto w-full lg:h-80 lg:w-auto"
+            sizes="(min-width: 1040px) 403px, (min-width: 540px) 448px, calc(89.09vw - 15px)"
+            className="z-1 h-auto w-full max-w-md lg:h-80 lg:w-auto"
           />
         </div>
       </div>
@@ -264,8 +264,8 @@ function AboutUsInitiativesSection() {
             alt="Dream Innovate Succeed Sticker"
             width={436}
             height={303}
-            sizes="(min-width: 1040px) 436px, calc(100vw - 48px)"
-            className="z-1 h-auto w-full lg:h-80 lg:w-auto"
+            sizes="(min-width: 540px) 448px, calc(89.09vw - 15px)"
+            className="z-1 h-auto w-full max-w-md lg:h-80 lg:w-auto"
           />
         </div>
         <div className="w-fill flex items-center justify-center">
