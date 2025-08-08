@@ -72,8 +72,16 @@ const partnerList = [
 ];
 const socialLinks = [
   { emoji: MailIcon, text: "Email", href: "mailto:info@isatech.com" },
-  { emoji: LucideFacebook, text: "Facebook", href: "https://facebook.com" },
-  { emoji: LucideLinkedin, text: "LinkedIn", href: "https://linkedin.com" },
+  {
+    emoji: LucideFacebook,
+    text: "Facebook",
+    href: "https://www.facebook.com/ISATech.ISATU",
+  },
+  {
+    emoji: LucideLinkedin,
+    text: "LinkedIn",
+    href: "https://www.linkedin.com/company/isatech-society/",
+  },
 ];
 
 /**

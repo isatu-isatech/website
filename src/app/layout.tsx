@@ -5,8 +5,8 @@ import FooterComponent from "@/components/footer";
 import HeaderComponent from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
+import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Analytics } from "@vercel/analytics/next";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -98,23 +98,28 @@ export default function RootLayout({
           {children}
           <FooterComponent />
           <Toaster />
-          <SpeedInsights />
-          <Analytics />
         </CookieConsentProvider>
+        <Analytics />
+        <SpeedInsights />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "CollegeOrUniversity",
+              "@type": "Organization",
               name: "ISATech Society",
               url: "https://isatech.club",
-              logo: "https://isatech.club/assets/logos/isatech.png",
+              logo: "https://isatech.club/assets/seo/logo.png",
               contactPoint: {
                 "@type": "ContactPoint",
-                email: "isatech@isatu.edu.ph",
                 contactType: "customer support",
+                url: "https://isatech.club/contact",
               },
+              sameAs: [
+                "https://www.facebook.com/ISATech.ISATU",
+                "https://www.linkedin.com/company/isatech-society/",
+                // Add other social media links here if available
+              ],
             }),
           }}
         />
