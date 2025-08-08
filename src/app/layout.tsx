@@ -31,6 +31,22 @@ export const metadata: Metadata = {
     default: "ISATech Society",
     template: "%s | ISATech Society",
   },
+  description:
+    "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+  authors: [{ name: "ISATech Society", url: "https://isatech.club" }],
+  creator: "ISATech Creatives Team",
+  publisher: "ISATech Society",
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
   icons: {
     icon: [
       {
@@ -40,6 +56,9 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
+    title: "ISATech Society",
+    description:
+      "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
     siteName: "ISATech Society",
     type: "website",
     locale: "en_PH",
@@ -51,6 +70,13 @@ export const metadata: Metadata = {
         alt: "ISATech Society Header Image",
       },
     ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ISATech Society",
+    description:
+      "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+    images: ["/assets/seo/ogimage.jpg"],
   },
 };
 

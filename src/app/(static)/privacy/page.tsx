@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     "community",
   ],
   openGraph: {
-    title: "ISATech Society - Privacy Policy",
+    title: "Privacy Policy",
     description:
       "This Privacy Policy outlines how ISATech Society collects, uses, and protects your information.",
     url: "https://isatech.club/privacy",

@@ -22,9 +22,9 @@ import Link from "next/link";
  * ################################################################################
  */
 export const metadata: Metadata = {
-  title: "ISATech Society - Homepage",
+  title: "Empowering the Next Generation of Innovators",
   description:
-    "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+    "ISATech Society is a student-led organization at ISAT U dedicated to empowering student founders through innovation, collaboration, and community.",
   keywords: [
     "philippines",
     "iloilo",
@@ -38,9 +38,9 @@ export const metadata: Metadata = {
     "community",
   ],
   openGraph: {
-    title: "ISATech Society - Homepage",
+    title: "Empowering the Next Generation of Innovators",
     description:
-      "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+      "ISATech Society is a student-led organization at ISAT U dedicated to empowering student founders through innovation, collaboration, and community.",
     url: "https://isatech.club/",
     siteName: "ISATech Society",
     images: [
