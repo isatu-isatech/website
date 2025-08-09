@@ -62,13 +62,14 @@ export const metadata: Metadata = {
  */
 const HeroYoutubeVideos: string[] = [
   // List of YouTube video IDs for the hero section
-  "Hy5PPhihZZc",
-  "ahHdHX80lYQ",
-  "qPGHid_8q2Q",
-  "k1vucCBXty8",
-  "wZgTdPMMve8",
-  "qUC_RJRLAnE",
-  "Z9VmqP2JvXA",
+  "ZuaelmDnU5w", // Office Showcase 2025
+  "wZgTdPMMve8", // ISATech 2024 Teaser
+  "qUC_RJRLAnE", // Codelympics 2024 Day 3
+  "ahHdHX80lYQ", // Codelympics 2024 Day 2
+  "qPGHid_8q2Q", // Codelympics 2024 Day 1
+  // "k1vucCBXty8", // Codelypics 2024 Teaser
+  // "Z9VmqP2JvXA", // ISATech 2023 U-Week Teaser
+  "Hy5PPhihZZc", // ISATech 2023 Teaser
 ];
 const heroStats: { quantity: string; description: string }[] = [
   { quantity: "5+", description: "Startups Established" },
