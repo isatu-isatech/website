@@ -133,13 +133,6 @@ function HomepageHeroSection() {
           loop
           mute
           hideControls
-          playerVars={{
-            disablekb: 1,
-            rel: 0,
-            autohide: 1,
-            fs: 0,
-            showinfo: 0,
-          }}
           className="pointer-events-none absolute aspect-video h-auto w-5xl lg:w-lvw"
         />
       </div>
