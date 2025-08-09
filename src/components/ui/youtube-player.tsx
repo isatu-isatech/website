@@ -30,19 +30,18 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
     `controls=${hideControls ? 0 : 1}`,
     `mute=${mute ? 1 : 0}`,
     `loop=${loop ? 1 : 0}`,
-    `playlist=${loop ? videoId : ""}`,
+    ...(loop ? [`playlist=${videoId}`] : []),
     "playsinline=1",
   ].join("&");
 
   return (
     <div className={className}>
       <iframe
-        className={className}
+        className={className ? `${className} border-0` : "border-0"}
         width={width}
         height={height}
         src={`https://www.youtube-nocookie.com/embed/${videoId}?${params}`}
         title={title}
-        frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
         loading="lazy"
