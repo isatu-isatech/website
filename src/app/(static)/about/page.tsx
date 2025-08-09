@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     "community",
   ],
   openGraph: {
-    title: "ISATech Society - About Us",
+    title: "About ISATech Society",
     description:
       "Learn more about ISATech Society, our mission, vision, and the team behind the innovation.",
     url: "https://isatech.club/about",

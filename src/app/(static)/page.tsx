@@ -22,9 +22,9 @@ import Link from "next/link";
  * ################################################################################
  */
 export const metadata: Metadata = {
-  title: "ISATech Society - Homepage",
+  title: "Empowering the Next Generation of Innovators",
   description:
-    "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+    "ISATech Society is a student-led organization at ISAT U dedicated to empowering student founders through innovation, collaboration, and community.",
   keywords: [
     "philippines",
     "iloilo",
@@ -38,9 +38,9 @@ export const metadata: Metadata = {
     "community",
   ],
   openGraph: {
-    title: "ISATech Society - Homepage",
+    title: "Empowering the Next Generation of Innovators",
     description:
-      "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+      "ISATech Society is a student-led organization at ISAT U dedicated to empowering student founders through innovation, collaboration, and community.",
     url: "https://isatech.club/",
     siteName: "ISATech Society",
     images: [
@@ -62,13 +62,14 @@ export const metadata: Metadata = {
  */
 const HeroYoutubeVideos: string[] = [
   // List of YouTube video IDs for the hero section
-  "Hy5PPhihZZc",
-  "ahHdHX80lYQ",
-  "qPGHid_8q2Q",
-  "k1vucCBXty8",
-  "wZgTdPMMve8",
-  "qUC_RJRLAnE",
-  "Z9VmqP2JvXA",
+  "ZuaelmDnU5w", // Office Showcase 2025
+  "wZgTdPMMve8", // ISATech 2024 Teaser
+  "qUC_RJRLAnE", // Codelympics 2024 Day 3
+  "ahHdHX80lYQ", // Codelympics 2024 Day 2
+  "qPGHid_8q2Q", // Codelympics 2024 Day 1
+  // "k1vucCBXty8", // Codelypics 2024 Teaser
+  // "Z9VmqP2JvXA", // ISATech 2023 U-Week Teaser
+  "Hy5PPhihZZc", // ISATech 2023 Teaser
 ];
 const heroStats: { quantity: string; description: string }[] = [
   { quantity: "5+", description: "Startups Established" },
@@ -132,13 +133,6 @@ function HomepageHeroSection() {
           loop
           mute
           hideControls
-          playerVars={{
-            disablekb: 1,
-            rel: 0,
-            autohide: 1,
-            fs: 0,
-            showinfo: 0,
-          }}
           className="pointer-events-none absolute aspect-video h-auto w-5xl lg:w-lvw"
         />
       </div>

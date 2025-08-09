@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     "community",
   ],
   openGraph: {
-    title: "ISATech Society - Contact Us",
+    title: "Contact ISATech Society",
     description:
       "Get in touch with ISATech Society for partnerships, inquiries, or feedback.",
     url: "https://isatech.club/contact",
@@ -72,8 +72,16 @@ const partnerList = [
 ];
 const socialLinks = [
   { emoji: MailIcon, text: "Email", href: "mailto:info@isatech.com" },
-  { emoji: LucideFacebook, text: "Facebook", href: "https://facebook.com" },
-  { emoji: LucideLinkedin, text: "LinkedIn", href: "https://linkedin.com" },
+  {
+    emoji: LucideFacebook,
+    text: "Facebook",
+    href: "https://www.facebook.com/ISATech.ISATU",
+  },
+  {
+    emoji: LucideLinkedin,
+    text: "LinkedIn",
+    href: "https://www.linkedin.com/company/isatech-society/",
+  },
 ];
 
 /**
