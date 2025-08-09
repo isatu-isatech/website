@@ -12,7 +12,7 @@ interface CookieConsentContextType {
 
 // Create the context with a default value
 const CookieConsentContext = createContext<CookieConsentContextType>({
-  acceptedCategories: ["necessary", "analytics", "preferences"], // Accept all by default
+  acceptedCategories: ["necessary"], // Only necessary cookies enabled by default
 });
 
 // Custom hook to easily access the context
@@ -25,10 +25,8 @@ export function CookieConsentProvider({
   children: React.ReactNode;
 }) {
   const [acceptedCategories, setAcceptedCategories] = useState<string[]>([
-    "necessary",
-    "analytics",
-    "preferences",
-  ]); // Accept all by default
+    "necessary", // Only necessary cookies enabled by default
+  ]);
 
   useEffect(() => {
     const cc_cookie = CookieConsent.getCookie();
@@ -48,12 +46,8 @@ export function CookieConsentProvider({
           readOnly: true,
         },
         analytics: {
-          enabled: true, // Accept by default
+          enabled: false, // Require explicit consent
           services: {
-            youtube: {
-              label: "YouTube Videos",
-              cookies: [{ name: "YSC" }, { name: "VISITOR_INFO1_LIVE" }],
-            },
             vercel_speed_insights: {
               label: "Vercel Speed Insights",
               cookies: [{ name: "_vercel_speed_insights" }],
@@ -65,7 +59,7 @@ export function CookieConsentProvider({
           },
         },
         preferences: {
-          enabled: true, // Accept by default
+          enabled: false, // Require explicit consent
         },
       },
       language: {
@@ -73,22 +67,23 @@ export function CookieConsentProvider({
         translations: {
           en: {
             consentModal: {
-              title: "Cookies are enabled",
+              title: "We value your privacy",
               description:
-                "We use cookies to enhance your experience. All cookies are enabled by default. You can manage your preferences at any time.",
-              acceptAllBtn: "OK",
+                "We use cookies to enhance your experience. Non-essential cookies (analytics, preferences) are disabled by default. You can accept all, accept necessary cookies, or manage your preferences.",
+              acceptAllBtn: "Accept all",
+              acceptNecessaryBtn: "Accept Necessary",
               showPreferencesBtn: "Manage preferences",
             },
             preferencesModal: {
               title: "Manage cookie preferences",
               acceptAllBtn: "Enable all",
-              acceptNecessaryBtn: "Disable all except necessary",
+              acceptNecessaryBtn: "Enable only necessary",
               savePreferencesBtn: "Save preferences",
               sections: [
                 {
                   title: "Cookie Usage",
                   description:
-                    "All cookies are enabled by default. You can disable non-essential cookies below.",
+                    "We use cookies to improve your experience. Non-essential cookies are disabled by default. You can enable or disable them below.",
                 },
                 {
                   title: "Strictly Necessary Cookies",
@@ -99,13 +94,13 @@ export function CookieConsentProvider({
                 {
                   title: "Analytics Cookies",
                   description:
-                    "These cookies allow us to analyze your use of the website to evaluate and improve our performance. They are also used to provide a better customer experience on this website. For example, remembering your log-in details, and providing video embeds.",
+                    "These cookies help us analyze site usage and improve performance. They are only set if you enable them.",
                   linkedCategory: "analytics",
                 },
                 {
                   title: "Preference Cookies",
                   description:
-                    "These cookies are used to remember your preferences, such as your language or theme choice.",
+                    "These cookies remember your preferences, such as language or theme. They are only set if you enable them.",
                   linkedCategory: "preferences",
                 },
               ],
@@ -126,15 +121,6 @@ export function CookieConsentProvider({
     };
 
     CookieConsent.run(config);
-
-    // Hide the consent modal after 5 seconds (5000 ms)
-    const hideTimeout = setTimeout(() => {
-      CookieConsent.hide();
-    }, 5000);
-
-    return () => {
-      clearTimeout(hideTimeout);
-    };
   }, []);
 
   return (
