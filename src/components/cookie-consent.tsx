@@ -12,7 +12,7 @@ interface CookieConsentContextType {
 
 // Create the context with a default value
 const CookieConsentContext = createContext<CookieConsentContextType>({
-  acceptedCategories: [],
+  acceptedCategories: ["necessary", "analytics", "preferences"], // Accept all by default
 });
 
 // Custom hook to easily access the context
@@ -24,18 +24,18 @@ export function CookieConsentProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [acceptedCategories, setAcceptedCategories] = useState<string[]>([]);
+  const [acceptedCategories, setAcceptedCategories] = useState<string[]>([
+    "necessary",
+    "analytics",
+    "preferences",
+  ]); // Accept all by default
 
   useEffect(() => {
-    // Get the current consent cookie, if it exists
     const cc_cookie = CookieConsent.getCookie();
-
-    // Set initial state from the cookie
     if (cc_cookie && cc_cookie.categories) {
       setAcceptedCategories(cc_cookie.categories);
     }
 
-    // Configuration for the cookie consent banner
     const config: CookieConsentConfig = {
       guiOptions: {
         consentModal: {
@@ -43,25 +43,12 @@ export function CookieConsentProvider({
           position: "bottom right",
         },
       },
-      // This will be called once the banner is initialized
-      onFirstConsent: ({ cookie }) => {
-        if (cookie.categories) {
-          setAcceptedCategories(cookie.categories);
-        }
-      },
-      // This will be called on any consent change
-      onChange: ({ cookie }) => {
-        if (cookie.categories) {
-          setAcceptedCategories(cookie.categories);
-        }
-      },
       categories: {
         necessary: {
-          readOnly: true, // Always enabled
+          readOnly: true,
         },
         analytics: {
-          enabled: true, // This makes the category accepted by default
-          // The YouTube player will be under this category
+          enabled: true, // Accept by default
           services: {
             youtube: {
               label: "YouTube Videos",
@@ -78,7 +65,7 @@ export function CookieConsentProvider({
           },
         },
         preferences: {
-          // The theme preference will be under this category
+          enabled: true, // Accept by default
         },
       },
       language: {
@@ -86,23 +73,22 @@ export function CookieConsentProvider({
         translations: {
           en: {
             consentModal: {
-              title: "We use cookies!",
+              title: "Cookies are enabled",
               description:
-                "This website uses cookies to enhance your browsing experience and to analyze our traffic. By clicking 'Accept all', you consent to our use of cookies.",
-              acceptAllBtn: "Accept all",
-              acceptNecessaryBtn: "Reject all",
+                "We use cookies to enhance your experience. All cookies are enabled by default. You can manage your preferences at any time.",
+              acceptAllBtn: "OK",
               showPreferencesBtn: "Manage preferences",
             },
             preferencesModal: {
               title: "Manage cookie preferences",
-              acceptAllBtn: "Accept all",
-              acceptNecessaryBtn: "Reject all",
+              acceptAllBtn: "Enable all",
+              acceptNecessaryBtn: "Disable all except necessary",
               savePreferencesBtn: "Save preferences",
               sections: [
                 {
                   title: "Cookie Usage",
                   description:
-                    "We use cookies to help you navigate efficiently and perform certain functions. You will find detailed information about all cookies under each consent category below.",
+                    "All cookies are enabled by default. You can disable non-essential cookies below.",
                 },
                 {
                   title: "Strictly Necessary Cookies",
@@ -127,9 +113,28 @@ export function CookieConsentProvider({
           },
         },
       },
+      onFirstConsent: ({ cookie }) => {
+        if (cookie.categories) {
+          setAcceptedCategories(cookie.categories);
+        }
+      },
+      onChange: ({ cookie }) => {
+        if (cookie.categories) {
+          setAcceptedCategories(cookie.categories);
+        }
+      },
     };
 
     CookieConsent.run(config);
+
+    // Hide the consent modal after 5 seconds (5000 ms)
+    const hideTimeout = setTimeout(() => {
+      CookieConsent.hide();
+    }, 5000);
+
+    return () => {
+      clearTimeout(hideTimeout);
+    };
   }, []);
 
   return (
