@@ -29,10 +29,10 @@ const navLinks: {
   {
     section: "Sitemap",
     links: [
-      { label: "Homepage", href: "/" },
+      { label: "Homepage", href: "/#" },
       // { label: "Achievements", href: "/" },
-      { label: "About Us", href: "/about" },
-      { label: "Contact Us", href: "/contact" },
+      { label: "About Us", href: "/about#" },
+      { label: "Contact Us", href: "/contact#" },
     ],
   },
   {
@@ -45,7 +45,7 @@ const navLinks: {
   {
     section: "Legal",
     links: [
-      { label: "Privacy Policy", href: "/privacy" },
+      { label: "Privacy Policy", href: "/privacy#" },
       { label: "Cookie Preferences", href: "/privacy#manage-cookies" },
     ],
   },

@@ -24,8 +24,8 @@ import { redirect } from "next/navigation";
 // If more links are needed, consider redesigning the header layout.
 const navLinks: { label: string; href: string }[] = [
   // { label: "Achievements", href: "/" },
-  { label: "About Us", href: "/about" },
-  { label: "Contact Us", href: "/contact" },
+  { label: "About Us", href: "/about#" },
+  { label: "Contact Us", href: "/contact#" },
 ];
 
 /**
@@ -38,7 +38,7 @@ export default function HeaderComponent() {
     <header className="border-b-grey-100 sticky top-0 z-90 flex items-center justify-center border-b bg-white/65 px-6 py-2 shadow-xs shadow-black/5 backdrop-blur-xs lg:px-8 xl:px-16">
       <div className="flex w-full max-w-6xl items-center justify-between">
         <Link
-          href="/"
+          href="/#"
           onContextMenu={(e) => {
             e.preventDefault();
             redirect("/about");
@@ -57,7 +57,7 @@ export default function HeaderComponent() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/membership">
+            <Link href="/membership#">
               <Button
                 variant={"default"}
                 size={"lg"}
@@ -66,7 +66,7 @@ export default function HeaderComponent() {
                 <p className="text-caption">Join Now</p>
               </Button>
             </Link>
-            <Link href="/membership">
+            <Link href="/membership#">
               <Button variant={"default"} size={"sm"} className="md:hidden">
                 <p className="text-caption">Join Now</p>
               </Button>

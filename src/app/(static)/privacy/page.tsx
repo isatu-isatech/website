@@ -361,7 +361,7 @@ function PrivacyContactSection() {
         </li>
         <li>
           By visiting our{" "}
-          <Link href="/contact" className="text-primary underline">
+          <Link href="/contact#" className="text-primary underline">
             contact page
           </Link>
         </li>
