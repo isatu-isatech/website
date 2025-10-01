@@ -43,7 +43,7 @@ export async function submitMessage(formData: unknown) {
   }
 
   // Validate the incoming form data
-  const parsed = await contactFormSchema.safeParseAsync(formData);
+  const parsed = contactFormSchema.safeParse(formData);
 
   if (!parsed.success) {
     return { success: false, error: "Invalid form data." };
