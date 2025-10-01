@@ -1,15 +1,14 @@
 "use server";
 
-import { Resend } from "resend";
-import { EmailTemplate } from "@/components/email-template";
-import { contactFormSchema } from "./form";
+import { createPage } from "@/lib/notion/helpers";
+import { contactFormSchema } from "./schema";
 
 // Initialize Resend with the API key from your .env file
-const resend = new Resend(process.env.RESEND_API_KEY);
+const CONTACT_FORM_DATABASE_ID = process.env.NOTION_CONTACT_FORM_DATABASE_ID;
 
 export async function sendContactEmail(formData: unknown) {
   // Validate the incoming form data
-  const parsed = contactFormSchema.safeParse(formData);
+  const parsed = await contactFormSchema.safeParseAsync(formData);
 
   if (!parsed.success) {
     return { success: false, error: "Invalid form data." };
@@ -41,21 +40,33 @@ export async function sendContactEmail(formData: unknown) {
   }
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: "ISATech Contact Form <onboarding@resend.dev>", // Must be a verified domain in Resend
-      to: "qsxdrtgbnmjuy@protonmail.ch", // Your email here
-      subject: `New message from ${name}`,
-      react: EmailTemplate({ name, email, message }), // Pass data to your template
+    const data = await createPage(CONTACT_FORM_DATABASE_ID!, {
+      Name: {
+        title: [
+          {
+            text: {
+              content: name,
+            },
+          },
+        ],
+      },
+      Email: {
+        email: email,
+      },
+      Message: {
+        rich_text: [
+          {
+            text: {
+              content: message,
+            },
+          },
+        ],
+      },
     });
-
-    if (error) {
-      console.error("Resend API Error:", error);
-      return { success: false, error: "Failed to send email." };
-    }
 
     return { success: true, data };
   } catch (error) {
-    console.error("Failed to send email:", error);
+    console.error("Something went wrong:", error);
     return { success: false, error: "An unexpected error occurred." };
   }
 }
