@@ -69,9 +69,8 @@ export function CookieConsentProvider({
             consentModal: {
               title: "We value your privacy",
               description:
-                "We use cookies to enhance your experience. Non-essential cookies (analytics, preferences) are disabled by default. You can accept all, accept necessary cookies, or manage your preferences.",
+                "We use cookies to enhance your experience. Non-essential cookies (analytics, preferences) are disabled by default. You can accept all or manage your preferences.",
               acceptAllBtn: "Accept all",
-              acceptNecessaryBtn: "Accept Necessary",
               showPreferencesBtn: "Manage preferences",
             },
             preferencesModal: {
