@@ -84,6 +84,9 @@ export const metadata: Metadata = {
       "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
     images: ["/assets/seo/ogimage.jpg"],
   },
+  other: {
+    preload: ["/assets/seo/favicon-light.ico", "/assets/seo/favicon-dark.ico"],
+  },
 };
 
 /**
