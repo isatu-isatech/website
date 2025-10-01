@@ -12,24 +12,28 @@ export function middleware() {
     "camera=(), microphone=(), geolocation=()",
   );
 
-  // Content Security Policy
-  response.headers.set(
-    "Content-Security-Policy",
+  // Only apply strict CSP in production
+  if (process.env.NODE_ENV === "production") {
+    response.headers.set(
+      "Content-Security-Policy",
+      `
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com;
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https: blob:;
+      font-src 'self' data:;
+      connect-src 'self' https://challenges.cloudflare.com https://api.notion.com;
+      frame-src https://www.youtube.com https://challenges.cloudflare.com;
+      object-src 'none';
+      base-uri 'self';
+      form-action 'self';
+      worker-src 'self' blob:;
+      prefetch-src 'self';
     `
-    default-src 'self';
-    script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com;
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' data: https:;
-    font-src 'self' data:;
-    connect-src 'self' https://challenges.cloudflare.com https://api.notion.com;
-    frame-src https://www.youtube.com https://challenges.cloudflare.com;
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-  `
-      .replace(/\s+/g, " ")
-      .trim(),
-  );
+        .replace(/\s+/g, " ")
+        .trim(),
+    );
+  }
 
   return response;
 }
