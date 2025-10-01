@@ -2,9 +2,11 @@
 
 import { createPage } from "@/lib/notion/helpers";
 import { contactFormSchema } from "./schema";
+import { env } from "@/lib/env";
 
 // Initialize Resend with the API key from your .env file
-const CONTACT_FORM_DATABASE_ID = process.env.NOTION_CONTACT_FORM_DATABASE_ID;
+const cloudflareTurnstileSecretKey = env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
+const contactFormDatabaseID = env.NOTION_CONTACT_FORM_DATABASE_ID;
 
 export async function sendContactEmail(formData: unknown) {
   // Validate the incoming form data
@@ -24,7 +26,7 @@ export async function sendContactEmail(formData: unknown) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          secret: process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY,
+          secret: cloudflareTurnstileSecretKey,
           response: turnstileToken,
         }),
       },
@@ -40,7 +42,7 @@ export async function sendContactEmail(formData: unknown) {
   }
 
   try {
-    const data = await createPage(CONTACT_FORM_DATABASE_ID!, {
+    const data = await createPage(contactFormDatabaseID, {
       Name: {
         title: [
           {

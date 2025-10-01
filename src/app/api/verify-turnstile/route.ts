@@ -1,5 +1,6 @@
 // app/api/verify-turnstile/route.ts
 import { NextRequest, NextResponse } from "next/server";
+import { env } from "@/lib/env";
 
 interface VerifyRequestBody {
   token: string;
@@ -23,17 +24,8 @@ interface ApiResponse {
 export async function POST(
   request: NextRequest,
 ): Promise<NextResponse<ApiResponse>> {
-  // Get the secret key from environment variables.
-  const secretKey: string | undefined =
-    process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
-
-  if (!secretKey) {
-    console.error("Cloudflare Turnstile secret key is not set.");
-    return NextResponse.json(
-      { success: false, message: "Server configuration error." },
-      { status: 500 },
-    );
-  }
+  // Get the secret key from validated environment variables.
+  const cloudflareTurnstileSecretKey = env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
 
   try {
     const { token }: VerifyRequestBody = await request.json();
@@ -47,7 +39,7 @@ export async function POST(
 
     // Prepare form data for Cloudflare's verification API
     const formData = new FormData();
-    formData.append("secret", secretKey);
+    formData.append("secret", cloudflareTurnstileSecretKey);
     formData.append("response", token);
 
     const ip: string | null = request.headers.get("CF-Connecting-IP");

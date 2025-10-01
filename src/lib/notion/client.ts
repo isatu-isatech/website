@@ -1,17 +1,15 @@
 import { Client } from "@notionhq/client";
 import type { Client as NotionClientType } from "@notionhq/client";
+import { env } from "@/lib/env";
 
 let notion: NotionClientType | null = null;
 
 export function getNotionClient(): NotionClientType {
   if (notion) return notion;
 
-  const apiKey = process.env.NOTION_API_KEY;
-  if (!apiKey) {
-    throw new Error("Missing NOTION_API_KEY in environment");
-  }
+  const notionApiKey = env.NOTION_API_KEY;
 
-  notion = new Client({ auth: apiKey });
+  notion = new Client({ auth: notionApiKey });
   return notion;
 }
 
