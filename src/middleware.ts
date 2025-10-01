@@ -22,16 +22,21 @@ export function middleware() {
       style-src 'self' 'unsafe-inline';
       img-src 'self' data: https: blob:;
       font-src 'self' data:;
-      connect-src 'self' https://challenges.cloudflare.com https://api.notion.com;
+      connect-src 'self' https://challenges.cloudflare.com https://api.notion.com https://vitals.vercel-analytics.com;
       frame-src https://www.youtube.com https://challenges.cloudflare.com;
       object-src 'none';
       base-uri 'self';
       form-action 'self';
       worker-src 'self' blob:;
+      upgrade-insecure-requests;
       prefetch-src 'self';
     `
         .replace(/\s+/g, " ")
         .trim(),
+    );
+    response.headers.set(
+      "Strict-Transport-Security",
+      "max-age=31536000; includeSubDomains; preload",
     );
   }
 
