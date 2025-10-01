@@ -17,6 +17,11 @@ const envSchema = z.object({
 
   // Optional: Add other environment variables as needed
   // RESEND_API_KEY: z.string().optional(),
+
+  // Vercel KV Configuration (optional for local development)
+  KV_URL: z.string().optional(),
+  KV_REST_API_URL: z.string().optional(),
+  KV_REST_API_TOKEN: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);
