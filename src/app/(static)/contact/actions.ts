@@ -23,7 +23,7 @@ try {
 const cloudflareTurnstileSecretKey = env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
 const contactFormDatabaseID = env.NOTION_CONTACT_FORM_DATABASE_ID;
 
-export async function sendContactEmail(formData: unknown) {
+export async function submitMessage(formData: unknown) {
   // Get client IP for rate limiting
   const headersList = await headers();
   const ip =
@@ -75,7 +75,7 @@ export async function sendContactEmail(formData: unknown) {
   }
 
   try {
-    const data = await createPage(contactFormDatabaseID, {
+    await createPage(contactFormDatabaseID, {
       Name: {
         title: [
           {
@@ -99,7 +99,7 @@ export async function sendContactEmail(formData: unknown) {
       },
     });
 
-    return { success: true, data };
+    return { success: true };
   } catch (error) {
     console.error("Something went wrong:", error);
     return { success: false, error: "An unexpected error occurred." };
