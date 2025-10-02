@@ -4,10 +4,12 @@ export function middleware(request: NextRequest) {
   const nonce = Buffer.from(globalThis.crypto.randomUUID()).toString("base64");
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com;
-    style-src 'self' 'nonce-${nonce}';
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval' https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com;
+    style-src 'self' 'nonce-${nonce}' 'unsafe-inline';
     img-src 'self' blob: data:;
-    font-src 'self';
+    font-src 'self' data:;
+    connect-src 'self' blob: https://challenges.cloudflare.com https://api.notion.com https://vitals.vercel-analytics.com;
+    frame-src https://www.youtube.com https://www.youtube-nocookie.com https://challenges.cloudflare.com;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
