@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import NextTopLoader from "nextjs-toploader";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -84,6 +85,9 @@ export const metadata: Metadata = {
       "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
     images: ["/assets/seo/ogimage.jpg"],
   },
+  other: {
+    preload: ["/assets/seo/favicon-light.ico", "/assets/seo/favicon-dark.ico"],
+  },
 };
 
 /**
@@ -99,6 +103,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} ${chivo.variable} antialiased`}>
+        <NextTopLoader
+          showSpinner={false}
+          color="linear-gradient(to right, #203c90, #ffac02)"
+          height={3}
+        />
         <CookieConsentProvider>
           <HeaderComponent />
           {children}

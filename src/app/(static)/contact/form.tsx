@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition, useState } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { sendContactEmail } from "./actions";
+import { submitMessage } from "./actions";
 import { toast } from "sonner";
 import {
   Form,
@@ -18,30 +18,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import TurnstileWidget from "@/components/turnstile-widget";
+import { contactFormSchema } from "./schema";
 
 /**
  * ################################################################################
  * #################################### SCHEMA ####################################
  * ################################################################################
  */
-// Define the schema for the contact form using zod
-export const contactFormSchema = z.object({
-  // Name must be a string between 2 and 50 characters
-  name: z
-    .string()
-    .min(2, "Name must be at least 2 characters")
-    .max(50, "Name must be at most 50 characters"),
-  // Email must be a valid email address
-  email: z.email("Invalid email address"),
-  // Message must be a string between 10 and 1000 characters
-  message: z
-    .string()
-    .min(10, "Message must be at least 10 characters")
-    .max(1000, "Message must be at most 1000 characters"),
-  turnstileToken: z
-    .string()
-    .min(1, { message: "Please complete the CAPTCHA verification." }),
-});
 
 /**
  * ################################################################################
@@ -51,6 +34,7 @@ export const contactFormSchema = z.object({
 export default function ContactUsForm() {
   const [loading, startTransition] = useTransition();
   const [token, setToken] = useState<string | null>(null);
+  const [widgetKey, setWidgetKey] = useState(0);
 
   // Initialize the form using react-hook-form and zod for validation
   const contactForm = useForm<z.infer<typeof contactFormSchema>>({
@@ -65,15 +49,24 @@ export default function ContactUsForm() {
 
   async function onSubmit(values: z.infer<typeof contactFormSchema>) {
     startTransition(async () => {
-      //form submission
-      const res = await sendContactEmail(values);
+      // Form submission
+      const res = await submitMessage(values);
+
+      try {
+        // Reset react-hook-form values (including hidden turnstileToken)
+        contactForm.reset();
+        contactForm.clearErrors("turnstileToken"); // Clear any validation errors for the token field
+        setToken(null); // Clear local token state
+        setWidgetKey((k) => k + 1); // Remount the Turnstile widget by bumping the key so it resets
+      } catch (err) {
+        // In the unlikely case resetting throws, log it but continue
+        console.error("Error resetting contact form:", err);
+      }
 
       if (res.success) {
-        // Simulate successful form submission
-        contactForm.reset();
         toast.success("Message sent successfully!");
       } else {
-        toast.error(res.error || "Failed to send message. Try again later.");
+        toast.error("Failed to send message. Try again later.");
       }
     });
   }
@@ -148,6 +141,7 @@ export default function ContactUsForm() {
         </div>
         <div className="flex flex-col items-end justify-start">
           <TurnstileWidget
+            key={widgetKey}
             onVerify={(t) => {
               setToken(t);
               contactForm.setValue("turnstileToken", t);

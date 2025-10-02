@@ -1,13 +1,47 @@
 "use server";
 
-import { Resend } from "resend";
-import { EmailTemplate } from "@/components/email-template";
-import { contactFormSchema } from "./form";
+import { createPage } from "@/lib/notion/helpers";
+import { contactFormSchema } from "./schema";
+import { env } from "@/lib/env";
+import { Ratelimit } from "@upstash/ratelimit";
+import { kv } from "@vercel/kv";
+import { headers } from "next/headers";
+
+// Initialize rate limiter: 5 requests per hour per IP
+let ratelimit: Ratelimit | null = null;
+
+try {
+  ratelimit = new Ratelimit({
+    redis: kv,
+    limiter: Ratelimit.slidingWindow(5, "1 h"),
+  });
+} catch (error) {
+  console.warn("Rate limiting disabled: Vercel KV not available", error);
+}
 
 // Initialize Resend with the API key from your .env file
-const resend = new Resend(process.env.RESEND_API_KEY);
+const cloudflareTurnstileSecretKey = env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
+const contactFormDatabaseID = env.NOTION_CONTACT_FORM_DATABASE_ID;
 
-export async function sendContactEmail(formData: unknown) {
+export async function submitMessage(formData: unknown) {
+  // Get client IP for rate limiting
+  const headersList = await headers();
+  const ip =
+    headersList.get("x-forwarded-for") ||
+    headersList.get("x-real-ip") ||
+    "127.0.0.1";
+
+  // Check rate limit (skip if KV not available)
+  if (ratelimit) {
+    const { success } = await ratelimit.limit(ip);
+    if (!success) {
+      return {
+        success: false,
+        error: "Too many requests. Please try again later.",
+      };
+    }
+  }
+
   // Validate the incoming form data
   const parsed = contactFormSchema.safeParse(formData);
 
@@ -25,7 +59,7 @@ export async function sendContactEmail(formData: unknown) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          secret: process.env.CLOUDFLARE_TURNSTILE_SECRET_KEY,
+          secret: cloudflareTurnstileSecretKey,
           response: turnstileToken,
         }),
       },
@@ -41,21 +75,48 @@ export async function sendContactEmail(formData: unknown) {
   }
 
   try {
-    const { data, error } = await resend.emails.send({
-      from: "ISATech Contact Form <onboarding@resend.dev>", // Must be a verified domain in Resend
-      to: "qsxdrtgbnmjuy@protonmail.ch", // Your email here
-      subject: `New message from ${name}`,
-      react: EmailTemplate({ name, email, message }), // Pass data to your template
+    await createPage(contactFormDatabaseID, {
+      Name: {
+        title: [
+          {
+            text: {
+              content: name,
+            },
+          },
+        ],
+      },
+      Email: {
+        email: email,
+      },
+      Message: {
+        rich_text: [
+          {
+            text: {
+              content: message,
+            },
+          },
+        ],
+      },
     });
 
-    if (error) {
-      console.error("Resend API Error:", error);
-      return { success: false, error: "Failed to send email." };
-    }
-
-    return { success: true, data };
+    return { success: true };
   } catch (error) {
-    console.error("Failed to send email:", error);
+    console.error("Something went wrong:", error);
     return { success: false, error: "An unexpected error occurred." };
+  }
+}
+
+// Utility function to check rate limit status (for debugging)
+export async function getRateLimitStatus(
+  ip?: string,
+): Promise<{ remaining: number; reset: number } | null> {
+  if (!ratelimit || !ip) return null;
+
+  try {
+    const { remaining, reset } = await ratelimit.limit(ip);
+    return { remaining, reset };
+  } catch (error) {
+    console.warn("Could not check rate limit status:", error);
+    return null;
   }
 }
