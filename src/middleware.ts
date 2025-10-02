@@ -18,12 +18,12 @@ export function middleware() {
       "Content-Security-Policy",
       `
       default-src 'self';
-      script-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com 'sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=';
+      script-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com 'unsafe-inline';
       style-src 'self' 'unsafe-inline';
       img-src 'self' data: https: blob:;
       font-src 'self' data:;
       connect-src 'self' https://challenges.cloudflare.com https://api.notion.com https://vitals.vercel-analytics.com;
-      frame-src https://www.youtube.com https://challenges.cloudflare.com;
+      frame-src https://www.youtube.com https://www.youtube-nocookie.com https://challenges.cloudflare.com;
       object-src 'none';
       base-uri 'self';
       form-action 'self';
