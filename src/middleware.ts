@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import * as crypto from "crypto";
 
 export function middleware(request: NextRequest) {
   const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
