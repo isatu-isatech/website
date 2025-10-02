@@ -18,7 +18,7 @@ export function middleware() {
       "Content-Security-Policy",
       `
       default-src 'self';
-      script-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com;
+      script-src 'self' https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com 'sha256-OBTN3RiyCV4Bq7dFqZ5a2pAXjnCcCYeTJMO2I/LYKeo=';
       style-src 'self' 'unsafe-inline';
       img-src 'self' data: https: blob:;
       font-src 'self' data:;
@@ -29,7 +29,6 @@ export function middleware() {
       form-action 'self';
       worker-src 'self' blob:;
       upgrade-insecure-requests;
-      prefetch-src 'self';
     `
         .replace(/\s+/g, " ")
         .trim(),
