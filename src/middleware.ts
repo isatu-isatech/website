@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import * as crypto from "crypto";
 
 export function middleware(request: NextRequest) {
-  const nonce = Buffer.from(crypto.randomUUID()).toString("base64");
+  const nonce = Buffer.from(globalThis.crypto.randomUUID()).toString("base64");
   const cspHeader = `
     default-src 'self';
     script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com;
