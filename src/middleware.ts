@@ -16,9 +16,12 @@ export function middleware(request: NextRequest) {
   const nonce = Buffer.from(globalThis.crypto.randomUUID()).toString("base64");
 
   // Define a strict Content Security Policy
+  // In development, we need 'unsafe-eval' for React Fast Refresh
+  const isDevelopment = process.env.NODE_ENV === "development";
+
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval' https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net https://va.vercel-scripts.com;
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net https://va.vercel-scripts.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com;
     font-src 'self' data: https://fonts.gstatic.com;
@@ -30,8 +33,8 @@ export function middleware(request: NextRequest) {
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
-    upgrade-insecure-requests;
-    block-all-mixed-content;
+    ${isDevelopment ? "" : "upgrade-insecure-requests;"}
+    ${isDevelopment ? "" : "block-all-mixed-content;"}
   `;
 
   // Replace newline characters and spaces
