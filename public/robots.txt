@@ -2,8 +2,13 @@
 User-agent: *
 Allow: /
 
+# Googlebot
+User-agent: Googlebot
+Allow: /
+
+# Bingbot
+User-agent: Bingbot
+Allow: /
+
 # Host
 Host: https://isatech.club
-
-# Sitemaps
-Sitemap: https://isatech.club/sitemap.xml

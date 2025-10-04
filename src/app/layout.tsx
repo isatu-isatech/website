@@ -42,6 +42,45 @@ export const metadata: Metadata = {
   },
   description:
     "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+  keywords: [
+    // Core brand keywords
+    "ISATech Society",
+    "ISATech",
+    "ISAT U",
+    "ISATU",
+    "Iloilo Science and Technology University",
+    // Location keywords
+    "Iloilo",
+    "Iloilo City",
+    "Western Visayas",
+    "Philippines",
+    // Activity keywords
+    "technopreneurship",
+    "student founders",
+    "student entrepreneurship",
+    "innovation",
+    "startups",
+    "startup incubator",
+    "technology business incubator",
+    "student organization",
+    // Program keywords
+    "hackathons",
+    "coding competitions",
+    "tech seminars",
+    "workshops",
+    "training programs",
+    "tech community",
+    // Partnerships
+    "KWADRA TBI",
+    "Kwadra Technology Business Incubator",
+    "UMWAD",
+    "university research",
+    // Target audience
+    "students",
+    "tech enthusiasts",
+    "aspiring entrepreneurs",
+    "innovators",
+  ],
   authors: [{ name: "ISATech Society", url: "https://isatech.club" }],
   creator: "ISATech Creatives Team",
   publisher: "ISATech Society",
@@ -88,14 +127,20 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@ISATech",
+    creator: "@ISATech",
     title: "ISATech Society",
     description:
       "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
-    images: ["/assets/seo/ogimage.jpg"],
+    images: {
+      url: "/assets/seo/ogimage.jpg",
+      alt: "ISATech Society - Empowering Student Founders",
+    },
   },
   alternates: {
     canonical: "https://isatech.club",
   },
+  manifest: "/manifest.json",
   other: {
     preload: ["/assets/seo/favicon-light.ico", "/assets/seo/favicon-dark.ico"],
   },
