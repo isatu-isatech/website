@@ -14,12 +14,14 @@ const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["400", "700"],
+  preload: true,
 });
 
 const chivo = Chivo({
   variable: "--font-chivo",
   subsets: ["latin"],
   weight: ["400", "700"],
+  preload: true,
 });
 
 /**
@@ -32,6 +34,11 @@ export const metadata: Metadata = {
   title: {
     default: "ISATech Society",
     template: "%s | ISATech Society",
+  },
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 5,
   },
   description:
     "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
@@ -86,6 +93,9 @@ export const metadata: Metadata = {
       "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
     images: ["/assets/seo/ogimage.jpg"],
   },
+  alternates: {
+    canonical: "https://isatech.club",
+  },
   other: {
     preload: ["/assets/seo/favicon-light.ico", "/assets/seo/favicon-dark.ico"],
   },
@@ -96,19 +106,17 @@ export const metadata: Metadata = {
  * #################################### LAYOUT ####################################
  * ################################################################################
  */
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   // Read the nonce set by middleware on the incoming request so we can apply
   // it to inline <script nonce="..."> tags and satisfy the CSP.
-  const headersList = headers() as unknown as {
-    get: (key: string) => string | null;
-  };
+  const headersList = await headers();
   const nonce = headersList.get("x-nonce") ?? undefined;
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable} ${chivo.variable} antialiased`}>
         <NextTopLoader
           showSpinner={false}
@@ -121,8 +129,10 @@ export default function RootLayout({
           <FooterComponent />
           <Toaster />
         </CookieConsentProvider>
+        {/* Analytics components - scripts are loaded with 'strict-dynamic' CSP */}
         <Analytics />
         <SpeedInsights />
+        {/* Schema.org structured data for SEO */}
         <script
           type="application/ld+json"
           nonce={nonce}
@@ -131,17 +141,33 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "ISATech Society",
+              alternateName: "ISATech",
               url: "https://isatech.club",
               logo: "https://isatech.club/assets/seo/logo.png",
+              description:
+                "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+              foundingDate: "2021",
+              address: {
+                "@type": "PostalAddress",
+                addressCountry: "PH",
+                addressLocality: "Iloilo City",
+                addressRegion: "Western Visayas",
+              },
               contactPoint: {
                 "@type": "ContactPoint",
                 contactType: "customer support",
                 url: "https://isatech.club/contact",
+                availableLanguage: ["English", "Filipino"],
               },
               sameAs: [
                 "https://www.facebook.com/ISATech.ISATU",
                 "https://www.linkedin.com/company/isatech-society/",
-                // Add other social media links here if available
+              ],
+              knowsAbout: [
+                "Technopreneurship",
+                "Innovation",
+                "Startups",
+                "Student Entrepreneurship",
               ],
             }),
           }}
