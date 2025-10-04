@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build && next-sitemap",
     "start": "next start",
-    "lint": "next lint && npx prettier --write src/"
+    "lint": "next lint && npx prettier --write src/",
+    "analyze": "cross-env ANALYZE=true npm run build",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.0",
@@ -52,6 +54,7 @@
     "@types/react-dom": "^19",
     "@types/three": "^0.178.1",
     "@types/youtube": "^0.1.2",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "15.4.2",
     "eslint-config-prettier": "^10.1.8",
