@@ -32,45 +32,29 @@ module.exports = {
     ],
   },
 
-  // Custom transformation for individual pages
-  transform: async (config, path) => {
-    // Define priority and changefreq per page
-    const customConfig = {
-      "/": {
-        priority: 1.0,
-        changefreq: "daily",
-      },
-      "/about": {
-        priority: 0.9,
-        changefreq: "monthly",
-      },
-      "/membership": {
-        priority: 0.9,
-        changefreq: "monthly",
-      },
-      "/contact": {
-        priority: 0.8,
-        changefreq: "monthly",
-      },
-      "/privacy": {
-        priority: 0.3,
-        changefreq: "yearly",
-      },
-    };
+  // Additional paths to include (in case static export doesn't catch them)
+  additionalPaths: async () => {
+    const result = [];
 
-    const pageConfig = customConfig[path] || {
-      priority: config.priority,
-      changefreq: config.changefreq,
-    };
+    // Define all pages with custom config
+    const pages = [
+      { path: "/", priority: 1.0, changefreq: "daily" },
+      { path: "/about", priority: 0.9, changefreq: "monthly" },
+      { path: "/membership", priority: 0.9, changefreq: "monthly" },
+      { path: "/contact", priority: 0.8, changefreq: "monthly" },
+      { path: "/privacy", priority: 0.3, changefreq: "yearly" },
+    ];
 
-    return {
-      loc: path,
-      changefreq: pageConfig.changefreq,
-      priority: pageConfig.priority,
-      lastmod: new Date().toISOString(),
-      // Add alternates for future i18n support
-      // alternateRefs: [],
-    };
+    for (const page of pages) {
+      result.push({
+        loc: page.path,
+        changefreq: page.changefreq,
+        priority: page.priority,
+        lastmod: new Date().toISOString(),
+      });
+    }
+
+    return result;
   },
 
   // Exclude patterns

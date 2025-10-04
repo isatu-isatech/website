@@ -29,16 +29,17 @@ const chivo = Chivo({
  * ################################### METADATA ###################################
  * ################################################################################
  */
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://isatech.club"),
   title: {
     default: "ISATech Society",
     template: "%s | ISATech Society",
-  },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
   },
   description:
     "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
