@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { Poppins, Chivo } from "next/font/google";
 import "@/app/globals.css";
-import { headers } from "next/headers";
 import FooterComponent from "@/components/footer";
 import HeaderComponent from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
@@ -157,10 +156,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Read the nonce set by middleware on the incoming request so we can apply
-  // it to inline <script nonce="..."> tags and satisfy the CSP.
-  const headersList = await headers();
-  const nonce = headersList.get("x-nonce") ?? undefined;
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable} ${chivo.variable} antialiased`}>
@@ -181,7 +176,6 @@ export default async function RootLayout({
         {/* Schema.org structured data for SEO */}
         <script
           type="application/ld+json"
-          nonce={nonce}
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
