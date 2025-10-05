@@ -16,16 +16,18 @@ export function middleware(request: NextRequest) {
   const nonce = Buffer.from(globalThis.crypto.randomUUID()).toString("base64");
 
   // Define a strict Content Security Policy
-  // In development, we need 'unsafe-eval' for React Fast Refresh and webpack HMR
+  // Detect environment: local dev vs preview vs production
   const isDevelopment = process.env.NODE_ENV === "development";
+  const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+  const isProduction = process.env.NODE_ENV === "production" && !isPreview;
 
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://va.vercel-scripts.com ${isDevelopment ? "https://cdn.jsdelivr.net" : ""};
+    script-src 'self' 'nonce-${nonce}' ${isDevelopment || isPreview ? "'unsafe-inline'" : ""} 'strict-dynamic' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://va.vercel-scripts.com ${isDevelopment ? "https://cdn.jsdelivr.net" : ""};
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com ${isDevelopment ? "https://*.githubusercontent.com" : ""};
     font-src 'self' https://fonts.gstatic.com;
-    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ${isDevelopment ? "ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club*" : ""};
+    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ${isDevelopment || isPreview ? "ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app" : ""};
     frame-src 'self' https://www.youtube-nocookie.com https://challenges.cloudflare.com https://www.openstreetmap.org;
     media-src 'self' https://www.youtube-nocookie.com;
     worker-src 'self' blob:;
@@ -35,8 +37,8 @@ export function middleware(request: NextRequest) {
     form-action 'self';
     frame-ancestors 'none';
     manifest-src 'self';
-    ${isDevelopment ? "" : "upgrade-insecure-requests;"}
-    ${isDevelopment ? "" : "block-all-mixed-content;"}
+    ${isProduction ? "upgrade-insecure-requests;" : ""}
+    ${isProduction ? "block-all-mixed-content;" : ""}
   `;
 
   // Replace newline characters and spaces
@@ -69,7 +71,7 @@ export function middleware(request: NextRequest) {
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
   response.headers.set(
     "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+    "camera=(), microphone=(), geolocation=()",
   );
 
   // Only enable HSTS in production to avoid issues in local development
