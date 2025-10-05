@@ -26,7 +26,7 @@ export function middleware(request: NextRequest) {
   const cspHeader = isProduction
     ? `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com https://va.vercel-scripts.com;
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval' https://challenges.cloudflare.com https://va.vercel-scripts.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com;
     font-src 'self' https://fonts.gstatic.com;
@@ -45,11 +45,11 @@ export function middleware(request: NextRequest) {
   `
     : `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://va.vercel-scripts.com https://*.vercel.app ${isDevelopment ? "https://cdn.jsdelivr.net" : ""};
+    script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://va.vercel-scripts.com https://vercel.live https://*.vercel.app ${isDevelopment ? "https://cdn.jsdelivr.net" : ""};
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com ${isDevelopment ? "https://*.githubusercontent.com" : ""};
     font-src 'self' https://fonts.gstatic.com;
-    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app;
+    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com https://vercel.live ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app;
     frame-src 'self' https://www.youtube-nocookie.com https://challenges.cloudflare.com https://www.openstreetmap.org;
     media-src 'self' https://www.youtube-nocookie.com;
     worker-src 'self' blob:;
