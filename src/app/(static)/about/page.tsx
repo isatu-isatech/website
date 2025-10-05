@@ -4,12 +4,12 @@ import {
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
 import { ISATechLogoMark } from "@/components/assets/logos";
-import PerlinNoiseTexture from "@/components/shaders/perlin";
 import { RocketIcon, TargetIcon } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import AboutUsAdvisersSection, { AdviserProps } from "./carousel";
 import { HomepageContactSection } from "../page";
+import { TopographyTexture } from "@/components/texture/topography";
 
 /**
  * ################################################################################
@@ -221,7 +221,7 @@ function AboutUsEmpowermentSection() {
       className="bg-primary relative flex w-full items-center justify-center px-6 py-14 md:py-6 lg:px-16"
       id="empowerment"
     >
-      <PerlinNoiseTexture
+      <TopographyTexture
         color="#FFAC03"
         className="absolute h-full w-full opacity-20"
       />

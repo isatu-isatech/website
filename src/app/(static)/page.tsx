@@ -6,8 +6,8 @@ import {
 import { ISATechLogoMark } from "@/components/assets/logos";
 import CountUpComponent from "@/components/count-up";
 import ScrollVelocityComponent from "@/components/scroll-velocity";
-import PerlinNoiseTexture from "@/components/shaders/perlin";
-import VoronoiTexture from "@/components/shaders/voronoi";
+import { CircuitBoardTexture } from "@/components/texture/circuitboard";
+import { TopographyTexture } from "@/components/texture/topography";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
 import YouTubePlayer from "@/components/ui/youtube-player";
@@ -248,9 +248,9 @@ function HomepagePartnersSection() {
       className="relative flex w-full flex-col items-center justify-center px-6 lg:px-16"
       id="partners"
     >
-      <PerlinNoiseTexture
+      <TopographyTexture
         color={"#ececec"}
-        className="absolute top-0 left-0 -z-1 h-full w-full opacity-30"
+        className="absolute top-0 left-0 -z-1 h-full w-full"
       />
       <div className="flex w-full max-w-6xl flex-col items-center justify-center gap-6 px-6 py-16 lg:px-8 xl:px-16">
         <h3 className="text-primary">Our Partners</h3>
@@ -326,7 +326,7 @@ function HomepageKwadraSection() {
           </div>
           <div className="flex w-full items-center justify-center md:justify-start">
             <Link
-              href="https://www.facebook.com/KwadraTBI"
+              href="https://kwadratbi.tech/"
               target="_blank"
               className="text-caption"
             >
@@ -367,11 +367,8 @@ function HomepageTeamSection() {
       id="4h"
     >
       {/* Decorations */}
-      <div className="absolute flex h-full w-full items-center justify-center">
-        <PerlinNoiseTexture
-          color={"#ececec"}
-          className="absolute h-full w-full opacity-5"
-        />
+      <div className="absolute flex h-full w-full">
+        <TopographyTexture color={"#ececec"} className="opacity-10" />
       </div>
       <div className="flex w-full max-w-6xl flex-col px-6 py-20 lg:px-8 xl:px-16">
         <div className="flex w-full flex-col items-center justify-center gap-6">
@@ -490,9 +487,7 @@ export function HomepageContactSection() {
     >
       <div className="bg-primary relative flex w-full max-w-6xl flex-col items-center justify-center gap-4 rounded-2xl px-4 py-8 sm:gap-6 sm:rounded-3xl">
         {/* Decorations */}
-        <div className="absolute flex h-full w-full items-center justify-center">
-          <VoronoiTexture className="absolute inset-0 h-full w-full opacity-10" />
-        </div>
+        <CircuitBoardTexture color="#ececec" className="absolute opacity-5" />
         <div className="text-primary-foreground flex flex-col text-center">
           <h2>Let&apos;s dream big!</h2>
           <h6>Got an idea? Let&apos;s make it happen.</h6>

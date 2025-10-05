@@ -5,7 +5,6 @@ import {
   ISATechDecorationCenter,
 } from "@/components/assets/decorations";
 import ImageCycleComponent, { ImageCycleProps } from "@/components/image-cycle";
-import PerlinNoiseTexture from "@/components/shaders/perlin";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,6 +19,7 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import MembershipPageReasonSection from "./lanyard-section";
+import { TopographyTexture } from "@/components/texture/topography";
 
 /**
  * ################################################################################
@@ -498,7 +498,7 @@ function MembershipPageCoreSection() {
     >
       {/* Decorations */}
       <div className="absolute -z-1 flex h-full w-full items-center justify-center opacity-80">
-        <PerlinNoiseTexture
+        <TopographyTexture
           color="#E6E6E7"
           className="absolute h-full w-full opacity-20"
         />
