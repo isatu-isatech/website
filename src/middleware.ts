@@ -16,23 +16,25 @@ export function middleware(request: NextRequest) {
   const nonce = Buffer.from(globalThis.crypto.randomUUID()).toString("base64");
 
   // Define a strict Content Security Policy
-  // In development, we need 'unsafe-eval' for React Fast Refresh
+  // In development, we need 'unsafe-eval' for React Fast Refresh and webpack HMR
   const isDevelopment = process.env.NODE_ENV === "development";
 
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://www.youtube.com https://s.ytimg.com https://cdn.jsdelivr.net https://va.vercel-scripts.com;
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://va.vercel-scripts.com ${isDevelopment ? "https://cdn.jsdelivr.net" : ""};
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com;
-    font-src 'self' data: https://fonts.gstatic.com;
-    connect-src 'self' https://challenges.cloudflare.com https://api.notion.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com;
-    frame-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://challenges.cloudflare.com https://www.openstreetmap.org;
+    img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com ${isDevelopment ? "https://*.githubusercontent.com" : ""};
+    font-src 'self' https://fonts.gstatic.com;
+    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ${isDevelopment ? "ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club*" : ""};
+    frame-src 'self' https://www.youtube-nocookie.com https://challenges.cloudflare.com https://www.openstreetmap.org;
+    media-src 'self' https://www.youtube-nocookie.com;
     worker-src 'self' blob:;
     child-src 'self' blob:;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
     frame-ancestors 'none';
+    manifest-src 'self';
     ${isDevelopment ? "" : "upgrade-insecure-requests;"}
     ${isDevelopment ? "" : "block-all-mixed-content;"}
   `;
