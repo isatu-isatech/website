@@ -21,13 +21,16 @@ export function middleware(request: NextRequest) {
   const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
   const isProduction = process.env.NODE_ENV === "production" && !isPreview;
 
-  const cspHeader = `
+  // For preview/dev, use a relaxed CSP without 'strict-dynamic' to allow Next.js inline scripts
+  // For production, use strict-dynamic with nonce-based execution
+  const cspHeader = isProduction
+    ? `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' ${isDevelopment || isPreview ? "'unsafe-inline'" : ""} 'strict-dynamic' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://va.vercel-scripts.com ${isDevelopment ? "https://cdn.jsdelivr.net" : ""};
+    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://challenges.cloudflare.com https://va.vercel-scripts.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com ${isDevelopment ? "https://*.githubusercontent.com" : ""};
+    img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com;
     font-src 'self' https://fonts.gstatic.com;
-    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ${isDevelopment || isPreview ? "ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app" : ""};
+    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com;
     frame-src 'self' https://www.youtube-nocookie.com https://challenges.cloudflare.com https://www.openstreetmap.org;
     media-src 'self' https://www.youtube-nocookie.com;
     worker-src 'self' blob:;
@@ -37,8 +40,25 @@ export function middleware(request: NextRequest) {
     form-action 'self';
     frame-ancestors 'none';
     manifest-src 'self';
-    ${isProduction ? "upgrade-insecure-requests;" : ""}
-    ${isProduction ? "block-all-mixed-content;" : ""}
+    upgrade-insecure-requests;
+    block-all-mixed-content;
+  `
+    : `
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://va.vercel-scripts.com https://*.vercel.app ${isDevelopment ? "https://cdn.jsdelivr.net" : ""};
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com ${isDevelopment ? "https://*.githubusercontent.com" : ""};
+    font-src 'self' https://fonts.gstatic.com;
+    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app;
+    frame-src 'self' https://www.youtube-nocookie.com https://challenges.cloudflare.com https://www.openstreetmap.org;
+    media-src 'self' https://www.youtube-nocookie.com;
+    worker-src 'self' blob:;
+    child-src 'self' blob:;
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+    frame-ancestors 'none';
+    manifest-src 'self';
   `;
 
   // Replace newline characters and spaces
