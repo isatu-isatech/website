@@ -5,3 +5,5 @@ export {
   default as ScrollVelocityComponent,
   ScrollVelocityComponent as ScrollVelocity,
 } from "./scroll-velocity";
+export { ErrorBoundary, withErrorBoundary } from "./error-boundary";
+export { SectionErrorBoundary } from "./section-error-boundary";

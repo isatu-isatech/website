@@ -7,7 +7,6 @@ import { CookieConsentProvider } from "@/components/cookie-consent";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import NextTopLoader from "nextjs-toploader";
-import { SITE_CONFIG, COLORS, GRADIENTS } from "@/lib/constants";
 
 const poppins = Poppins({
   variable: "--font-poppins",
