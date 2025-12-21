@@ -1,7 +1,6 @@
 import { Metadata } from "next";
 import { Poppins, Chivo } from "next/font/google";
 import "@/app/globals.css";
-import { FooterComponent, HeaderComponent } from "@/components/layout";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { Analytics } from "@vercel/analytics/react";
@@ -164,9 +163,7 @@ export default async function RootLayout({
           height={3}
         />
         <CookieConsentProvider>
-          <HeaderComponent />
           {children}
-          <FooterComponent />
           <Toaster />
         </CookieConsentProvider>
         {/* Analytics components - scripts are loaded with 'strict-dynamic' CSP */}
