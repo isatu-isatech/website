@@ -15,7 +15,7 @@ import {
   type Choice,
 } from "@/lib/quiz-data";
 import { Button } from "@/components/ui/button";
-import { RotateCcw, Share2, Sparkles } from "lucide-react";
+import { ArrowLeft, RotateCcw, Share2, Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
 import Image from "next/image";
 
@@ -38,7 +38,7 @@ interface QuizState {
   shuffledQuestions: Question[];
   shuffledTieBreakers: Question[];
   usedTieBreakers: number;
-  answers: number[];
+  answers: Choice[];
 }
 
 // Result types
@@ -74,12 +74,18 @@ export function QuizContainer() {
   }));
 
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
-  const [shuffledChoices, setShuffledChoices] = useState<Choice[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize shuffled questions when starting quiz
   const startQuiz = useCallback(() => {
-    const shuffledQ = shuffleArray(questions);
-    const shuffledTB = shuffleArray(tieBreakers);
+    const shuffledQ = shuffleArray(questions).map((q) => ({
+      ...q,
+      choices: shuffleArray(q.choices),
+    }));
+    const shuffledTB = shuffleArray(tieBreakers).map((q) => ({
+      ...q,
+      choices: shuffleArray(q.choices),
+    }));
     setState({
       phase: "quiz",
       currentQuestionIndex: 0,
@@ -101,13 +107,28 @@ export function QuizContainer() {
     return null;
   }, [state]);
 
-  // Shuffle choices when question changes
+  // Restore selection when question changes
   useEffect(() => {
     if (currentQuestion) {
-      setShuffledChoices(shuffleArray(currentQuestion.choices));
-      setSelectedChoice(null);
+      setIsSubmitting(false);
+
+      // Check if we have a previous answer for this question
+      const previousAnswer = state.answers[state.currentQuestionIndex];
+      if (previousAnswer) {
+        // Find index of the previous answer in the STABLE choices
+        const index = currentQuestion.choices.findIndex(
+          (c) => c.choice === previousAnswer.choice
+        );
+        if (index !== -1) {
+          setSelectedChoice(index);
+        } else {
+          setSelectedChoice(null);
+        }
+      } else {
+        setSelectedChoice(null);
+      }
     }
-  }, [currentQuestion]);
+  }, [currentQuestion, state.answers, state.currentQuestionIndex]);
 
   // Calculate result
   const result = useMemo((): QuizResult => {
@@ -165,11 +186,12 @@ export function QuizContainer() {
   // Handle answer selection
   const handleAnswer = useCallback(
     (choiceIndex: number) => {
-      if (selectedChoice !== null) return;
+      if (!currentQuestion) return;
 
+      setIsSubmitting(true);
       setSelectedChoice(choiceIndex);
 
-      const choice = shuffledChoices[choiceIndex];
+      const choice = currentQuestion.choices[choiceIndex];
       const newScores = { ...state.scores };
 
       for (const [key, value] of Object.entries(choice.weight)) {
@@ -182,19 +204,26 @@ export function QuizContainer() {
           const newState = {
             ...prev,
             scores: newScores,
-            answers: [...prev.answers, choiceIndex],
+            answers: [
+              ...prev.answers.slice(0, prev.currentQuestionIndex),
+              choice,
+            ],
           };
 
           if (prev.phase === "quiz") {
             if (prev.currentQuestionIndex < prev.shuffledQuestions.length - 1) {
-              return { ...newState, currentQuestionIndex: prev.currentQuestionIndex + 1 };
+              return {
+                ...newState,
+                currentQuestionIndex: prev.currentQuestionIndex + 1,
+              };
             } else {
               // Check if we need tiebreaker
               const sortedScores = Object.entries(newScores).sort(
                 ([, a], [, b]) => b - a
               ) as [ArchetypeKey, number][];
               const [top1, top2, top3] = sortedScores;
-              const needsTie = top1[1] === top2[1] || (top2 && top2[1] === top3[1]);
+              const needsTie =
+                top1[1] === top2[1] || (top2 && top2[1] === top3[1]);
 
               if (needsTie && prev.shuffledTieBreakers.length > 0) {
                 return { ...newState, phase: "tiebreaker" };
@@ -207,7 +236,8 @@ export function QuizContainer() {
               ([, a], [, b]) => b - a
             ) as [ArchetypeKey, number][];
             const [top1, top2, top3] = sortedScores;
-            const stillNeedsTie = top1[1] === top2[1] || (top2 && top2[1] === top3[1]);
+            const stillNeedsTie =
+              top1[1] === top2[1] || (top2 && top2[1] === top3[1]);
 
             if (
               stillNeedsTie &&
@@ -222,8 +252,54 @@ export function QuizContainer() {
         });
       }, 600);
     },
-    [selectedChoice, shuffledChoices, state.scores]
+    [selectedChoice, currentQuestion, state.scores]
   );
+
+  // Handle going back
+  const handleBack = useCallback(() => {
+    setState((prev) => {
+      if (prev.answers.length === 0) return prev;
+
+      // Logic to determine where we are going back TO
+      let newPhase = prev.phase;
+      let newIndex = prev.currentQuestionIndex;
+      let newUsedTieBreakers = prev.usedTieBreakers;
+
+      if (prev.phase === "tiebreaker") {
+        if (prev.usedTieBreakers > 0) {
+          newUsedTieBreakers--;
+        } else {
+          // Go back to the last question of the main quiz
+          newPhase = "quiz";
+          newIndex = prev.shuffledQuestions.length - 1;
+        }
+      } else if (prev.phase === "quiz") {
+        if (newIndex > 0) {
+          newIndex--;
+        }
+      }
+
+      // Calculate new scores by reverting the answer of the target question
+      const answerToUndo = prev.answers[newIndex];
+      const revertedScores = { ...prev.scores };
+
+      if (answerToUndo) {
+        for (const [key, value] of Object.entries(answerToUndo.weight)) {
+          revertedScores[key as ArchetypeKey] -= value;
+        }
+      }
+
+      return {
+        ...prev,
+        scores: revertedScores,
+        // Keep answers in history so we can highlight them
+        phase: newPhase,
+        currentQuestionIndex: newIndex,
+        usedTieBreakers: newUsedTieBreakers,
+      };
+    });
+    // Don't reset selectedChoice here, let useEffect handle it based on history
+  }, []);
 
   // Trigger confetti on result
   useEffect(() => {
@@ -310,7 +386,7 @@ export function QuizContainer() {
           <QuestionScreen
             key={`question-${state.currentQuestionIndex}-${state.phase}`}
             question={currentQuestion}
-            shuffledChoices={shuffledChoices}
+            shuffledChoices={currentQuestion.choices}
             selectedChoice={selectedChoice}
             onSelect={handleAnswer}
             progress={progress}
@@ -325,6 +401,11 @@ export function QuizContainer() {
                 : state.shuffledQuestions.length + 1
             }
             isTieBreaker={state.phase === "tiebreaker"}
+            onBack={handleBack}
+            canGoBack={
+              state.phase === "tiebreaker" || state.currentQuestionIndex > 0
+            }
+            isSubmitting={isSubmitting}
           />
         )}
 
@@ -379,43 +460,18 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
       </h1>
       
       <p className="text-base md:text-lg text-muted-foreground max-w-xl mb-4 md:mb-6">
-        Discover your founder archetype! Are you a <strong className="text-amber-500">Hustler</strong>,{" "}
+        Discover your founder archetype! 
+        <br />
+        Are you a <strong className="text-amber-500">Hustler</strong>,{" "}
         <strong className="text-blue-500">Hacker</strong>,{" "}
         <strong className="text-pink-500">Hipster</strong>, or{" "}
         <strong className="text-emerald-500">Hound</strong>?
       </p>
 
-      <div className="grid grid-cols-4 gap-2 md:gap-3 mb-4 md:mb-6 w-full max-w-lg">
-        <ArchetypePreview
-          imageSrc={archetypeIcons.Hustler}
-          name="Hustler"
-          description="Deal-maker"
-          color="bg-gradient-to-br from-amber-500/20 to-orange-600/20 border-amber-500/30"
-        />
-        <ArchetypePreview
-          imageSrc={archetypeIcons.Hacker}
-          name="Hacker"
-          description="Builder"
-          color="bg-gradient-to-br from-blue-500/20 to-indigo-600/20 border-blue-500/30"
-        />
-        <ArchetypePreview
-          imageSrc={archetypeIcons.Hipster}
-          name="Hipster"
-          description="Creative"
-          color="bg-gradient-to-br from-pink-500/20 to-purple-600/20 border-pink-500/30"
-        />
-        <ArchetypePreview
-          imageSrc={archetypeIcons.Hound}
-          name="Hound"
-          description="Tracker"
-          color="bg-gradient-to-br from-emerald-500/20 to-teal-600/20 border-emerald-500/30"
-        />
-      </div>
-
       <Button
         onClick={onStart}
         size="lg"
-        className="group relative overflow-hidden bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-500 text-white px-6 py-4 md:px-8 md:py-5 text-base md:text-lg rounded-xl md:rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300"
+        className="group relative overflow-hidden bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-500 text-white px-6 py-4 md:px-8 md:py-5 text-base md:text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
       >
         <Sparkles className="mr-2 size-4 md:size-5" />
         Start the Quiz
@@ -434,28 +490,6 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
   );
 }
 
-function ArchetypePreview({
-  imageSrc,
-  name,
-  description,
-  color,
-}: {
-  imageSrc: string;
-  name: string;
-  description: string;
-  color: string;
-}) {
-  return (
-    <div className={`p-2 md:p-3 rounded-lg md:rounded-xl border ${color} backdrop-blur-sm flex flex-col items-center`}>
-      <div className="relative w-8 h-8 md:w-10 md:h-10 mb-1">
-        <Image src={imageSrc} alt={name} fill className="object-contain" />
-      </div>
-      <div className="font-bold text-xs md:text-sm">{name}</div>
-      <div className="text-[10px] md:text-xs text-muted-foreground text-center hidden md:block">{description}</div>
-    </div>
-  );
-}
-
 function QuestionScreen({
   question,
   shuffledChoices,
@@ -465,6 +499,9 @@ function QuestionScreen({
   questionNumber,
   totalQuestions,
   isTieBreaker,
+  onBack,
+  canGoBack,
+  isSubmitting,
 }: {
   question: Question;
   shuffledChoices: Choice[];
@@ -474,6 +511,9 @@ function QuestionScreen({
   questionNumber: number;
   totalQuestions: number;
   isTieBreaker: boolean;
+  onBack: () => void;
+  canGoBack: boolean;
+  isSubmitting: boolean;
 }) {
   return (
     <motion.div
@@ -481,7 +521,7 @@ function QuestionScreen({
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: -50 }}
       transition={{ duration: 0.3 }}
-      className="px-4 py-4 md:py-6 w-full"
+      className="px-4 py-4 md:py-6 w-full relative"
     >
       {/* Progress bar */}
       <div className="mb-4 md:mb-6">
@@ -525,13 +565,13 @@ function QuestionScreen({
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05 }}
             onClick={() => onSelect(index)}
-            disabled={selectedChoice !== null}
+            disabled={isSubmitting}
             className={`
               w-full p-3 md:p-4 text-left rounded-lg md:rounded-xl border-2 transition-all duration-300
               ${
                 selectedChoice === index
                   ? "border-primary bg-primary/10 scale-[1.02]"
-                  : selectedChoice !== null
+                  : isSubmitting
                   ? "border-muted bg-muted/30 opacity-50"
                   : "border-border hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]"
               }
@@ -555,6 +595,21 @@ function QuestionScreen({
           </motion.button>
         ))}
       </div>
+      
+      {/* Undo Button */}
+      {canGoBack && (
+        <div className="mt-4 md:mt-6 flex justify-center">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBack}
+            className="text-muted-foreground hover:text-foreground gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Undo Previous Answer
+          </Button>
+        </div>
+      )}
     </motion.div>
   );
 }

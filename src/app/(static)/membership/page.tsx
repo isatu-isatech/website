@@ -4,6 +4,7 @@ import {
   ISATechDecoration,
   ISATechDecorationCenter,
 } from "@/components/assets/decorations";
+import { OptimizedImage } from "@/components/common";
 import { ImageCycleProps } from "@/components/common/image-cycle";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
@@ -120,10 +121,15 @@ function MembershipPageHeroSection() {
                 lead our society and bring technopreneurship to life.
               </h5>
             </div>
-            <div className="flex w-full justify-center md:justify-start">
+            <div className="flex w-full justify-center md:justify-start gap-2">
               <Link href="#apply" className="text-caption">
                 <Button variant={"default"} size={"lg"}>
                   Apply Now
+                </Button>
+              </Link>
+              <Link href="/quiz" className="text-caption">
+                <Button variant={"ghost"} size={"lg"}>
+                  Take the Quiz
                 </Button>
               </Link>
             </div>
@@ -234,12 +240,13 @@ function MembershipPageTeamSection() {
                 <div className="w-full rounded-2xl bg-gray-300/50 md:rounded-4xl">
                   <div className="flex w-full flex-col items-center justify-start gap-4 rounded-2xl px-4 py-6 backdrop-blur-2xl md:rounded-4xl lg:py-8">
                     <div className="bg-secondary flex aspect-square w-3/4 items-center justify-center rounded-2xl p-4 md:rounded-3xl">
-                      <Image
+                      <OptimizedImage
                         src={member.path}
                         alt={member.role}
                         height={1000}
                         width={1000}
                         className="h-full w-full object-contain"
+                        brandPlaceholder
                       />
                     </div>
                     <div className="flex flex-col items-center gap-2 text-center">

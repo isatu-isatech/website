@@ -78,6 +78,13 @@ export const metadata: Metadata = {
     "tech enthusiasts",
     "aspiring entrepreneurs",
     "innovators",
+    // 4H Quiz keywords
+    "4H personality quiz",
+    "founder archetype",
+    "Hustler Hacker Hipster Hound",
+    "startup team roles",
+    "entrepreneur personality test",
+    "team building quiz",
   ],
   authors: [{ name: "ISATech Society", url: "https://isatech.club" }],
   creator: "ISATech Creatives Team",

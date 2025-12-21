@@ -31,6 +31,7 @@ const navLinks: {
       // { label: "Achievements", href: "/" },
       { label: "About Us", href: "/about#" },
       { label: "Contact Us", href: "/contact#" },
+      { label: "Quiz", href: "/quiz#" },
     ],
   },
   {
