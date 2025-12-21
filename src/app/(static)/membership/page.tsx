@@ -7,6 +7,8 @@ import {
 import ImageCycleComponent, { ImageCycleProps } from "@/components/image-cycle";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
+import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
+import { TopographyTexture } from "@/components/texture/topography";
 import {
   GraduationCap,
   Handshake,
@@ -19,7 +21,6 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import MembershipPageReasonSection from "./lanyard-section";
-import { TopographyTexture } from "@/components/texture/topography";
 
 /**
  * ################################################################################
@@ -548,6 +549,12 @@ function MembershipPageCoreSection() {
 export default function MembershipPage() {
   return (
     <div>
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Membership", path: "/membership" },
+        ]}
+      />
       <MembershipPageHeroSection />
       <MembershipPageReasonSection />
       <MembershipPageTeamSection />

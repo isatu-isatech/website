@@ -4,12 +4,13 @@ import {
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
 import { ISATechLogoMark } from "@/components/assets/logos";
+import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
+import { HomepageContactSection } from "@/components/home/contact-section";
+import { TopographyTexture } from "@/components/texture/topography";
 import { RocketIcon, TargetIcon } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
 import AboutUsAdvisersSection, { AdviserProps } from "./carousel";
-import { HomepageContactSection } from "../page";
-import { TopographyTexture } from "@/components/texture/topography";
 
 /**
  * ################################################################################
@@ -290,6 +291,12 @@ function AboutUsInitiativesSection() {
 export default function AboutUsPage() {
   return (
     <div className="flex flex-col items-center justify-center">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", path: "/" },
+          { name: "About Us", path: "/about" },
+        ]}
+      />
       <AboutUsHeroSection />
       <AboutUsDescriptionSection />
       <AboutUsEmpowermentSection />
