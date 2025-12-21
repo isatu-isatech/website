@@ -1,6 +1,6 @@
 "use client";
 
-import CountUpComponent from "@/components/count-up";
+import { CountUpComponent } from "@/components/common";
 
 const heroStats: { quantity: string; description: string }[] = [
   { quantity: "5+", description: "Startups Established" },

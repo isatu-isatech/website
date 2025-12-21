@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import React from "react";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
 import {
   Sheet,
@@ -10,23 +10,10 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "./ui/sheet";
-import { ISATechLogoMark } from "./assets/logos";
+} from "@/components/ui/sheet";
+import { ISATechLogoMark } from "@/components/assets/logos";
 import { redirect } from "next/navigation";
-
-/**
- * ################################################################################
- * #################################### CONFIG ####################################
- * ################################################################################
- */
-// List of navigation links
-// This can be extended or modified as needed; Max of 5.
-// If more links are needed, consider redesigning the header layout.
-const navLinks: { label: string; href: string }[] = [
-  // { label: "Achievements", href: "/" },
-  { label: "About Us", href: "/about#" },
-  { label: "Contact Us", href: "/contact#" },
-];
+import { NAV_LINKS } from "@/lib/constants";
 
 /**
  * ################################################################################
@@ -48,8 +35,8 @@ export default function HeaderComponent() {
         </Link>
         <div className="flex items-center gap-2 md:gap-2 lg:gap-4">
           <div className="hidden items-center gap-1 md:flex">
-            {navLinks.map((link) => (
-              <Link href={link.href} key={link.label}>
+            {NAV_LINKS.filter((link) => link.href !== "/" && link.href !== "/membership").map((link) => (
+              <Link href={`${link.href}#`} key={link.label}>
                 <Button variant={"ghost"} size={"sm"}>
                   <p className="text-caption">{link.label}</p>
                 </Button>
@@ -83,9 +70,9 @@ export default function HeaderComponent() {
                   <SheetTitle className="hidden">Navigation Menu</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col items-start gap-4 px-2">
-                  {navLinks.map((link) => (
+                  {NAV_LINKS.filter((link) => link.href !== "/" && link.href !== "/membership").map((link) => (
                     <Link
-                      href={link.href}
+                      href={`${link.href}#`}
                       className="w-full px-2 py-1"
                       key={link.label}
                     >

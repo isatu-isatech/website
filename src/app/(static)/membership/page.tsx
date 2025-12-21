@@ -4,7 +4,7 @@ import {
   ISATechDecoration,
   ISATechDecorationCenter,
 } from "@/components/assets/decorations";
-import { ImageCycleProps } from "@/components/image-cycle";
+import { ImageCycleProps } from "@/components/common/image-cycle";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
 import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
@@ -22,7 +22,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 
-const ImageCycleComponent = dynamic(() => import("@/components/image-cycle"));
+const ImageCycleComponent = dynamic(() => import("@/components/common/image-cycle"));
 const MembershipPageReasonSection = dynamic(() => import("./lanyard-section"));
 
 /**

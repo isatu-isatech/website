@@ -1,13 +1,13 @@
 import { Metadata } from "next";
 import { Poppins, Chivo } from "next/font/google";
 import "@/app/globals.css";
-import FooterComponent from "@/components/footer";
-import HeaderComponent from "@/components/header";
+import { FooterComponent, HeaderComponent } from "@/components/layout";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import NextTopLoader from "nextjs-toploader";
+import { SITE_CONFIG, COLORS, GRADIENTS } from "@/lib/constants";
 
 const poppins = Poppins({
   variable: "--font-poppins",

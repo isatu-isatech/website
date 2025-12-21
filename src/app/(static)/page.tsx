@@ -6,7 +6,7 @@ import { HomepageOfferSection } from "@/components/home/offer-section";
 import { HomepagePartnersSection } from "@/components/home/partners-section";
 import { HomepageStatsSection } from "@/components/home/stats-section";
 import { HomepageTeamSection } from "@/components/home/team-section";
-import ScrollVelocityComponent from "@/components/scroll-velocity";
+import { ScrollVelocityComponent } from "@/components/common";
 import { Metadata } from "next";
 
 /**

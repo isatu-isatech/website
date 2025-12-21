@@ -1,18 +1,16 @@
 "use client";
 
-import React, { ForwardRefExoticComponent, RefAttributes } from "react";
-import { Button } from "./ui/button";
+import React from "react";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  Facebook,
-  Linkedin,
-  LucideIcon,
-  LucideProps,
-  Mail,
-} from "lucide-react";
+import { Facebook, Linkedin, LucideIcon, Mail } from "lucide-react";
 import Image from "next/image";
-import { FooterArchDecoration, ISATechDecoration } from "./assets/decorations";
-import { ISATechLogoType } from "./assets/logos";
+import {
+  FooterArchDecoration,
+  ISATechDecoration,
+} from "@/components/assets/decorations";
+import { ISATechLogoType } from "@/components/assets/logos";
+import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants";
 
 /**
  * ################################################################################
@@ -50,21 +48,16 @@ const navLinks: {
     ],
   },
 ];
-// List of social links
-// This can be extended or modified as needed; Max of 5.
-// If more links are needed, consider redesigning the footer layout.
+
+// List of social links using centralized constants
 const socialLinks: {
-  emoji: ForwardRefExoticComponent<
-    Omit<LucideProps, "ref"> & RefAttributes<SVGSVGElement>
-  >;
+  icon: LucideIcon;
   href: string;
+  label: string;
 }[] = [
-  { emoji: Mail, href: "mailto:isatech@isatu.edu.ph" },
-  { emoji: Facebook, href: "https://www.facebook.com/ISATech.ISATU" },
-  {
-    emoji: Linkedin,
-    href: "https://www.linkedin.com/company/isatech-society/",
-  },
+  { icon: Mail, href: `mailto:${SOCIAL_LINKS.email}`, label: "Email" },
+  { icon: Facebook, href: SOCIAL_LINKS.facebook, label: "Facebook" },
+  { icon: Linkedin, href: SOCIAL_LINKS.linkedin, label: "LinkedIn" },
 ];
 
 /**
@@ -134,10 +127,16 @@ export default function FooterComponent() {
             </div>
           </div>
           <div className="flex w-full items-center gap-3">
-            {socialLinks.map((social, key) => {
-              const Icon: LucideIcon = social.emoji;
+            {socialLinks.map((social) => {
+              const Icon = social.icon;
               return (
-                <Button asChild size={"icon"} variant={"accent"} key={key}>
+                <Button
+                  asChild
+                  size={"icon"}
+                  variant={"accent"}
+                  key={social.label}
+                  aria-label={social.label}
+                >
                   <Link href={social.href} target="_blank">
                     <Icon />
                   </Link>
@@ -151,8 +150,9 @@ export default function FooterComponent() {
       <div className="bg-secondary flex w-full justify-center">
         <div className="flex w-full max-w-6xl items-center justify-center px-12 py-2 text-center">
           <p className="text-micro">
-            © 2025 ISATech Society. All rights reserved. All logos and brands
-            are property of their respective owners. Made by ISATech Creatives.
+            © {new Date().getFullYear()} {SITE_CONFIG.name}. All rights
+            reserved. All logos and brands are property of their respective
+            owners. Made by ISATech Creatives.
           </p>
         </div>
       </div>
