@@ -77,7 +77,7 @@ export default function CountUpComponent({
             onEnd();
           }
         },
-        delay * 1000 + duration * 1000
+        delay * 1000 + duration * 1000,
       );
 
       return () => {
@@ -110,7 +110,7 @@ export default function CountUpComponent({
         };
 
         const formattedNumber = Intl.NumberFormat("en-US", options).format(
-          latest
+          latest,
         );
 
         ref.current.textContent = separator

@@ -60,18 +60,20 @@ export function LoadingSpinner({
           <span
             key={i}
             className={cn(
-              "rounded-full bg-primary animate-bounce",
+              "bg-primary animate-bounce rounded-full",
               size === "xs" && "h-1 w-1",
               size === "sm" && "h-1.5 w-1.5",
               size === "md" && "h-2 w-2",
               size === "lg" && "h-2.5 w-2.5",
-              size === "xl" && "h-3 w-3"
+              size === "xl" && "h-3 w-3",
             )}
             style={{ animationDelay: `${i * 150}ms` }}
           />
         ))}
         {showText && (
-          <span className={cn("ml-2 text-muted-foreground", textSizeClasses[size])}>
+          <span
+            className={cn("text-muted-foreground ml-2", textSizeClasses[size])}
+          >
             {text}
           </span>
         )}
@@ -82,7 +84,12 @@ export function LoadingSpinner({
   if (variant === "pulse") {
     return (
       <div className={cn("flex items-center gap-2", className)}>
-        <div className={cn("animate-pulse rounded-full bg-primary", sizeClasses[size])} />
+        <div
+          className={cn(
+            "bg-primary animate-pulse rounded-full",
+            sizeClasses[size],
+          )}
+        />
         {showText && (
           <span className={cn("text-muted-foreground", textSizeClasses[size])}>
             {text}
@@ -96,7 +103,7 @@ export function LoadingSpinner({
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <svg
-        className={cn("animate-spin text-primary", sizeClasses[size])}
+        className={cn("text-primary animate-spin", sizeClasses[size])}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -138,13 +145,13 @@ export function FullPageLoader({
   return (
     <div
       className={cn(
-        "fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm",
-        className
+        "bg-background/80 fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm",
+        className,
       )}
     >
       <div className="flex flex-col items-center gap-4">
         <LoadingSpinner size="xl" />
-        <p className="text-lg font-medium text-foreground">{text}</p>
+        <p className="text-foreground text-lg font-medium">{text}</p>
       </div>
     </div>
   );
@@ -153,11 +160,7 @@ export function FullPageLoader({
 /**
  * InlineLoader - A small inline loading indicator
  */
-export function InlineLoader({
-  className,
-}: {
-  className?: string;
-}) {
+export function InlineLoader({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-1", className)}>
       <LoadingSpinner size="xs" />

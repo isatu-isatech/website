@@ -6,7 +6,10 @@ import { HomepageOfferSection } from "@/components/home/offer-section";
 import { HomepagePartnersSection } from "@/components/home/partners-section";
 import { HomepageStatsSection } from "@/components/home/stats-section";
 import { HomepageTeamSection } from "@/components/home/team-section";
-import { ScrollVelocityComponent, SectionErrorBoundary } from "@/components/common";
+import {
+  ScrollVelocityComponent,
+  SectionErrorBoundary,
+} from "@/components/common";
 import { Metadata } from "next";
 
 /**
@@ -108,4 +111,3 @@ export default function Homepage() {
     </div>
   );
 }
-

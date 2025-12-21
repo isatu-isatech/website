@@ -42,8 +42,7 @@ export const COLORS = {
 export const GRADIENTS = {
   primary: "linear-gradient(to right, #203C90, #FFAC03)",
   primaryVertical: "linear-gradient(to bottom, #203C90, #FFAC03)",
-  goldShine:
-    "linear-gradient(135deg, #FFAC03 0%, #FFD700 50%, #FFAC03 100%)",
+  goldShine: "linear-gradient(135deg, #FFAC03 0%, #FFD700 50%, #FFAC03 100%)",
 } as const;
 
 export const SHADOWS = {

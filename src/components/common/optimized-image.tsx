@@ -60,7 +60,6 @@ export function OptimizedImage({
   src,
   alt,
   className,
-  showSkeleton = false,
   skeletonClassName,
   placeholderType = "blur",
   brandPlaceholder = false,
@@ -89,8 +88,8 @@ export function OptimizedImage({
         {/* Skeleton placeholder */}
         <div
           className={cn(
-            "absolute inset-0 animate-pulse rounded bg-muted",
-            skeletonClassName
+            "bg-muted absolute inset-0 animate-pulse rounded",
+            skeletonClassName,
           )}
         />
         {/* Hidden image that loads in background */}
@@ -111,8 +110,8 @@ export function OptimizedImage({
     return (
       <div
         className={cn(
-          "flex items-center justify-center bg-muted text-muted-foreground",
-          className
+          "bg-muted text-muted-foreground flex items-center justify-center",
+          className,
         )}
         style={{
           width: props.width,
@@ -132,7 +131,7 @@ export function OptimizedImage({
       className={cn(
         "transition-opacity duration-300",
         isLoading ? "opacity-0" : "opacity-100",
-        className
+        className,
       )}
       placeholder={placeholderType === "blur" ? "blur" : undefined}
       blurDataURL={
@@ -167,14 +166,14 @@ export function ImagePlaceholder({
   return (
     <div
       className={cn(
-        "flex items-center justify-center rounded bg-muted",
+        "bg-muted flex items-center justify-center rounded",
         animated && "animate-pulse",
-        className
+        className,
       )}
       style={{ width, height }}
     >
       <svg
-        className="h-10 w-10 text-muted-foreground/50"
+        className="text-muted-foreground/50 h-10 w-10"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"

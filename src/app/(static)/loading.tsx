@@ -10,8 +10,8 @@ export default function Loading() {
       {/* Animated Logo */}
       <div className="relative flex items-center justify-center">
         {/* Pulse ring */}
-        <div className="absolute h-24 w-24 animate-ping rounded-full bg-primary/20" />
-        <div className="absolute h-20 w-20 animate-pulse rounded-full bg-primary/30" />
+        <div className="bg-primary/20 absolute h-24 w-24 animate-ping rounded-full" />
+        <div className="bg-primary/30 absolute h-20 w-20 animate-pulse rounded-full" />
         {/* Logo */}
         <div className="relative z-10 animate-pulse">
           <ISATechLogoMark className="h-16 w-auto" />
@@ -20,8 +20,8 @@ export default function Loading() {
 
       {/* Loading text */}
       <div className="flex flex-col items-center gap-2">
-        <p className="text-lg font-medium text-foreground">Loading...</p>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-foreground text-lg font-medium">Loading...</p>
+        <p className="text-muted-foreground text-sm">
           Please wait while we prepare the page
         </p>
       </div>
@@ -29,15 +29,15 @@ export default function Loading() {
       {/* Animated dots */}
       <div className="flex gap-1.5">
         <span
-          className="h-2 w-2 animate-bounce rounded-full bg-primary"
+          className="bg-primary h-2 w-2 animate-bounce rounded-full"
           style={{ animationDelay: "0ms" }}
         />
         <span
-          className="h-2 w-2 animate-bounce rounded-full bg-primary"
+          className="bg-primary h-2 w-2 animate-bounce rounded-full"
           style={{ animationDelay: "150ms" }}
         />
         <span
-          className="h-2 w-2 animate-bounce rounded-full bg-primary"
+          className="bg-primary h-2 w-2 animate-bounce rounded-full"
           style={{ animationDelay: "300ms" }}
         />
       </div>

@@ -35,7 +35,9 @@ export default function HeaderComponent() {
         </Link>
         <div className="flex items-center gap-2 md:gap-2 lg:gap-4">
           <div className="hidden items-center gap-1 md:flex">
-            {NAV_LINKS.filter((link) => link.href !== "/" && link.href !== "/membership").map((link) => (
+            {NAV_LINKS.filter(
+              (link) => link.href !== "/" && link.href !== "/membership",
+            ).map((link) => (
               <Link href={`${link.href}#`} key={link.label}>
                 <Button variant={"ghost"} size={"sm"}>
                   <p className="text-caption">{link.label}</p>
@@ -70,7 +72,9 @@ export default function HeaderComponent() {
                   <SheetTitle className="hidden">Navigation Menu</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col items-start gap-4 px-2">
-                  {NAV_LINKS.filter((link) => link.href !== "/" && link.href !== "/membership").map((link) => (
+                  {NAV_LINKS.filter(
+                    (link) => link.href !== "/" && link.href !== "/membership",
+                  ).map((link) => (
                     <Link
                       href={`${link.href}#`}
                       className="w-full px-2 py-1"

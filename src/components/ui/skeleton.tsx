@@ -24,11 +24,11 @@ export function Skeleton({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-md bg-muted",
+        "bg-muted relative overflow-hidden rounded-md",
         "before:absolute before:inset-0",
         "before:-translate-x-full before:animate-[shimmer_2s_infinite]",
         "before:bg-gradient-to-r before:from-transparent before:via-white/20 before:to-transparent",
-        className
+        className,
       )}
       {...props}
     />
@@ -52,7 +52,7 @@ export function SkeletonText({
           key={i}
           className={cn(
             "h-4",
-            i === lines - 1 ? "w-3/4" : "w-full" // Last line is shorter
+            i === lines - 1 ? "w-3/4" : "w-full", // Last line is shorter
           )}
         />
       ))}
@@ -67,8 +67,8 @@ export function SkeletonCard({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "flex flex-col gap-4 rounded-xl border bg-card p-4",
-        className
+        "bg-card flex flex-col gap-4 rounded-xl border p-4",
+        className,
       )}
     >
       <Skeleton className="h-40 w-full rounded-lg" />
@@ -99,9 +99,7 @@ export function SkeletonAvatar({
   };
 
   return (
-    <Skeleton
-      className={cn("rounded-full", sizeClasses[size], className)}
-    />
+    <Skeleton className={cn("rounded-full", sizeClasses[size], className)} />
   );
 }
 
@@ -122,9 +120,7 @@ export function SkeletonButton({
   };
 
   return (
-    <Skeleton
-      className={cn("rounded-md", sizeClasses[size], className)}
-    />
+    <Skeleton className={cn("rounded-md", sizeClasses[size], className)} />
   );
 }
 
@@ -136,7 +132,7 @@ export function SectionSkeleton({ className }: { className?: string }) {
     <section
       className={cn(
         "flex w-full flex-col items-center justify-center gap-6 px-6 py-16",
-        className
+        className,
       )}
     >
       <div className="flex w-full max-w-6xl flex-col items-center gap-6">

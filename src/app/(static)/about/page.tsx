@@ -301,23 +301,23 @@ export default function AboutUsPage() {
         ]}
       />
       <AboutUsHeroSection />
-      
+
       <SectionErrorBoundary sectionName="Description">
         <AboutUsDescriptionSection />
       </SectionErrorBoundary>
-      
+
       <SectionErrorBoundary sectionName="Empowerment">
         <AboutUsEmpowermentSection />
       </SectionErrorBoundary>
-      
+
       <SectionErrorBoundary sectionName="Initiatives">
         <AboutUsInitiativesSection />
       </SectionErrorBoundary>
-      
+
       <SectionErrorBoundary sectionName="Advisers">
         <AboutUsAdvisersSection advisers={advisers} />
       </SectionErrorBoundary>
-      
+
       <SectionErrorBoundary sectionName="Contact">
         <HomepageContactSection />
       </SectionErrorBoundary>

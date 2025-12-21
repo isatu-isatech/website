@@ -13,7 +13,7 @@ type BreakpointKey = keyof typeof BREAKPOINTS;
  */
 export function useBreakpoint(
   breakpoint: BreakpointKey,
-  direction: "up" | "down" = "up"
+  direction: "up" | "down" = "up",
 ): boolean {
   const [matches, setMatches] = useState(false);
 

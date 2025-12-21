@@ -22,7 +22,9 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
 
-const ImageCycleComponent = dynamic(() => import("@/components/common/image-cycle"));
+const ImageCycleComponent = dynamic(
+  () => import("@/components/common/image-cycle"),
+);
 const MembershipPageReasonSection = dynamic(() => import("./lanyard-section"));
 
 /**

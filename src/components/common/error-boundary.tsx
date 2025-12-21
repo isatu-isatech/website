@@ -110,16 +110,16 @@ export class ErrorBoundary extends Component<
       // Default error UI
       return (
         <div
-          className={`flex min-h-[200px] w-full flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-destructive/50 bg-destructive/5 p-6 text-center ${className || ""}`}
+          className={`border-destructive/50 bg-destructive/5 flex min-h-[200px] w-full flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-6 text-center ${className || ""}`}
           role="alert"
           aria-live="assertive"
         >
           <div className="flex flex-col items-center gap-2">
-            <div className="rounded-full bg-destructive/10 p-3">
-              <AlertTriangle className="h-6 w-6 text-destructive" />
+            <div className="bg-destructive/10 rounded-full p-3">
+              <AlertTriangle className="text-destructive h-6 w-6" />
             </div>
             <h3 className="text-lg font-semibold">Something went wrong</h3>
-            <p className="text-sm text-muted-foreground max-w-sm">
+            <p className="text-muted-foreground max-w-sm text-sm">
               An error occurred while rendering this section. Please try again.
             </p>
           </div>
@@ -127,10 +127,10 @@ export class ErrorBoundary extends Component<
           {/* Error details (shown in development or when showDetails is true) */}
           {(showDetails || process.env.NODE_ENV === "development") && error && (
             <details className="w-full max-w-md text-left">
-              <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
+              <summary className="text-muted-foreground hover:text-foreground cursor-pointer text-sm">
                 View error details
               </summary>
-              <pre className="mt-2 overflow-auto rounded bg-muted p-3 text-xs">
+              <pre className="bg-muted mt-2 overflow-auto rounded p-3 text-xs">
                 <code>{error.message}</code>
                 {error.stack && (
                   <>
@@ -169,7 +169,7 @@ export class ErrorBoundary extends Component<
  */
 export function withErrorBoundary<P extends object>(
   WrappedComponent: React.ComponentType<P>,
-  errorBoundaryProps?: Omit<ErrorBoundaryProps, "children">
+  errorBoundaryProps?: Omit<ErrorBoundaryProps, "children">,
 ): React.FC<P> {
   const displayName =
     WrappedComponent.displayName || WrappedComponent.name || "Component";

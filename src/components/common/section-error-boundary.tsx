@@ -48,7 +48,7 @@ export class SectionErrorBoundary extends Component<
   }
 
   static getDerivedStateFromError(
-    error: Error
+    error: Error,
   ): Partial<SectionErrorBoundaryState> {
     return { hasError: true, error };
   }
@@ -58,7 +58,7 @@ export class SectionErrorBoundary extends Component<
 
     console.error(
       `SectionErrorBoundary${sectionName ? ` (${sectionName})` : ""} caught an error:`,
-      error
+      error,
     );
 
     if (onError) {
@@ -79,10 +79,10 @@ export class SectionErrorBoundary extends Component<
         // Compact inline error display
         return (
           <div
-            className="flex w-full items-center justify-center gap-3 rounded-lg bg-muted/50 px-4 py-6 text-muted-foreground"
+            className="bg-muted/50 text-muted-foreground flex w-full items-center justify-center gap-3 rounded-lg px-4 py-6"
             role="alert"
           >
-            <AlertCircle className="h-5 w-5 text-destructive" />
+            <AlertCircle className="text-destructive h-5 w-5" />
             <span className="text-sm">
               {sectionName
                 ? `Failed to load ${sectionName}`
@@ -109,18 +109,18 @@ export class SectionErrorBoundary extends Component<
           aria-live="polite"
         >
           <div className="flex flex-col items-center gap-3 text-center">
-            <div className="rounded-full bg-muted p-3">
-              <AlertCircle className="h-8 w-8 text-muted-foreground" />
+            <div className="bg-muted rounded-full p-3">
+              <AlertCircle className="text-muted-foreground h-8 w-8" />
             </div>
             <div className="flex flex-col gap-1">
-              <h3 className="text-lg font-medium text-foreground">
+              <h3 className="text-foreground text-lg font-medium">
                 {sectionName
                   ? `Unable to load ${sectionName}`
                   : "Section temporarily unavailable"}
               </h3>
-              <p className="max-w-md text-sm text-muted-foreground">
-                We're having trouble displaying this content. Don't worry, the
-                rest of the page should work fine.
+              <p className="text-muted-foreground max-w-md text-sm">
+                We&apos;re having trouble displaying this content. Don&apos;t
+                worry, the rest of the page should work fine.
               </p>
             </div>
             <Button
