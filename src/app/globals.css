@@ -166,6 +166,7 @@
 
   html {
     scroll-behavior: smooth !important;
+    scroll-padding-top: 4rem;
   }
 
   body {
