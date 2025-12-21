@@ -39,6 +39,7 @@ module.exports = {
     // Define all pages with custom config
     const pages = [
       { path: "/", priority: 1.0, changefreq: "daily" },
+      { path: "/quiz", priority: 0.7, changefreq: "weekly" },
       { path: "/about", priority: 0.9, changefreq: "monthly" },
       { path: "/membership", priority: 0.9, changefreq: "monthly" },
       { path: "/contact", priority: 0.8, changefreq: "monthly" },
