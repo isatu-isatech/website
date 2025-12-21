@@ -4,8 +4,8 @@ import {
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
 import { ISATechLogoMark } from "@/components/assets/logos";
-import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
 import { HomepageContactSection } from "@/components/home/contact-section";
+import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
 import { TopographyTexture } from "@/components/texture/topography";
 import { RocketIcon, TargetIcon } from "lucide-react";
 import { Metadata } from "next";

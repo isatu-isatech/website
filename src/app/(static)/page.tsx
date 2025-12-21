@@ -1,6 +1,6 @@
+import { HomepageHeroSection } from "@/components/home/hero-section";
 import { HomepageAboutSection } from "@/components/home/about-section";
 import { HomepageContactSection } from "@/components/home/contact-section";
-import { HomepageHeroSection } from "@/components/home/hero-section";
 import { HomepageKwadraSection } from "@/components/home/kwadra-section";
 import { HomepageOfferSection } from "@/components/home/offer-section";
 import { HomepagePartnersSection } from "@/components/home/partners-section";
