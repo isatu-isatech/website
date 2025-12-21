@@ -6,7 +6,7 @@ import { HomepageOfferSection } from "@/components/home/offer-section";
 import { HomepagePartnersSection } from "@/components/home/partners-section";
 import { HomepageStatsSection } from "@/components/home/stats-section";
 import { HomepageTeamSection } from "@/components/home/team-section";
-import { ScrollVelocityComponent } from "@/components/common";
+import { ScrollVelocityComponent, SectionErrorBoundary } from "@/components/common";
 import { Metadata } from "next";
 
 /**
@@ -56,22 +56,56 @@ export const metadata: Metadata = {
 export default function Homepage() {
   return (
     <div className="flex w-full flex-col items-center justify-center">
+      {/* Hero section - critical, no error boundary needed as it's simple */}
       <HomepageHeroSection />
-      <HomepageStatsSection />
-      <HomepageAboutSection />
-      <HomepagePartnersSection />
-      <HomepageKwadraSection />
-      <HomepageTeamSection />
-      <div className="flex w-full items-center justify-center overflow-hidden">
-        <ScrollVelocityComponent
-          texts={["DREAM • INNOVATE • SUCCEED •"]}
-          velocity={50}
-          numCopies={5}
-          className="opacity-10"
-        />
-      </div>
-      <HomepageOfferSection />
-      <HomepageContactSection />
+
+      {/* Stats section with error boundary */}
+      <SectionErrorBoundary sectionName="Statistics">
+        <HomepageStatsSection />
+      </SectionErrorBoundary>
+
+      {/* About section with error boundary */}
+      <SectionErrorBoundary sectionName="About">
+        <HomepageAboutSection />
+      </SectionErrorBoundary>
+
+      {/* Partners section with error boundary */}
+      <SectionErrorBoundary sectionName="Partners" compact>
+        <HomepagePartnersSection />
+      </SectionErrorBoundary>
+
+      {/* Kwadra section with error boundary */}
+      <SectionErrorBoundary sectionName="Kwadra TBI">
+        <HomepageKwadraSection />
+      </SectionErrorBoundary>
+
+      {/* Team section with error boundary */}
+      <SectionErrorBoundary sectionName="Team">
+        <HomepageTeamSection />
+      </SectionErrorBoundary>
+
+      {/* Scroll velocity - decorative, compact error handling */}
+      <SectionErrorBoundary compact>
+        <div className="flex w-full items-center justify-center overflow-hidden">
+          <ScrollVelocityComponent
+            texts={["DREAM • INNOVATE • SUCCEED •"]}
+            velocity={50}
+            numCopies={5}
+            className="opacity-10"
+          />
+        </div>
+      </SectionErrorBoundary>
+
+      {/* Offer section with error boundary */}
+      <SectionErrorBoundary sectionName="What We Offer">
+        <HomepageOfferSection />
+      </SectionErrorBoundary>
+
+      {/* Contact section with error boundary */}
+      <SectionErrorBoundary sectionName="Contact">
+        <HomepageContactSection />
+      </SectionErrorBoundary>
     </div>
   );
 }
+

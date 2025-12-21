@@ -1,7 +1,7 @@
 "use client";
 
 import { TopographyTexture } from "@/components/texture/topography";
-import Image from "next/image";
+import { OptimizedImage } from "@/components/common";
 
 const homepagePartners = [
   {
@@ -53,13 +53,14 @@ export function HomepagePartnersSection() {
         <div className="flex w-full flex-wrap items-center justify-center gap-x-10 gap-y-10 md:justify-center md:gap-20">
           {homepagePartners.map((partner, key) => (
             <div className="w-fit justify-center" key={key}>
-              <Image
+              <OptimizedImage
                 src={partner.src}
                 alt={partner.alt}
                 width={partner.width}
                 height={partner.height}
                 className={partner.className}
                 sizes={partner.sizes}
+                brandPlaceholder
               />
             </div>
           ))}
@@ -68,3 +69,4 @@ export function HomepagePartnersSection() {
     </section>
   );
 }
+

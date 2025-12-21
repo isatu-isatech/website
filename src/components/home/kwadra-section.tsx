@@ -3,7 +3,7 @@
 import { ISATechDecorationLeft } from "@/components/assets/decorations";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { OptimizedImage } from "@/components/common";
 import Link from "next/link";
 
 export function HomepageKwadraSection() {
@@ -38,13 +38,14 @@ export function HomepageKwadraSection() {
       <div className="flex w-full max-w-6xl flex-col items-center justify-center gap-6 md:flex-row">
         {/* Main Image Container */}
         <div className="flex w-full items-center justify-center md:w-1/2">
-          <Image
+          <OptimizedImage
             src="/assets/logos/kwadra-tbi.png"
             alt="KWADRA TBI Icon"
             width={1080}
             height={1080}
             className="h-[150px] w-[150px] md:h-[290px] md:w-[290px]"
             sizes="(min-width: 780px) 290px, 150px"
+            brandPlaceholder
           />
         </div>
         {/* Section Content Container */}

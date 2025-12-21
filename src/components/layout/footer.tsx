@@ -4,7 +4,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Facebook, Linkedin, LucideIcon, Mail } from "lucide-react";
-import Image from "next/image";
+import { OptimizedImage } from "@/components/common";
 import {
   FooterArchDecoration,
   ISATechDecoration,
@@ -78,13 +78,14 @@ export default function FooterComponent() {
           color="#FFAC03"
         />
         <div className="absolute right-0 bottom-0 h-fit w-2/3 lg:w-1/3 xl:w-1/4">
-          <Image
+          <OptimizedImage
             src="/assets/decorations/4h-horizontal.png"
             alt="4H Footer Decoration"
             width={1060}
             height={385}
             sizes="(min-width: 1280px) 25.06vw, (min-width: 1040px) 33.64vw, 50.14vw"
             className="pointer-events-none h-auto w-full object-cover"
+            brandPlaceholder
           />
         </div>
 
