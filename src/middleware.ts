@@ -4,52 +4,28 @@ import { NextRequest, NextResponse } from "next/server";
  * Middleware for Next.js Application
  *
  * This middleware implements:
- * - Strict Content Security Policy (CSP) with nonce-based script execution
- * - Security headers for enhanced protection
- * - Request tracking and logging capabilities
+ * - Content Security Policy (CSP) for enhanced security
+ * - Security headers for protection against common attacks
  *
- * The nonce is generated per-request and passed to the layout via headers
- * to enable inline scripts while maintaining strict CSP.
+ * Note: We use 'unsafe-inline' for scripts because Next.js relies on
+ * inline scripts that are difficult to properly nonce. This is the
+ * standard approach for Next.js applications.
  */
 export function middleware(request: NextRequest) {
-  // Generate a unique nonce for this request using globalThis for explicit global access
-  const nonce = Buffer.from(globalThis.crypto.randomUUID()).toString("base64");
-
-  // Define a strict Content Security Policy
+  // Define Content Security Policy
   // Detect environment: local dev vs preview vs production
   const isDevelopment = process.env.NODE_ENV === "development";
-  const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
-  const isProduction = process.env.NODE_ENV === "production" && !isPreview;
 
-  // For preview/dev, use a relaxed CSP without 'strict-dynamic' to allow Next.js inline scripts
-  // For production, use strict-dynamic with nonce-based execution
-  const cspHeader = isProduction
-    ? `
+  // Use 'unsafe-inline' for scripts because Next.js relies on inline scripts
+  // that are difficult to properly nonce. This is the standard approach for Next.js apps.
+  // Production still maintains strong security through other headers and directives.
+  const cspHeader = `
     default-src 'self';
-    script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval' https://challenges.cloudflare.com https://va.vercel-scripts.com;
-    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-    img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com;
-    font-src 'self' https://fonts.gstatic.com;
-    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com;
-    frame-src 'self' https://www.youtube-nocookie.com https://challenges.cloudflare.com https://www.openstreetmap.org;
-    media-src 'self' https://www.youtube-nocookie.com;
-    worker-src 'self' blob:;
-    child-src 'self' blob:;
-    object-src 'none';
-    base-uri 'self';
-    form-action 'self';
-    frame-ancestors 'none';
-    manifest-src 'self';
-    upgrade-insecure-requests;
-    block-all-mixed-content;
-  `
-    : `
-    default-src 'self';
-    script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://va.vercel-scripts.com https://vercel.live https://*.vercel.app ${isDevelopment ? "https://cdn.jsdelivr.net" : ""};
+    script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://va.vercel-scripts.com ${isDevelopment ? "https://vercel.live https://*.vercel.app https://cdn.jsdelivr.net" : ""};
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com ${isDevelopment ? "https://*.githubusercontent.com" : ""};
     font-src 'self' https://fonts.gstatic.com;
-    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com https://vercel.live ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app;
+    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ${isDevelopment ? "https://vercel.live ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app" : ""};
     frame-src 'self' https://www.youtube-nocookie.com https://challenges.cloudflare.com https://www.openstreetmap.org;
     media-src 'self' https://www.youtube-nocookie.com;
     worker-src 'self' blob:;
@@ -59,6 +35,7 @@ export function middleware(request: NextRequest) {
     form-action 'self';
     frame-ancestors 'none';
     manifest-src 'self';
+    ${!isDevelopment ? "upgrade-insecure-requests;" : ""}
   `;
 
   // Replace newline characters and spaces
@@ -67,7 +44,6 @@ export function middleware(request: NextRequest) {
     .trim();
 
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-nonce", nonce);
   requestHeaders.set(
     "Content-Security-Policy",
     contentSecurityPolicyHeaderValue,
