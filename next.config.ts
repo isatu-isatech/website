@@ -1,5 +1,12 @@
 import type { NextConfig } from "next";
 import withBundleAnalyzer from "@next/bundle-analyzer";
+import withSerwistInit from "@serwist/next";
+
+const withSerwist = withSerwistInit({
+  // Note: This is where you point to your service worker file
+  swSrc: "src/app/sw.ts",
+  swDest: "public/sw.js",
+});
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
@@ -31,4 +38,4 @@ const bundleAnalyzer = withBundleAnalyzer({
   enabled: process.env.ANALYZE === "true",
 });
 
-export default bundleAnalyzer(nextConfig);
+export default bundleAnalyzer(withSerwist(nextConfig));

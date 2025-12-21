@@ -24,6 +24,9 @@
     "@react-three/drei": "^10.6.1",
     "@react-three/fiber": "^9.2.0",
     "@react-three/rapier": "^2.1.0",
+    "@serwist/next": "^9.3.0",
+    "@serwist/precaching": "^9.3.0",
+    "@serwist/sw": "^9.3.0",
     "@upstash/ratelimit": "^2.0.6",
     "@vercel/analytics": "^1.5.0",
     "@vercel/kv": "^3.0.0",
@@ -50,6 +53,7 @@
     "zod": "^4.0.10"
   },
   "devDependencies": {
+    "@babel/core": "^7.28.5",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/canvas-confetti": "^1.9.0",
