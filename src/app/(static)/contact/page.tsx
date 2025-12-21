@@ -11,9 +11,10 @@ import {
   LucideRocket,
   MailIcon,
 } from "lucide-react";
-import Link from "next/link";
-import { Toaster } from "@/components/ui/sonner";
 import { Metadata } from "next";
+import Link from "next/link";
+import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
+import { Toaster } from "@/components/ui/sonner";
 import ContactUsForm from "./form";
 
 /**
@@ -196,6 +197,12 @@ function ContactUsSocialLinksSection() {
 export default function ContactPage() {
   return (
     <main className="flex flex-col items-center justify-center">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Contact Us", path: "/contact" },
+        ]}
+      />
       <ContactUsPartnerSection />
       <ContactUsFormSection />
       <ContactUsSocialLinksSection />

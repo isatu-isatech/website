@@ -166,6 +166,7 @@
 
   html {
     scroll-behavior: smooth !important;
+    scroll-padding-top: 4rem;
   }
 
   body {
@@ -230,4 +231,11 @@
 
 .text-label {
   @apply text-sm font-medium md:text-base lg:text-lg;
+}
+
+/* Shimmer animation for skeleton loading */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import PerlinNoiseTexture from "@/components/shaders/perlin";
+import { TopographyTexture } from "@/components/texture/topography";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 
@@ -14,9 +14,9 @@ export default function MembershipPageReasonSection() {
       id="reason"
       className="bg-primary relative flex w-full items-center justify-center overflow-hidden px-6 lg:px-16"
     >
-      <PerlinNoiseTexture
-        color="#FFAC03"
-        className="absolute h-full w-full opacity-20"
+      <TopographyTexture
+        color="#ececec"
+        className="absolute h-full w-full opacity-10"
       />
       <LanyardComponent
         position={[0, 0, 11]}

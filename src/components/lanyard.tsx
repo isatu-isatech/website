@@ -29,6 +29,7 @@ declare module "@react-three/fiber" {
 
 useGLTF.preload("/assets/decorations/models/card.glb");
 useTexture.preload("/assets/decorations/lanyard.png");
+useTexture.preload("/assets/decorations/card.jpg");
 
 // Register meshline components for JSX usage
 extend({
@@ -133,7 +134,11 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
   };
 
   const { nodes, materials } = useGLTF("/assets/decorations/models/card.glb");
-  const texture = useTexture("/assets/decorations/lanyard.png");
+  const lanyardTexture = useTexture("/assets/decorations/lanyard.png");
+  const cardTexture = useTexture("/assets/decorations/card.jpg");
+
+  // Fix texture orientation and offset
+  cardTexture.flipY = false; // Fix vertical flip
 
   const [curve] = useState(
     () =>
@@ -203,7 +208,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
   });
 
   curve.curveType = "chordal";
-  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+  lanyardTexture.wrapS = lanyardTexture.wrapT = THREE.RepeatWrapping;
 
   return (
     <>
@@ -268,7 +273,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
           >
             <mesh geometry={(nodes.card as THREE.Mesh).geometry}>
               <meshPhysicalMaterial
-                map={(materials.base as THREE.MeshStandardMaterial).map}
+                map={cardTexture}
                 map-anisotropy={16}
                 clearcoat={1}
                 clearcoatRoughness={0.15}
@@ -295,7 +300,7 @@ function Band({ maxSpeed = 50, minSpeed = 0 }: BandProps) {
           depthTest={false}
           resolution={[size.width, size.height]}
           useMap
-          map={texture}
+          map={lanyardTexture}
           repeat={[-4, 1]}
           lineWidth={1}
         />

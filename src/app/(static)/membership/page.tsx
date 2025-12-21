@@ -4,10 +4,12 @@ import {
   ISATechDecoration,
   ISATechDecorationCenter,
 } from "@/components/assets/decorations";
-import ImageCycleComponent, { ImageCycleProps } from "@/components/image-cycle";
-import PerlinNoiseTexture from "@/components/shaders/perlin";
+import { OptimizedImage } from "@/components/common";
+import { ImageCycleProps } from "@/components/common/image-cycle";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
+import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
+import { TopographyTexture } from "@/components/texture/topography";
 import {
   GraduationCap,
   Handshake,
@@ -17,9 +19,14 @@ import {
   Users,
 } from "lucide-react";
 import { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import Link from "next/link";
-import MembershipPageReasonSection from "./lanyard-section";
+
+const ImageCycleComponent = dynamic(
+  () => import("@/components/common/image-cycle"),
+);
+const MembershipPageReasonSection = dynamic(() => import("./lanyard-section"));
 
 /**
  * ################################################################################
@@ -114,10 +121,15 @@ function MembershipPageHeroSection() {
                 lead our society and bring technopreneurship to life.
               </h5>
             </div>
-            <div className="flex w-full justify-center md:justify-start">
+            <div className="flex w-full justify-center md:justify-start gap-2">
               <Link href="#apply" className="text-caption">
                 <Button variant={"default"} size={"lg"}>
                   Apply Now
+                </Button>
+              </Link>
+              <Link href="/quiz" className="text-caption">
+                <Button variant={"ghost"} size={"lg"}>
+                  Take the Quiz
                 </Button>
               </Link>
             </div>
@@ -228,12 +240,13 @@ function MembershipPageTeamSection() {
                 <div className="w-full rounded-2xl bg-gray-300/50 md:rounded-4xl">
                   <div className="flex w-full flex-col items-center justify-start gap-4 rounded-2xl px-4 py-6 backdrop-blur-2xl md:rounded-4xl lg:py-8">
                     <div className="bg-secondary flex aspect-square w-3/4 items-center justify-center rounded-2xl p-4 md:rounded-3xl">
-                      <Image
+                      <OptimizedImage
                         src={member.path}
                         alt={member.role}
                         height={1000}
                         width={1000}
                         className="h-full w-full object-contain"
+                        brandPlaceholder
                       />
                     </div>
                     <div className="flex flex-col items-center gap-2 text-center">
@@ -498,7 +511,7 @@ function MembershipPageCoreSection() {
     >
       {/* Decorations */}
       <div className="absolute -z-1 flex h-full w-full items-center justify-center opacity-80">
-        <PerlinNoiseTexture
+        <TopographyTexture
           color="#E6E6E7"
           className="absolute h-full w-full opacity-20"
         />
@@ -548,6 +561,12 @@ function MembershipPageCoreSection() {
 export default function MembershipPage() {
   return (
     <div>
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Membership", path: "/membership" },
+        ]}
+      />
       <MembershipPageHeroSection />
       <MembershipPageReasonSection />
       <MembershipPageTeamSection />

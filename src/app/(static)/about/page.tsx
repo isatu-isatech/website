@@ -4,12 +4,13 @@ import {
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
 import { ISATechLogoMark } from "@/components/assets/logos";
-import PerlinNoiseTexture from "@/components/shaders/perlin";
+import { OptimizedImage, SectionErrorBoundary } from "@/components/common";
+import { HomepageContactSection } from "@/components/home/contact-section";
+import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
+import { TopographyTexture } from "@/components/texture/topography";
 import { RocketIcon, TargetIcon } from "lucide-react";
 import { Metadata } from "next";
-import Image from "next/image";
 import AboutUsAdvisersSection, { AdviserProps } from "./carousel";
-import { HomepageContactSection } from "../page";
 
 /**
  * ################################################################################
@@ -128,7 +129,7 @@ function AboutUsHeroSection() {
         </div>
         {/* 4H Decoration */}
         <div className="hidden w-fit items-center justify-center sm:flex sm:w-full">
-          <Image
+          <OptimizedImage
             src="/assets/decorations/4h-vertical.png"
             alt="4H Vertical Pose"
             width={279}
@@ -136,6 +137,7 @@ function AboutUsHeroSection() {
             className="h-32 w-fit md:h-64"
             sizes="(min-width: 780px) 217px, 109px"
             priority
+            brandPlaceholder
           />
         </div>
         {/* ISATech Logo Decoration */}
@@ -162,7 +164,7 @@ function AboutUsDescriptionSection() {
       <div className="flex w-full max-w-6xl flex-col items-center">
         {/* Text Content */}
         <div className="bg-accent relative flex w-full max-w-6xl flex-col items-center justify-between gap-4 overflow-hidden rounded-3xl px-6 lg:px-20">
-          <Image
+          <OptimizedImage
             src="/assets/decorations/tradeanovate-grouphoto.jpg"
             alt="Tradeanovate Group Photo"
             width={1695}
@@ -221,7 +223,7 @@ function AboutUsEmpowermentSection() {
       className="bg-primary relative flex w-full items-center justify-center px-6 py-14 md:py-6 lg:px-16"
       id="empowerment"
     >
-      <PerlinNoiseTexture
+      <TopographyTexture
         color="#FFAC03"
         className="absolute h-full w-full opacity-20"
       />
@@ -237,13 +239,14 @@ function AboutUsEmpowermentSection() {
           </h5>
         </div>
         <div className="w-fill flex items-center justify-center">
-          <Image
+          <OptimizedImage
             src="/assets/decorations/poststamp-sticker.png"
             alt="ISATech Society Reseach Hub Stamp"
             width={436}
             height={346}
             sizes="(min-width: 1040px) 403px, (min-width: 540px) 448px, calc(89.09vw - 15px)"
             className="z-1 h-auto w-full max-w-md lg:h-80 lg:w-auto"
+            brandPlaceholder
           />
         </div>
       </div>
@@ -259,13 +262,14 @@ function AboutUsInitiativesSection() {
     >
       <div className="flex w-full max-w-6xl grid-cols-1 flex-col gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
         <div className="w-fill flex items-center justify-center">
-          <Image
+          <OptimizedImage
             src="/assets/decorations/tagline-sticker.png"
             alt="Dream Innovate Succeed Sticker"
             width={436}
             height={303}
             sizes="(min-width: 540px) 448px, calc(89.09vw - 15px)"
             className="z-1 h-auto w-full max-w-md lg:h-80 lg:w-auto"
+            brandPlaceholder
           />
         </div>
         <div className="w-fill flex items-center justify-center">
@@ -290,12 +294,33 @@ function AboutUsInitiativesSection() {
 export default function AboutUsPage() {
   return (
     <div className="flex flex-col items-center justify-center">
+      <BreadcrumbSchema
+        items={[
+          { name: "Home", path: "/" },
+          { name: "About Us", path: "/about" },
+        ]}
+      />
       <AboutUsHeroSection />
-      <AboutUsDescriptionSection />
-      <AboutUsEmpowermentSection />
-      <AboutUsInitiativesSection />
-      <AboutUsAdvisersSection advisers={advisers} />
-      <HomepageContactSection />
+
+      <SectionErrorBoundary sectionName="Description">
+        <AboutUsDescriptionSection />
+      </SectionErrorBoundary>
+
+      <SectionErrorBoundary sectionName="Empowerment">
+        <AboutUsEmpowermentSection />
+      </SectionErrorBoundary>
+
+      <SectionErrorBoundary sectionName="Initiatives">
+        <AboutUsInitiativesSection />
+      </SectionErrorBoundary>
+
+      <SectionErrorBoundary sectionName="Advisers">
+        <AboutUsAdvisersSection advisers={advisers} />
+      </SectionErrorBoundary>
+
+      <SectionErrorBoundary sectionName="Contact">
+        <HomepageContactSection />
+      </SectionErrorBoundary>
     </div>
   );
 }

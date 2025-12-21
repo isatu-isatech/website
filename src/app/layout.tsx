@@ -1,9 +1,6 @@
 import { Metadata } from "next";
 import { Poppins, Chivo } from "next/font/google";
 import "@/app/globals.css";
-import { headers } from "next/headers";
-import FooterComponent from "@/components/footer";
-import HeaderComponent from "@/components/header";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { Analytics } from "@vercel/analytics/react";
@@ -14,12 +11,14 @@ const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
   weight: ["400", "700"],
+  preload: true,
 });
 
 const chivo = Chivo({
   variable: "--font-chivo",
   subsets: ["latin"],
   weight: ["400", "700"],
+  preload: true,
 });
 
 /**
@@ -27,6 +26,12 @@ const chivo = Chivo({
  * ################################### METADATA ###################################
  * ################################################################################
  */
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://isatech.club"),
   title: {
@@ -35,6 +40,52 @@ export const metadata: Metadata = {
   },
   description:
     "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+  keywords: [
+    // Core brand keywords
+    "ISATech Society",
+    "ISATech",
+    "ISAT U",
+    "ISATU",
+    "Iloilo Science and Technology University",
+    // Location keywords
+    "Iloilo",
+    "Iloilo City",
+    "Western Visayas",
+    "Philippines",
+    // Activity keywords
+    "technopreneurship",
+    "student founders",
+    "student entrepreneurship",
+    "innovation",
+    "startups",
+    "startup incubator",
+    "technology business incubator",
+    "student organization",
+    // Program keywords
+    "hackathons",
+    "coding competitions",
+    "tech seminars",
+    "workshops",
+    "training programs",
+    "tech community",
+    // Partnerships
+    "KWADRA TBI",
+    "Kwadra Technology Business Incubator",
+    "UMWAD",
+    "university research",
+    // Target audience
+    "students",
+    "tech enthusiasts",
+    "aspiring entrepreneurs",
+    "innovators",
+    // 4H Quiz keywords
+    "4H personality quiz",
+    "founder archetype",
+    "Hustler Hacker Hipster Hound",
+    "startup team roles",
+    "entrepreneur personality test",
+    "team building quiz",
+  ],
   authors: [{ name: "ISATech Society", url: "https://isatech.club" }],
   creator: "ISATech Creatives Team",
   publisher: "ISATech Society",
@@ -81,11 +132,20 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
+    site: "@ISATech",
+    creator: "@ISATech",
     title: "ISATech Society",
     description:
       "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
-    images: ["/assets/seo/ogimage.jpg"],
+    images: {
+      url: "/assets/seo/ogimage.jpg",
+      alt: "ISATech Society - Empowering Student Founders",
+    },
   },
+  alternates: {
+    canonical: "https://isatech.club",
+  },
+  manifest: "/manifest.json",
   other: {
     preload: ["/assets/seo/favicon-light.ico", "/assets/seo/favicon-dark.ico"],
   },
@@ -96,19 +156,13 @@ export const metadata: Metadata = {
  * #################################### LAYOUT ####################################
  * ################################################################################
  */
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Read the nonce set by middleware on the incoming request so we can apply
-  // it to inline <script nonce="..."> tags and satisfy the CSP.
-  const headersList = headers() as unknown as {
-    get: (key: string) => string | null;
-  };
-  const nonce = headersList.get("x-nonce") ?? undefined;
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${poppins.variable} ${chivo.variable} antialiased`}>
         <NextTopLoader
           showSpinner={false}
@@ -116,32 +170,47 @@ export default function RootLayout({
           height={3}
         />
         <CookieConsentProvider>
-          <HeaderComponent />
           {children}
-          <FooterComponent />
           <Toaster />
         </CookieConsentProvider>
+        {/* Analytics components - scripts are loaded with 'strict-dynamic' CSP */}
         <Analytics />
         <SpeedInsights />
+        {/* Schema.org structured data for SEO */}
         <script
           type="application/ld+json"
-          nonce={nonce}
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
               "@type": "Organization",
               name: "ISATech Society",
+              alternateName: "ISATech",
               url: "https://isatech.club",
               logo: "https://isatech.club/assets/seo/logo.png",
+              description:
+                "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
+              foundingDate: "2021",
+              address: {
+                "@type": "PostalAddress",
+                addressCountry: "PH",
+                addressLocality: "Iloilo City",
+                addressRegion: "Western Visayas",
+              },
               contactPoint: {
                 "@type": "ContactPoint",
                 contactType: "customer support",
                 url: "https://isatech.club/contact",
+                availableLanguage: ["English", "Filipino"],
               },
               sameAs: [
                 "https://www.facebook.com/ISATech.ISATU",
                 "https://www.linkedin.com/company/isatech-society/",
-                // Add other social media links here if available
+              ],
+              knowsAbout: [
+                "Technopreneurship",
+                "Innovation",
+                "Startups",
+                "Student Entrepreneurship",
               ],
             }),
           }}
