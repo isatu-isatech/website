@@ -134,7 +134,7 @@ export function QuizContainer() {
       top1[1] === top2[1] && top2[1] === top3[1] && top3[1] === top4[1];
 
     let role: string;
-    let primaryArchetype: ArchetypeKey = top1[0];
+    const primaryArchetype: ArchetypeKey = top1[0];
     let secondaryArchetype: ArchetypeKey | null = null;
 
     if (isGeneralist) {
@@ -190,7 +190,6 @@ export function QuizContainer() {
               return { ...newState, currentQuestionIndex: prev.currentQuestionIndex + 1 };
             } else {
               // Check if we need tiebreaker
-              const total = Object.values(newScores).reduce((a, b) => a + b, 0);
               const sortedScores = Object.entries(newScores).sort(
                 ([, a], [, b]) => b - a
               ) as [ArchetypeKey, number][];
