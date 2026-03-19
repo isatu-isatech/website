@@ -117,7 +117,7 @@ export function QuizContainer() {
       if (previousAnswer) {
         // Find index of the previous answer in the STABLE choices
         const index = currentQuestion.choices.findIndex(
-          (c) => c.choice === previousAnswer.choice
+          (c) => c.choice === previousAnswer.choice,
         );
         if (index !== -1) {
           setSelectedChoice(index);
@@ -137,16 +137,20 @@ export function QuizContainer() {
     if (total === 0) return null;
 
     const sortedScores = Object.entries(scores).sort(
-      ([, a], [, b]) => b - a
+      ([, a], [, b]) => b - a,
     ) as [ArchetypeKey, number][];
 
     const [top1, top2, top3, top4] = sortedScores;
 
     // Check for ties that need resolution
     const needsTieBreaker =
-      top1[1] === top2[1] || (top2[1] === top3[1] && top1[1] - top2[1] < SCORE_THRESHOLD);
+      top1[1] === top2[1] ||
+      (top2[1] === top3[1] && top1[1] - top2[1] < SCORE_THRESHOLD);
 
-    if (needsTieBreaker && state.usedTieBreakers < state.shuffledTieBreakers.length) {
+    if (
+      needsTieBreaker &&
+      state.usedTieBreakers < state.shuffledTieBreakers.length
+    ) {
       return { needsTieBreaker: true };
     }
 
@@ -219,7 +223,7 @@ export function QuizContainer() {
             } else {
               // Check if we need tiebreaker
               const sortedScores = Object.entries(newScores).sort(
-                ([, a], [, b]) => b - a
+                ([, a], [, b]) => b - a,
               ) as [ArchetypeKey, number][];
               const [top1, top2, top3] = sortedScores;
               const needsTie =
@@ -233,7 +237,7 @@ export function QuizContainer() {
           } else if (prev.phase === "tiebreaker") {
             // Check if still needs tiebreaker
             const sortedScores = Object.entries(newScores).sort(
-              ([, a], [, b]) => b - a
+              ([, a], [, b]) => b - a,
             ) as [ArchetypeKey, number][];
             const [top1, top2, top3] = sortedScores;
             const stillNeedsTie =
@@ -252,7 +256,7 @@ export function QuizContainer() {
         });
       }, 600);
     },
-    [selectedChoice, currentQuestion, state.scores]
+    [currentQuestion, state.scores],
   );
 
   // Handle going back
@@ -333,7 +337,10 @@ export function QuizContainer() {
 
   const progress = useMemo(() => {
     if (state.phase === "quiz") {
-      return ((state.currentQuestionIndex + 1) / state.shuffledQuestions.length) * 100;
+      return (
+        ((state.currentQuestionIndex + 1) / state.shuffledQuestions.length) *
+        100
+      );
     } else if (state.phase === "tiebreaker") {
       return 100;
     }
@@ -363,7 +370,7 @@ export function QuizContainer() {
         shareUrl.searchParams.set("generalist", "true");
       }
       const url = shareUrl.toString();
-      
+
       if (navigator.share) {
         navigator.share({ title: "4H Personality Quiz", text, url });
       } else {
@@ -374,7 +381,7 @@ export function QuizContainer() {
   }, [result]);
 
   return (
-    <div className="relative w-full max-w-4xl mx-auto h-full flex flex-col justify-center">
+    <div className="relative mx-auto flex h-full w-full max-w-4xl flex-col justify-center">
       <AnimatePresence mode="wait">
         {/* Intro Phase */}
         {state.phase === "intro" && (
@@ -382,32 +389,33 @@ export function QuizContainer() {
         )}
 
         {/* Quiz & Tiebreaker Phase */}
-        {(state.phase === "quiz" || state.phase === "tiebreaker") && currentQuestion && (
-          <QuestionScreen
-            key={`question-${state.currentQuestionIndex}-${state.phase}`}
-            question={currentQuestion}
-            shuffledChoices={currentQuestion.choices}
-            selectedChoice={selectedChoice}
-            onSelect={handleAnswer}
-            progress={progress}
-            questionNumber={
-              state.phase === "quiz"
-                ? state.currentQuestionIndex + 1
-                : state.shuffledQuestions.length + state.usedTieBreakers + 1
-            }
-            totalQuestions={
-              state.phase === "quiz"
-                ? state.shuffledQuestions.length
-                : state.shuffledQuestions.length + 1
-            }
-            isTieBreaker={state.phase === "tiebreaker"}
-            onBack={handleBack}
-            canGoBack={
-              state.phase === "tiebreaker" || state.currentQuestionIndex > 0
-            }
-            isSubmitting={isSubmitting}
-          />
-        )}
+        {(state.phase === "quiz" || state.phase === "tiebreaker") &&
+          currentQuestion && (
+            <QuestionScreen
+              key={`question-${state.currentQuestionIndex}-${state.phase}`}
+              question={currentQuestion}
+              shuffledChoices={currentQuestion.choices}
+              selectedChoice={selectedChoice}
+              onSelect={handleAnswer}
+              progress={progress}
+              questionNumber={
+                state.phase === "quiz"
+                  ? state.currentQuestionIndex + 1
+                  : state.shuffledQuestions.length + state.usedTieBreakers + 1
+              }
+              totalQuestions={
+                state.phase === "quiz"
+                  ? state.shuffledQuestions.length
+                  : state.shuffledQuestions.length + 1
+              }
+              isTieBreaker={state.phase === "tiebreaker"}
+              onBack={handleBack}
+              canGoBack={
+                state.phase === "tiebreaker" || state.currentQuestionIndex > 0
+              }
+              isSubmitting={isSubmitting}
+            />
+          )}
 
         {/* Result Phase */}
         {state.phase === "result" && isFinalResult(result) && (
@@ -433,7 +441,7 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="flex flex-col items-center justify-center text-center px-4 py-4 md:py-6"
+      className="flex flex-col items-center justify-center px-4 py-4 text-center md:py-6"
     >
       {/* Floating 4H images */}
       <div className="relative mb-4 md:mb-6">
@@ -442,25 +450,30 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           className="flex items-center justify-center gap-3 md:gap-6"
         >
-          {(['Hustler', 'Hacker', 'Hipster', 'Hound'] as const).map((archetype) => (
-            <div key={archetype} className="relative w-12 h-12 md:w-14 md:h-14 lg:w-16 lg:h-16">
-              <Image
-                src={archetypeIcons[archetype]}
-                alt={archetype}
-                fill
-                className="object-contain"
-              />
-            </div>
-          ))}
+          {(["Hustler", "Hacker", "Hipster", "Hound"] as const).map(
+            (archetype) => (
+              <div
+                key={archetype}
+                className="relative h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16"
+              >
+                <Image
+                  src={archetypeIcons[archetype]}
+                  alt={archetype}
+                  fill
+                  className="object-contain"
+                />
+              </div>
+            ),
+          )}
         </motion.div>
       </div>
 
-      <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-3 bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+      <h1 className="from-primary via-secondary to-primary mb-2 bg-gradient-to-r bg-clip-text text-2xl font-bold text-transparent md:mb-3 md:text-3xl lg:text-4xl">
         4H Personality Quiz
       </h1>
-      
-      <p className="text-base md:text-lg text-muted-foreground max-w-xl mb-4 md:mb-6">
-        Discover your founder archetype! 
+
+      <p className="text-muted-foreground mb-4 max-w-xl text-base md:mb-6 md:text-lg">
+        Discover your founder archetype!
         <br />
         Are you a <strong className="text-amber-500">Hustler</strong>,{" "}
         <strong className="text-blue-500">Hacker</strong>,{" "}
@@ -471,7 +484,7 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
       <Button
         onClick={onStart}
         size="lg"
-        className="group relative overflow-hidden bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-500 text-white px-6 py-4 md:px-8 md:py-5 text-base md:text-lg shadow-xl hover:shadow-2xl transition-all duration-300"
+        className="group from-primary hover:from-primary/90 relative overflow-hidden bg-gradient-to-r to-blue-600 px-6 py-4 text-base text-white shadow-xl transition-all duration-300 hover:to-blue-500 hover:shadow-2xl md:px-8 md:py-5 md:text-lg"
       >
         <Sparkles className="mr-2 size-4 md:size-5" />
         Start the Quiz
@@ -483,7 +496,7 @@ function IntroScreen({ onStart }: { onStart: () => void }) {
         />
       </Button>
 
-      <p className="mt-3 text-xs md:text-sm text-muted-foreground">
+      <p className="text-muted-foreground mt-3 text-xs md:text-sm">
         ⏱️ Takes about 3-5 minutes
       </p>
     </motion.div>
@@ -516,101 +529,101 @@ function QuestionScreen({
   isSubmitting: boolean;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 50 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -50 }}
-      transition={{ duration: 0.3 }}
-      className="px-4 py-4 md:py-6 w-full relative"
-    >
+    <div className="relative w-full px-4 py-4 md:py-6">
       {/* Progress bar */}
       <div className="mb-4 md:mb-6">
-        <div className="flex justify-between items-center mb-1">
-          <span className="text-xs md:text-sm font-medium text-muted-foreground">
+        <div className="mb-1 flex items-center justify-between">
+          <span className="text-muted-foreground text-xs font-medium md:text-sm">
             {isTieBreaker ? (
               <span className="text-secondary">⚡ Tiebreaker Round</span>
             ) : (
               `Question ${questionNumber} of ${totalQuestions}`
             )}
           </span>
-          <span className="text-xs md:text-sm font-medium text-muted-foreground">
+          <span className="text-muted-foreground text-xs font-medium md:text-sm">
             {Math.round(progress)}%
           </span>
         </div>
-        <div className="h-1.5 md:h-2 bg-muted rounded-full overflow-hidden">
+        <div className="bg-muted h-1.5 overflow-hidden rounded-full md:h-2">
           <motion.div
-            className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
-            initial={{ width: 0 }}
+            className="from-primary to-secondary h-full rounded-full bg-gradient-to-r"
+            initial={false}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.5 }}
           />
         </div>
       </div>
 
-      {/* Question */}
-      <motion.h2
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-lg md:text-xl lg:text-2xl font-bold text-center mb-4 md:mb-6"
+      {/* Question and Choices */}
+      <motion.div
+        layout
+        initial={{ opacity: 0, x: 0, y: 10 }}
+        animate={{ opacity: 1, x: 0, y: 0 }}
+        exit={{ opacity: 0, x: 0, y: -10 }}
+        transition={{ duration: 0.4, ease: "easeInOut" }}
+        className="relative"
       >
-        {question.question}
-      </motion.h2>
+        {/* Question */}
+        <motion.h2
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-4 text-center text-lg font-bold md:mb-6 md:text-xl lg:text-2xl"
+        >
+          {question.question}
+        </motion.h2>
 
-      {/* Choices */}
-      <div className="space-y-2 md:space-y-3">
-        {shuffledChoices.map((choice, index) => (
-          <motion.button
-            key={`${choice.choice}-${index}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.05 }}
-            onClick={() => onSelect(index)}
-            disabled={isSubmitting}
-            className={`
-              w-full p-3 md:p-4 text-left rounded-lg md:rounded-xl border-2 transition-all duration-300
-              ${
+        {/* Choices */}
+        <div className="space-y-2 md:space-y-3">
+          {shuffledChoices.map((choice, index) => (
+            <motion.button
+              key={`${choice.choice}-${index}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.05 }}
+              onClick={() => onSelect(index)}
+              disabled={isSubmitting}
+              className={`w-full rounded-lg border-2 p-3 text-left transition-all duration-300 md:rounded-xl md:p-4 ${
                 selectedChoice === index
                   ? "border-primary bg-primary/10 scale-[1.02]"
                   : isSubmitting
-                  ? "border-muted bg-muted/30 opacity-50"
-                  : "border-border hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]"
-              }
-            `}
-          >
-            <div className="flex items-center gap-2 md:gap-3">
-              <div
-                className={`
-                  w-6 h-6 md:w-8 md:h-8 rounded-full flex items-center justify-center text-xs md:text-sm font-bold flex-shrink-0
-                  ${
+                    ? "border-muted bg-muted/30 opacity-50"
+                    : "border-border hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]"
+              } `}
+            >
+              <div className="flex items-center gap-2 md:gap-3">
+                <div
+                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold md:h-8 md:w-8 md:text-sm ${
                     selectedChoice === index
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"
-                  }
-                `}
-              >
-                {String.fromCharCode(65 + index)}
+                  } `}
+                >
+                  {String.fromCharCode(65 + index)}
+                </div>
+                <span className="text-sm font-medium md:text-base">
+                  {choice.choice}
+                </span>
               </div>
-              <span className="font-medium text-sm md:text-base">{choice.choice}</span>
-            </div>
-          </motion.button>
-        ))}
-      </div>
-      
+            </motion.button>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Undo Button */}
       {canGoBack && (
-        <div className="mt-4 md:mt-6 flex justify-center">
+        <div className="mt-4 flex justify-center md:mt-6">
           <Button
             variant="ghost"
             size="sm"
             onClick={onBack}
             className="text-muted-foreground hover:text-foreground gap-2"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="h-4 w-4" />
             Undo Previous Answer
           </Button>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
 
@@ -636,21 +649,16 @@ function ResultScreen({
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0 }}
-      className="px-4 py-4 md:py-6 text-center w-full"
+      className="w-full px-4 py-4 text-center md:py-6"
     >
       {/* Result badge */}
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", delay: 0.2 }}
-        className={`
-          inline-flex flex-col items-center justify-center
-          w-24 h-24 md:w-32 md:h-32 rounded-full mb-4 md:mb-6
-          bg-gradient-to-br ${primaryColor}
-          shadow-2xl p-3 md:p-4
-        `}
+        className={`mb-4 inline-flex h-24 w-24 flex-col items-center justify-center rounded-full bg-gradient-to-br md:mb-6 md:h-32 md:w-32 ${primaryColor} p-3 shadow-2xl md:p-4`}
       >
-        <div className="relative w-full h-full">
+        <div className="relative h-full w-full">
           <Image
             src={primaryImage}
             alt={result.role}
@@ -665,12 +673,11 @@ function ResultScreen({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
-        <p className="text-muted-foreground text-sm md:text-base mb-1">You are a...</p>
+        <p className="text-muted-foreground mb-1 text-sm md:text-base">
+          You are a...
+        </p>
         <h2
-          className={`
-          text-2xl md:text-3xl lg:text-4xl font-bold mb-2 md:mb-3
-          bg-gradient-to-r ${primaryColor} bg-clip-text text-transparent
-        `}
+          className={`mb-2 bg-gradient-to-r text-2xl font-bold md:mb-3 md:text-3xl lg:text-4xl ${primaryColor} bg-clip-text text-transparent`}
         >
           {result.role}
         </h2>
@@ -680,7 +687,7 @@ function ResultScreen({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6 }}
-        className="text-sm md:text-base text-muted-foreground max-w-xl mx-auto mb-4 md:mb-6"
+        className="text-muted-foreground mx-auto mb-4 max-w-xl text-sm md:mb-6 md:text-base"
       >
         {result.description}
       </motion.p>
@@ -691,15 +698,17 @@ function ResultScreen({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
-          className="mb-4 md:mb-6 p-3 md:p-4 bg-card rounded-xl md:rounded-2xl border shadow-lg max-w-md mx-auto"
+          className="bg-card mx-auto mb-4 max-w-md rounded-xl border p-3 shadow-lg md:mb-6 md:rounded-2xl md:p-4"
         >
-          <h3 className="font-bold mb-2 md:mb-3 text-sm md:text-base">Your Archetype Breakdown</h3>
+          <h3 className="mb-2 text-sm font-bold md:mb-3 md:text-base">
+            Your Archetype Breakdown
+          </h3>
           <div className="space-y-2">
             {(Object.entries(result.breakdown) as [ArchetypeKey, number][])
               .sort(([, a], [, b]) => b - a)
               .map(([archetype, percentage]) => (
                 <div key={archetype} className="flex items-center gap-2">
-                  <div className="relative w-5 h-5 md:w-6 md:h-6 flex-shrink-0">
+                  <div className="relative h-5 w-5 flex-shrink-0 md:h-6 md:w-6">
                     <Image
                       src={archetypeIcons[archetype as ArchetypeKey]}
                       alt={archetype}
@@ -708,11 +717,13 @@ function ResultScreen({
                     />
                   </div>
                   <div className="flex-1">
-                    <div className="flex justify-between text-xs md:text-sm mb-0.5">
+                    <div className="mb-0.5 flex justify-between text-xs md:text-sm">
                       <span className="font-medium">{archetype}</span>
-                      <span className="text-muted-foreground">{percentage}%</span>
+                      <span className="text-muted-foreground">
+                        {percentage}%
+                      </span>
                     </div>
-                    <div className="h-1.5 bg-muted rounded-full overflow-hidden">
+                    <div className="bg-muted h-1.5 overflow-hidden rounded-full">
                       <motion.div
                         initial={{ width: 0 }}
                         animate={{ width: `${percentage}%` }}
@@ -734,13 +745,23 @@ function ResultScreen({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
-        className="flex flex-row gap-3 justify-center"
+        className="flex flex-row justify-center gap-3"
       >
-        <Button onClick={onShare} variant="secondary" size="default" className="gap-2">
+        <Button
+          onClick={onShare}
+          variant="secondary"
+          size="default"
+          className="gap-2"
+        >
           <Share2 className="size-4" />
           Share
         </Button>
-        <Button onClick={onReset} variant="outline" size="default" className="gap-2">
+        <Button
+          onClick={onReset}
+          variant="outline"
+          size="default"
+          className="gap-2"
+        >
           <RotateCcw className="size-4" />
           Retake
         </Button>
