@@ -1,25 +1,23 @@
 "use client";
 
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import {
   questions,
   tieBreakers,
   archetypes,
   adjectives,
-  archetypeGradients,
-  archetypeIcons,
   SCORE_THRESHOLD,
   type ArchetypeKey,
   type Question,
   type Choice,
 } from "@/lib/quiz-data";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft, RotateCcw, Share2, Sparkles } from "lucide-react";
 import confetti from "canvas-confetti";
-import Image from "next/image";
+import { IntroScreen } from "./intro-screen";
+import { QuestionScreen } from "./question-screen";
+import { ResultScreen } from "./result-screen";
+import { isFinalResult, type QuizResult } from "./types";
 
-// Utility to shuffle array
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -41,27 +39,6 @@ interface QuizState {
   answers: Choice[];
 }
 
-// Result types
-interface TieBreakerResult {
-  needsTieBreaker: true;
-}
-
-interface FinalResult {
-  needsTieBreaker: false;
-  role: string;
-  description: string;
-  primaryArchetype: ArchetypeKey;
-  secondaryArchetype: ArchetypeKey | null;
-  breakdown: Record<string, number>;
-  isGeneralist: boolean;
-}
-
-type QuizResult = TieBreakerResult | FinalResult | null;
-
-function isFinalResult(result: QuizResult): result is FinalResult {
-  return result !== null && !result.needsTieBreaker;
-}
-
 export function QuizContainer() {
   const [state, setState] = useState<QuizState>(() => ({
     phase: "intro",
@@ -76,7 +53,6 @@ export function QuizContainer() {
   const [selectedChoice, setSelectedChoice] = useState<number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Initialize shuffled questions when starting quiz
   const startQuiz = useCallback(() => {
     const shuffledQ = shuffleArray(questions).map((q) => ({
       ...q,
@@ -97,7 +73,6 @@ export function QuizContainer() {
     });
   }, []);
 
-  // Get current question based on phase
   const currentQuestion = useMemo(() => {
     if (state.phase === "quiz") {
       return state.shuffledQuestions[state.currentQuestionIndex];
@@ -107,30 +82,22 @@ export function QuizContainer() {
     return null;
   }, [state]);
 
-  // Restore selection when question changes
   useEffect(() => {
     if (currentQuestion) {
       setIsSubmitting(false);
 
-      // Check if we have a previous answer for this question
       const previousAnswer = state.answers[state.currentQuestionIndex];
       if (previousAnswer) {
-        // Find index of the previous answer in the STABLE choices
         const index = currentQuestion.choices.findIndex(
           (c) => c.choice === previousAnswer.choice,
         );
-        if (index !== -1) {
-          setSelectedChoice(index);
-        } else {
-          setSelectedChoice(null);
-        }
+        setSelectedChoice(index !== -1 ? index : null);
       } else {
         setSelectedChoice(null);
       }
     }
   }, [currentQuestion, state.answers, state.currentQuestionIndex]);
 
-  // Calculate result
   const result = useMemo((): QuizResult => {
     const { scores } = state;
     const total = Object.values(scores).reduce((a, b) => a + b, 0);
@@ -142,7 +109,6 @@ export function QuizContainer() {
 
     const [top1, top2, top3, top4] = sortedScores;
 
-    // Check for ties that need resolution
     const needsTieBreaker =
       top1[1] === top2[1] ||
       (top2[1] === top3[1] && top1[1] - top2[1] < SCORE_THRESHOLD);
@@ -154,7 +120,6 @@ export function QuizContainer() {
       return { needsTieBreaker: true };
     }
 
-    // Check for generalist (all scores equal)
     const isGeneralist =
       top1[1] === top2[1] && top2[1] === top3[1] && top3[1] === top4[1];
 
@@ -187,7 +152,6 @@ export function QuizContainer() {
     };
   }, [state]);
 
-  // Handle answer selection
   const handleAnswer = useCallback(
     (choiceIndex: number) => {
       if (!currentQuestion) return;
@@ -202,7 +166,6 @@ export function QuizContainer() {
         newScores[key as ArchetypeKey] += value;
       }
 
-      // Auto-advance after a short delay
       setTimeout(() => {
         setState((prev) => {
           const newState = {
@@ -221,7 +184,6 @@ export function QuizContainer() {
                 currentQuestionIndex: prev.currentQuestionIndex + 1,
               };
             } else {
-              // Check if we need tiebreaker
               const sortedScores = Object.entries(newScores).sort(
                 ([, a], [, b]) => b - a,
               ) as [ArchetypeKey, number][];
@@ -235,7 +197,6 @@ export function QuizContainer() {
               return { ...newState, phase: "result" };
             }
           } else if (prev.phase === "tiebreaker") {
-            // Check if still needs tiebreaker
             const sortedScores = Object.entries(newScores).sort(
               ([, a], [, b]) => b - a,
             ) as [ArchetypeKey, number][];
@@ -259,12 +220,10 @@ export function QuizContainer() {
     [currentQuestion, state.scores],
   );
 
-  // Handle going back
   const handleBack = useCallback(() => {
     setState((prev) => {
       if (prev.answers.length === 0) return prev;
 
-      // Logic to determine where we are going back TO
       let newPhase = prev.phase;
       let newIndex = prev.currentQuestionIndex;
       let newUsedTieBreakers = prev.usedTieBreakers;
@@ -273,7 +232,6 @@ export function QuizContainer() {
         if (prev.usedTieBreakers > 0) {
           newUsedTieBreakers--;
         } else {
-          // Go back to the last question of the main quiz
           newPhase = "quiz";
           newIndex = prev.shuffledQuestions.length - 1;
         }
@@ -283,7 +241,6 @@ export function QuizContainer() {
         }
       }
 
-      // Calculate new scores by reverting the answer of the target question
       const answerToUndo = prev.answers[newIndex];
       const revertedScores = { ...prev.scores };
 
@@ -296,16 +253,13 @@ export function QuizContainer() {
       return {
         ...prev,
         scores: revertedScores,
-        // Keep answers in history so we can highlight them
         phase: newPhase,
         currentQuestionIndex: newIndex,
         usedTieBreakers: newUsedTieBreakers,
       };
     });
-    // Don't reset selectedChoice here, let useEffect handle it based on history
   }, []);
 
-  // Trigger confetti on result
   useEffect(() => {
     if (state.phase === "result" && result && !result.needsTieBreaker) {
       const duration = 3000;
@@ -362,7 +316,6 @@ export function QuizContainer() {
   const shareResult = useCallback(() => {
     if (isFinalResult(result)) {
       const text = `I just took the 4H Personality Quiz and I'm a ${result.role}! 🎉\n\nDiscover your founder archetype at`;
-      // Generate shareable URL with result parameters for dynamic OG image
       const shareUrl = new URL("/quiz/result", window.location.origin);
       shareUrl.searchParams.set("role", result.role);
       shareUrl.searchParams.set("archetype", result.primaryArchetype);
@@ -383,12 +336,10 @@ export function QuizContainer() {
   return (
     <div className="relative mx-auto flex h-full w-full max-w-4xl flex-col justify-center">
       <AnimatePresence mode="wait">
-        {/* Intro Phase */}
         {state.phase === "intro" && (
           <IntroScreen key="intro" onStart={startQuiz} />
         )}
 
-        {/* Quiz & Tiebreaker Phase */}
         {(state.phase === "quiz" || state.phase === "tiebreaker") &&
           currentQuestion && (
             <QuestionScreen
@@ -417,7 +368,6 @@ export function QuizContainer() {
             />
           )}
 
-        {/* Result Phase */}
         {state.phase === "result" && isFinalResult(result) && (
           <ResultScreen
             key="result"
@@ -428,344 +378,5 @@ export function QuizContainer() {
         )}
       </AnimatePresence>
     </div>
-  );
-}
-
-// ====================
-// Sub-components
-// ====================
-
-function IntroScreen({ onStart }: { onStart: () => void }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="flex flex-col items-center justify-center px-4 py-4 text-center md:py-6"
-    >
-      {/* Floating 4H images */}
-      <div className="relative mb-4 md:mb-6">
-        <motion.div
-          animate={{ y: [-3, 3, -3] }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          className="flex items-center justify-center gap-3 md:gap-6"
-        >
-          {(["Hustler", "Hacker", "Hipster", "Hound"] as const).map(
-            (archetype) => (
-              <div
-                key={archetype}
-                className="relative h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16"
-              >
-                <Image
-                  src={archetypeIcons[archetype]}
-                  alt={archetype}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            ),
-          )}
-        </motion.div>
-      </div>
-
-      <h1 className="from-primary via-secondary to-primary mb-2 bg-gradient-to-r bg-clip-text text-2xl font-bold text-transparent md:mb-3 md:text-3xl lg:text-4xl">
-        4H Personality Quiz
-      </h1>
-
-      <p className="text-muted-foreground mb-4 max-w-xl text-base md:mb-6 md:text-lg">
-        Discover your founder archetype!
-        <br />
-        Are you a <strong className="text-amber-500">Hustler</strong>,{" "}
-        <strong className="text-blue-500">Hacker</strong>,{" "}
-        <strong className="text-pink-500">Hipster</strong>, or{" "}
-        <strong className="text-emerald-500">Hound</strong>?
-      </p>
-
-      <Button
-        onClick={onStart}
-        size="lg"
-        className="group from-primary hover:from-primary/90 relative overflow-hidden bg-gradient-to-r to-blue-600 px-6 py-4 text-base text-white shadow-xl transition-all duration-300 hover:to-blue-500 hover:shadow-2xl md:px-8 md:py-5 md:text-lg"
-      >
-        <Sparkles className="mr-2 size-4 md:size-5" />
-        Start the Quiz
-        <motion.div
-          className="absolute inset-0 bg-white/20"
-          initial={{ x: "-100%" }}
-          whileHover={{ x: "100%" }}
-          transition={{ duration: 0.5 }}
-        />
-      </Button>
-
-      <p className="text-muted-foreground mt-3 text-xs md:text-sm">
-        ⏱️ Takes about 3-5 minutes
-      </p>
-    </motion.div>
-  );
-}
-
-function QuestionScreen({
-  question,
-  shuffledChoices,
-  selectedChoice,
-  onSelect,
-  progress,
-  questionNumber,
-  totalQuestions,
-  isTieBreaker,
-  onBack,
-  canGoBack,
-  isSubmitting,
-}: {
-  question: Question;
-  shuffledChoices: Choice[];
-  selectedChoice: number | null;
-  onSelect: (index: number) => void;
-  progress: number;
-  questionNumber: number;
-  totalQuestions: number;
-  isTieBreaker: boolean;
-  onBack: () => void;
-  canGoBack: boolean;
-  isSubmitting: boolean;
-}) {
-  return (
-    <div className="relative w-full px-4 py-4 md:py-6">
-      {/* Progress bar */}
-      <div className="mb-4 md:mb-6">
-        <div className="mb-1 flex items-center justify-between">
-          <span className="text-muted-foreground text-xs font-medium md:text-sm">
-            {isTieBreaker ? (
-              <span className="text-secondary">⚡ Tiebreaker Round</span>
-            ) : (
-              `Question ${questionNumber} of ${totalQuestions}`
-            )}
-          </span>
-          <span className="text-muted-foreground text-xs font-medium md:text-sm">
-            {Math.round(progress)}%
-          </span>
-        </div>
-        <div className="bg-muted h-1.5 overflow-hidden rounded-full md:h-2">
-          <motion.div
-            className="from-primary to-secondary h-full rounded-full bg-gradient-to-r"
-            initial={false}
-            animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.5 }}
-          />
-        </div>
-      </div>
-
-      {/* Question and Choices */}
-      <motion.div
-        layout
-        initial={{ opacity: 0, x: 0, y: 10 }}
-        animate={{ opacity: 1, x: 0, y: 0 }}
-        exit={{ opacity: 0, x: 0, y: -10 }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
-        className="relative"
-      >
-        {/* Question */}
-        <motion.h2
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-4 text-center text-lg font-bold md:mb-6 md:text-xl lg:text-2xl"
-        >
-          {question.question}
-        </motion.h2>
-
-        {/* Choices */}
-        <div className="space-y-2 md:space-y-3">
-          {shuffledChoices.map((choice, index) => (
-            <motion.button
-              key={`${choice.choice}-${index}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              onClick={() => onSelect(index)}
-              disabled={isSubmitting}
-              className={`w-full rounded-lg border-2 p-3 text-left transition-all duration-300 md:rounded-xl md:p-4 ${
-                selectedChoice === index
-                  ? "border-primary bg-primary/10 scale-[1.02]"
-                  : isSubmitting
-                    ? "border-muted bg-muted/30 opacity-50"
-                    : "border-border hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]"
-              } `}
-            >
-              <div className="flex items-center gap-2 md:gap-3">
-                <div
-                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold md:h-8 md:w-8 md:text-sm ${
-                    selectedChoice === index
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  } `}
-                >
-                  {String.fromCharCode(65 + index)}
-                </div>
-                <span className="text-sm font-medium md:text-base">
-                  {choice.choice}
-                </span>
-              </div>
-            </motion.button>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* Undo Button */}
-      {canGoBack && (
-        <div className="mt-4 flex justify-center md:mt-6">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onBack}
-            className="text-muted-foreground hover:text-foreground gap-2"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Undo Previous Answer
-          </Button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function ResultScreen({
-  result,
-  onReset,
-  onShare,
-}: {
-  result: FinalResult;
-  onReset: () => void;
-  onShare: () => void;
-}) {
-  const primaryColor = result.isGeneralist
-    ? "from-violet-500 to-purple-600"
-    : archetypeGradients[result.primaryArchetype];
-
-  const primaryImage = result.isGeneralist
-    ? "/assets/decorations/4h-vertical.png"
-    : archetypeIcons[result.primaryArchetype];
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0 }}
-      className="w-full px-4 py-4 text-center md:py-6"
-    >
-      {/* Result badge */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        transition={{ type: "spring", delay: 0.2 }}
-        className={`mb-4 inline-flex h-24 w-24 flex-col items-center justify-center rounded-full bg-gradient-to-br md:mb-6 md:h-32 md:w-32 ${primaryColor} p-3 shadow-2xl md:p-4`}
-      >
-        <div className="relative h-full w-full">
-          <Image
-            src={primaryImage}
-            alt={result.role}
-            fill
-            className="object-contain"
-          />
-        </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-      >
-        <p className="text-muted-foreground mb-1 text-sm md:text-base">
-          You are a...
-        </p>
-        <h2
-          className={`mb-2 bg-gradient-to-r text-2xl font-bold md:mb-3 md:text-3xl lg:text-4xl ${primaryColor} bg-clip-text text-transparent`}
-        >
-          {result.role}
-        </h2>
-      </motion.div>
-
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="text-muted-foreground mx-auto mb-4 max-w-xl text-sm md:mb-6 md:text-base"
-      >
-        {result.description}
-      </motion.p>
-
-      {/* Score breakdown */}
-      {!result.isGeneralist && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="bg-card mx-auto mb-4 max-w-md rounded-xl border p-3 shadow-lg md:mb-6 md:rounded-2xl md:p-4"
-        >
-          <h3 className="mb-2 text-sm font-bold md:mb-3 md:text-base">
-            Your Archetype Breakdown
-          </h3>
-          <div className="space-y-2">
-            {(Object.entries(result.breakdown) as [ArchetypeKey, number][])
-              .sort(([, a], [, b]) => b - a)
-              .map(([archetype, percentage]) => (
-                <div key={archetype} className="flex items-center gap-2">
-                  <div className="relative h-5 w-5 flex-shrink-0 md:h-6 md:w-6">
-                    <Image
-                      src={archetypeIcons[archetype as ArchetypeKey]}
-                      alt={archetype}
-                      fill
-                      className="object-contain"
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <div className="mb-0.5 flex justify-between text-xs md:text-sm">
-                      <span className="font-medium">{archetype}</span>
-                      <span className="text-muted-foreground">
-                        {percentage}%
-                      </span>
-                    </div>
-                    <div className="bg-muted h-1.5 overflow-hidden rounded-full">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${percentage}%` }}
-                        transition={{ duration: 1, delay: 1 }}
-                        className={`h-full rounded-full bg-gradient-to-r ${
-                          archetypeGradients[archetype as ArchetypeKey]
-                        }`}
-                      />
-                    </div>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </motion.div>
-      )}
-
-      {/* Action buttons */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1 }}
-        className="flex flex-row justify-center gap-3"
-      >
-        <Button
-          onClick={onShare}
-          variant="secondary"
-          size="default"
-          className="gap-2"
-        >
-          <Share2 className="size-4" />
-          Share
-        </Button>
-        <Button
-          onClick={onReset}
-          variant="outline"
-          size="default"
-          className="gap-2"
-        >
-          <RotateCcw className="size-4" />
-          Retake
-        </Button>
-      </motion.div>
-    </motion.div>
   );
 }
