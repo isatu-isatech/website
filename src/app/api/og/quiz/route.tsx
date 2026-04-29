@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
     ? "#8B5CF6"
     : archetypeColors[archetype] || "#3B82F6";
 
-  return new ImageResponse(
+  const ogResponse = new ImageResponse(
     (
       <div
         style={{
@@ -169,6 +169,13 @@ export async function GET(request: NextRequest) {
     {
       width: 1200,
       height: 630,
-    }
+    },
   );
+
+  ogResponse.headers.set(
+    "Cache-Control",
+    "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800",
+  );
+
+  return ogResponse;
 }

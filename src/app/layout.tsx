@@ -163,6 +163,15 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link rel="preconnect" href="https://challenges.cloudflare.com" />
+        <link rel="dns-prefetch" href="https://vitals.vercel-analytics.com" />
+      </head>
       <body className={`${poppins.variable} ${chivo.variable} antialiased`}>
         <NextTopLoader
           showSpinner={false}
