@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import YouTubePlayer from "@/components/ui/youtube-player";
 import Link from "next/link";
@@ -17,6 +18,14 @@ const HeroYoutubeVideos: string[] = [
 ];
 
 export function HomepageHeroSection() {
+  const [videoId, setVideoId] = useState(HeroYoutubeVideos[0]);
+
+  useEffect(() => {
+    setVideoId(
+      HeroYoutubeVideos[Math.floor(Math.random() * HeroYoutubeVideos.length)],
+    );
+  }, []);
+
   return (
     <section
       className="relative flex w-full flex-col items-center justify-center overflow-hidden bg-black/50"
@@ -24,11 +33,7 @@ export function HomepageHeroSection() {
     >
       <div className="absolute -z-1 flex h-full w-full items-center justify-center">
         <YouTubePlayer
-          videoId={
-            HeroYoutubeVideos[
-              Math.floor(Math.random() * HeroYoutubeVideos.length)
-            ]
-          }
+          videoId={videoId}
           autoPlay
           loop
           mute
