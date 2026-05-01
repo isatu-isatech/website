@@ -1,7 +1,20 @@
 import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
+import { Ratelimit } from "@upstash/ratelimit";
+import { kv } from "@vercel/kv";
 
 export const runtime = "edge";
+
+let ratelimit: Ratelimit | null = null;
+
+try {
+  ratelimit = new Ratelimit({
+    redis: kv,
+    limiter: Ratelimit.slidingWindow(20, "1 h"),
+  });
+} catch {
+  // Graceful degradation if Vercel KV is not configured
+}
 
 const archetypeColors: Record<string, string> = {
   Hustler: "#F59E0B",
@@ -18,6 +31,17 @@ const archetypeGradients: Record<string, [string, string]> = {
 };
 
 export async function GET(request: NextRequest) {
+  if (ratelimit) {
+    const ip =
+      request.headers.get("x-forwarded-for") ??
+      request.headers.get("x-real-ip") ??
+      "127.0.0.1";
+    const { success } = await ratelimit.limit(ip);
+    if (!success) {
+      return new Response("Too many requests", { status: 429 });
+    }
+  }
+
   const { searchParams } = new URL(request.url);
 
   const role = searchParams.get("role") || "4H Personality Quiz";
@@ -32,7 +56,7 @@ export async function GET(request: NextRequest) {
     ? "#8B5CF6"
     : archetypeColors[archetype] || "#3B82F6";
 
-  return new ImageResponse(
+  const ogResponse = new ImageResponse(
     (
       <div
         style={{
@@ -169,6 +193,13 @@ export async function GET(request: NextRequest) {
     {
       width: 1200,
       height: 630,
-    }
+    },
   );
+
+  ogResponse.headers.set(
+    "Cache-Control",
+    "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800",
+  );
+
+  return ogResponse;
 }

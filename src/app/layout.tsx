@@ -3,8 +3,7 @@ import { Poppins, Chivo } from "next/font/google";
 import "@/app/globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from "@vercel/speed-insights/next";
+import { ConsentGatedAnalytics } from "@/components/consent-gated-analytics";
 import NextTopLoader from "nextjs-toploader";
 
 const poppins = Poppins({
@@ -163,6 +162,15 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link rel="preconnect" href="https://challenges.cloudflare.com" />
+        <link rel="dns-prefetch" href="https://vitals.vercel-analytics.com" />
+      </head>
       <body className={`${poppins.variable} ${chivo.variable} antialiased`}>
         <NextTopLoader
           showSpinner={false}
@@ -172,10 +180,8 @@ export default async function RootLayout({
         <CookieConsentProvider>
           {children}
           <Toaster />
+          <ConsentGatedAnalytics />
         </CookieConsentProvider>
-        {/* Analytics components - scripts are loaded with 'strict-dynamic' CSP */}
-        <Analytics />
-        <SpeedInsights />
         {/* Schema.org structured data for SEO */}
         <script
           type="application/ld+json"
