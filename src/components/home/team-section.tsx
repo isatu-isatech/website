@@ -66,14 +66,14 @@ export function HomepageTeamSection() {
                 <div className="bg-primary flex flex-col items-center justify-center gap-4 rounded-2xl lg:rounded-4xl">
                   <div className="bg-card/25 flex flex-col flex-wrap items-center justify-center gap-4 rounded-2xl px-6 py-8 lg:rounded-4xl lg:px-8 lg:py-10">
                     <div className="bg-secondary flex items-center justify-center rounded-2xl p-2 lg:rounded-3xl lg:p-6 xl:size-40">
-                        <OptimizedImage
-                          src={member.path}
-                          alt={member.role}
-                          height={1000}
-                          width={1000}
-                          className="h-full w-full object-contain"
-                          brandPlaceholder
-                        />
+                      <OptimizedImage
+                        src={member.path}
+                        alt={member.role}
+                        height={1000}
+                        width={1000}
+                        className="h-full w-full object-contain"
+                        brandPlaceholder
+                      />
                     </div>
                     <h6 className="text-primary-foreground font-bold">
                       {member.role}

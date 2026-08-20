@@ -16,7 +16,9 @@ interface Props {
  * a dynamic OG image showing their result. However, when someone
  * clicks the link, they are redirected to take the quiz themselves.
  */
-export async function generateMetadata({ searchParams }: Props): Promise<Metadata> {
+export async function generateMetadata({
+  searchParams,
+}: Props): Promise<Metadata> {
   const params = await searchParams;
   const role = params.role || "4H Personality Quiz";
   const archetype = params.archetype || "Hustler";

@@ -14,11 +14,11 @@ export default function QuizLayout({
   return (
     <>
       {/* Simplified Header */}
-      <header className="sticky top-0 z-90 flex items-center justify-center border-b border-border/50 bg-background/80 px-6 py-3 backdrop-blur-md">
+      <header className="border-border/50 bg-background/80 sticky top-0 z-90 flex items-center justify-center border-b px-6 py-3 backdrop-blur-md">
         <div className="flex w-full max-w-6xl items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+            className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
           >
             <Button variant="ghost" size="sm" className="gap-2">
               <ArrowLeft className="size-4" />
