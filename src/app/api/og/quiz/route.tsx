@@ -57,139 +57,137 @@ export async function GET(request: NextRequest) {
     : archetypeColors[archetype] || "#3B82F6";
 
   const ogResponse = new ImageResponse(
-    (
+    <div
+      style={{
+        height: "100%",
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        background: `linear-gradient(135deg, ${gradientStart}22 0%, ${gradientEnd}22 100%)`,
+        backgroundColor: "#0f172a",
+        fontFamily: "system-ui, sans-serif",
+      }}
+    >
+      {/* Background decorations */}
       <div
         style={{
-          height: "100%",
-          width: "100%",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: "600px",
+          height: "600px",
+          borderRadius: "50%",
+          background: `radial-gradient(circle, ${primaryColor}30 0%, transparent 70%)`,
+        }}
+      />
+
+      {/* Main content */}
+      <div
+        style={{
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: `linear-gradient(135deg, ${gradientStart}22 0%, ${gradientEnd}22 100%)`,
-          backgroundColor: "#0f172a",
-          fontFamily: "system-ui, sans-serif",
+          zIndex: 10,
         }}
       >
-        {/* Background decorations */}
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "600px",
-            height: "600px",
-            borderRadius: "50%",
-            background: `radial-gradient(circle, ${primaryColor}30 0%, transparent 70%)`,
-          }}
-        />
-
-        {/* Main content */}
+        {/* Badge circle */}
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            zIndex: 10,
+            width: "180px",
+            height: "180px",
+            borderRadius: "50%",
+            background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
+            boxShadow: `0 20px 60px ${primaryColor}50`,
+            marginBottom: "32px",
           }}
         >
-          {/* Badge circle */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              width: "180px",
-              height: "180px",
-              borderRadius: "50%",
-              background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
-              boxShadow: `0 20px 60px ${primaryColor}50`,
-              marginBottom: "32px",
-            }}
-          >
-            <span style={{ fontSize: "80px" }}>
-              {isGeneralist
-                ? "🌟"
-                : archetype === "Hustler"
-                  ? "🚀"
-                  : archetype === "Hacker"
-                    ? "💻"
-                    : archetype === "Hipster"
-                      ? "🎨"
-                      : "🔍"}
-            </span>
-          </div>
-
-          {/* "I am a..." text */}
-          <p
-            style={{
-              fontSize: "24px",
-              color: "#94A3B8",
-              marginBottom: "8px",
-            }}
-          >
-            I am a...
-          </p>
-
-          {/* Role title */}
-          <h1
-            style={{
-              fontSize: "64px",
-              fontWeight: "bold",
-              background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
-              backgroundClip: "text",
-              color: "transparent",
-              margin: "0 0 24px 0",
-              textAlign: "center",
-              lineHeight: 1.1,
-            }}
-          >
-            {role}
-          </h1>
-
-          {/* Quiz branding */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "12px",
-              marginTop: "32px",
-            }}
-          >
-            <p
-              style={{
-                fontSize: "20px",
-                color: "#64748B",
-              }}
-            >
-              4H Personality Quiz • isatech.club/quiz
-            </p>
-          </div>
+          <span style={{ fontSize: "80px" }}>
+            {isGeneralist
+              ? "🌟"
+              : archetype === "Hustler"
+                ? "🚀"
+                : archetype === "Hacker"
+                  ? "💻"
+                  : archetype === "Hipster"
+                    ? "🎨"
+                    : "🔍"}
+          </span>
         </div>
 
-        {/* Footer */}
+        {/* "I am a..." text */}
+        <p
+          style={{
+            fontSize: "24px",
+            color: "#94A3B8",
+            marginBottom: "8px",
+          }}
+        >
+          I am a...
+        </p>
+
+        {/* Role title */}
+        <h1
+          style={{
+            fontSize: "64px",
+            fontWeight: "bold",
+            background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
+            backgroundClip: "text",
+            color: "transparent",
+            margin: "0 0 24px 0",
+            textAlign: "center",
+            lineHeight: 1.1,
+          }}
+        >
+          {role}
+        </h1>
+
+        {/* Quiz branding */}
         <div
           style={{
-            position: "absolute",
-            bottom: "32px",
             display: "flex",
             alignItems: "center",
-            gap: "8px",
+            gap: "12px",
+            marginTop: "32px",
           }}
         >
           <p
             style={{
-              fontSize: "18px",
-              color: "#475569",
+              fontSize: "20px",
+              color: "#64748B",
             }}
           >
-            Discover your founder archetype
+            4H Personality Quiz • isatech.club/quiz
           </p>
         </div>
       </div>
-    ),
+
+      {/* Footer */}
+      <div
+        style={{
+          position: "absolute",
+          bottom: "32px",
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+        }}
+      >
+        <p
+          style={{
+            fontSize: "18px",
+            color: "#475569",
+          }}
+        >
+          Discover your founder archetype
+        </p>
+      </div>
+    </div>,
     {
       width: 1200,
       height: 630,
