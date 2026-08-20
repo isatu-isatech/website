@@ -27,17 +27,20 @@ The official website for ISATech Society (ISAT U Innovators and Technopreneurs S
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/your-org/isatech-website.git
    cd isatech-website
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Create a `.env.local` file based on `.env.example`:
+
    ```bash
    cp .env.example .env.local
    ```
@@ -45,6 +48,7 @@ The official website for ISATech Society (ISAT U Innovators and Technopreneurs S
 4. Fill in the required environment variables (see below).
 
 5. Start the development server:
+
    ```bash
    npm run dev
    ```
@@ -53,15 +57,15 @@ The official website for ISATech Society (ISAT U Innovators and Technopreneurs S
 
 ## Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `NOTION_API_KEY` | Yes | Notion integration API key |
-| `NOTION_CONTACT_FORM_DATABASE_ID` | Yes | Notion database ID for contact form submissions |
-| `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY` | Yes | Cloudflare Turnstile site key (public) |
-| `CLOUDFLARE_TURNSTILE_SECRET_KEY` | Yes | Cloudflare Turnstile secret key |
-| `KV_URL` | No | Vercel KV connection URL (for rate limiting) |
-| `KV_REST_API_URL` | No | Vercel KV REST API URL |
-| `KV_REST_API_TOKEN` | No | Vercel KV REST API token |
+| Variable                                    | Required | Description                                     |
+| ------------------------------------------- | -------- | ----------------------------------------------- |
+| `NOTION_API_KEY`                            | Yes      | Notion integration API key                      |
+| `NOTION_CONTACT_FORM_DATABASE_ID`           | Yes      | Notion database ID for contact form submissions |
+| `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY` | Yes      | Cloudflare Turnstile site key (public)          |
+| `CLOUDFLARE_TURNSTILE_SECRET_KEY`           | Yes      | Cloudflare Turnstile secret key                 |
+| `KV_URL`                                    | No       | Vercel KV connection URL (for rate limiting)    |
+| `KV_REST_API_URL`                           | No       | Vercel KV REST API URL                          |
+| `KV_REST_API_TOKEN`                         | No       | Vercel KV REST API token                        |
 
 ## Project Structure
 
@@ -91,14 +95,18 @@ src/
 
 ## Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server with Turbopack |
-| `npm run build` | Build for production + generate sitemap |
-| `npm run start` | Start production server |
-| `npm run lint` | Run ESLint + Prettier |
-| `npm run type-check` | Run TypeScript type checking |
-| `npm run analyze` | Analyze bundle size |
+| Command                | Description                                     |
+| ---------------------- | ----------------------------------------------- |
+| `npm run dev`          | Start development server with Turbopack         |
+| `npm run build`        | Build for production + generate sitemap         |
+| `npm run start`        | Start production server                         |
+| `npm run lint`         | Run ESLint (`eslint . --max-warnings 0`)        |
+| `npm run lint:eslint`  | Run ESLint (authoritative, fail on warnings)    |
+| `npm run lint:ox`      | Run oxlint (fast pass)                          |
+| `npm run format:check` | Check formatting with Prettier                  |
+| `npm run type-check`   | Run TypeScript type checking                    |
+| `npm run analyze`      | Analyze bundle size                             |
+| `npm run commitlint`   | Validate the last commit message (Conventional) |
 
 ## Key Features
 
@@ -113,7 +121,27 @@ src/
 
 ## Deployment
 
-The site is automatically deployed via Vercel. Push to `main` for production, or create a PR for preview deployments.
+The site is automatically deployed via Vercel. Push to `master` for production, or create a PR for preview deployments.
+
+## CI & Build Secrets
+
+GitHub Actions (`.github/workflows/ci.yml`) runs three jobs on every push/PR to `master`/`dev`:
+
+- **Lint & Format** — ESLint (`npm run lint:eslint`), oxlint (`npm run lint:ox`), Prettier (`npm run format:check`)
+- **Type Check** — `npm run type-check`
+- **Production Build** — `npm run build`, gated on lint + typecheck passing
+
+The **Production Build** job runs `next build` (which parses the Zod `envSchema` in `src/lib/env.ts`), so it needs the following **GitHub Actions repository secrets** configured under `Settings → Secrets and variables → Actions`:
+
+| Secret                                           | Required | Notes                                      |
+| ------------------------------------------------ | -------- | ------------------------------------------ |
+| `NOTION_API_KEY`                                 | Yes      | Same value as `.env.local`                 |
+| `NOTION_CONTACT_FORM_DATABASE_ID`                | Yes      | Same value as `.env.local`                 |
+| `CLOUDFLARE_TURNSTILE_SECRET_KEY`                | Yes      | Same value as `.env.local`                 |
+| `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY`      | Yes      | Same value as `.env.local`                 |
+| `KV_URL`, `KV_REST_API_URL`, `KV_REST_API_TOKEN` | No       | Only if the Vercel KV rate-limiter is used |
+
+Until these secrets are set, the `build` job will fail (`envSchema.parse` requires them) even though lint/typecheck pass — this is expected.
 
 ## Contributing
 
