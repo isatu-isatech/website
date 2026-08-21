@@ -38,15 +38,15 @@ export const metadata: Metadata = {
 
 export default function QuizPage() {
   return (
-    <main className="relative h-[calc(100vh-60px)] w-full overflow-hidden bg-gradient-to-b from-background via-background to-muted/30">
+    <main className="from-background via-background to-muted/30 relative h-[calc(100vh-60px)] w-full overflow-hidden bg-gradient-to-b">
       {/* Background decorations */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-secondary/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-pink-500/5 to-blue-500/5 rounded-full blur-3xl" />
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="bg-primary/5 absolute top-1/4 left-1/4 h-96 w-96 rounded-full blur-3xl" />
+        <div className="bg-secondary/5 absolute right-1/4 bottom-1/4 h-96 w-96 rounded-full blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-pink-500/5 to-blue-500/5 blur-3xl" />
       </div>
 
-      <div className="relative w-full h-full flex items-center justify-center px-4 py-4 md:py-8">
+      <div className="relative flex h-full w-full items-center justify-center px-4 py-4 md:py-8">
         <QuizContainer />
       </div>
     </main>

@@ -4,15 +4,14 @@ import {
 } from "@/components/assets/decorations";
 import {
   LucideCog,
-  LucideFacebook,
   LucideGraduationCap,
   LucideHandshake,
-  LucideLinkedin,
   LucideRocket,
   MailIcon,
 } from "lucide-react";
 import { Metadata } from "next";
 import Link from "next/link";
+import { FacebookIcon, LinkedinIcon } from "@/components/assets/social-icons";
 import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
 import { Toaster } from "@/components/ui/sonner";
 import ContactUsForm from "./form";
@@ -74,12 +73,12 @@ const partnerList = [
 const socialLinks = [
   { emoji: MailIcon, text: "Email", href: "mailto:info@isatech.com" },
   {
-    emoji: LucideFacebook,
+    emoji: FacebookIcon,
     text: "Facebook",
     href: "https://www.facebook.com/ISATech.ISATU",
   },
   {
-    emoji: LucideLinkedin,
+    emoji: LinkedinIcon,
     text: "LinkedIn",
     href: "https://www.linkedin.com/company/isatech-society/",
   },

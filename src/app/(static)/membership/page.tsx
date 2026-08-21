@@ -121,7 +121,7 @@ function MembershipPageHeroSection() {
                 lead our society and bring technopreneurship to life.
               </h5>
             </div>
-            <div className="flex w-full justify-center md:justify-start gap-2">
+            <div className="flex w-full justify-center gap-2 md:justify-start">
               <Link href="#apply" className="text-caption">
                 <Button variant={"default"} size={"lg"}>
                   Apply Now

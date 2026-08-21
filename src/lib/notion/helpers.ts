@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getNotionClient } from "./client";
 import type {
   PageObjectResponse,
@@ -22,9 +21,7 @@ export type DateResponse = {
 };
 
 export type UserResponse =
-  | UserObjectResponse
-  | PartialUserObjectResponse
-  | GroupObjectResponse;
+  UserObjectResponse | PartialUserObjectResponse | GroupObjectResponse;
 
 // Notion Property Types - using actual API response types
 export type NotionProperty =

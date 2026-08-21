@@ -5,12 +5,17 @@ on:
     branches: [master, dev]
   pull_request:
     branches: [master, dev]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  lint-and-typecheck:
-    name: Lint & Type Check
+  lint:
+    name: Lint & Format
     runs-on: ubuntu-latest
-
+    timeout-minutes: 15
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -18,7 +23,33 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: ESLint (authoritative)
+        run: npm run lint:eslint
+
+      - name: oxlint (fast pass)
+        run: npm run lint:ox
+
+      - name: Prettier check
+        run: npm run format:check
+
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
           cache: npm
 
       - name: Install dependencies
@@ -27,5 +58,39 @@ jobs:
       - name: Type check
         run: npm run type-check
 
-      - name: Lint
-        run: npx next lint
+  build:
+    name: Production Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [lint, typecheck]
+    env:
+      NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+      NOTION_CONTACT_FORM_DATABASE_ID: ${{ secrets.NOTION_CONTACT_FORM_DATABASE_ID }}
+      CLOUDFLARE_TURNSTILE_SECRET_KEY: ${{ secrets.CLOUDFLARE_TURNSTILE_SECRET_KEY }}
+      NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY }}
+      KV_URL: ${{ secrets.KV_URL }}
+      KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
+      KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Cache Next.js build cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('next.config.*') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-
+
+      - name: Production build
+        run: npm run build
