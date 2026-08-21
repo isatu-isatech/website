@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 // CSS Module declarations
 declare module "*.css" {
   const content: Record<string, string>;

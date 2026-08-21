@@ -1,15 +1,18 @@
 "use client";
 
 import React from "react";
+import type { ComponentType } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Facebook, Linkedin, LucideIcon, Mail } from "lucide-react";
+import { Mail } from "lucide-react";
+import type { LucideProps } from "lucide-react";
 import { OptimizedImage } from "@/components/common";
 import {
   FooterArchDecoration,
   ISATechDecoration,
 } from "@/components/assets/decorations";
 import { ISATechLogoType } from "@/components/assets/logos";
+import { FacebookIcon, LinkedinIcon } from "@/components/assets/social-icons";
 import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants";
 
 /**
@@ -52,13 +55,13 @@ const navLinks: {
 
 // List of social links using centralized constants
 const socialLinks: {
-  icon: LucideIcon;
+  icon: ComponentType<LucideProps>;
   href: string;
   label: string;
 }[] = [
   { icon: Mail, href: `mailto:${SOCIAL_LINKS.email}`, label: "Email" },
-  { icon: Facebook, href: SOCIAL_LINKS.facebook, label: "Facebook" },
-  { icon: Linkedin, href: SOCIAL_LINKS.linkedin, label: "LinkedIn" },
+  { icon: FacebookIcon, href: SOCIAL_LINKS.facebook, label: "Facebook" },
+  { icon: LinkedinIcon, href: SOCIAL_LINKS.linkedin, label: "LinkedIn" },
 ];
 
 /**
