@@ -12,7 +12,7 @@ It is the org's primary public presence: a marketing/perception surface that int
 - Site taglines: _"Empowering the Next Generation of Innovators"_, _"Empowering student founders to achieve their dreams."_
 - Motto scroll: **DREAM · INNOVATE · SUCCEED**
 - Founded: 2021 (founding year recorded as 2021).
-- The org runs a **"4H" roles** framework — the four distinct roles/types members can embody (Hustler, Hypeman, Hacker, Hipster — e.g. "The designer", "The researcher", etc.), which is also the basis of an interactive on-site quiz.
+- The org runs a **"4H" roles** framework — the four distinct roles/types members can embody (Hustler, Hound, Hacker, Hipster — e.g. "The designer", "The researcher", etc.), which is also the basis of an interactive on-site quiz.
 
 ## Primary users / audiences
 
@@ -49,7 +49,7 @@ All four goals are active and shared:
 - **Affiliation:** Iloilo Science and Technology University; close partner KWADRA TBI (technology business incubator); advisers hold university roles (VP for Research & Extension, IPMO Director, etc.).
 - **Programs/events:** Codelympics (a recurring competition), office/space showcase, seminars/events.
 - **Hero media:** rotating YouTube videos (office showcase, teasers, Codelympics recaps).
-- **4H roles:** Hustler, Hypeman, Hacker, Hipster — central to the org brand and the quiz.
+- **4H roles:** Hustler, Hound, Hacker, Hipster — central to the org brand and the quiz.
 
 ## Platform
 
@@ -61,4 +61,4 @@ Site already targets core a11y (Radix UI primitives, semantic HTML). Accessibili
 
 ## Scope decision (active direction)
 
-The confirmed direction for upcoming design work is a **redesign / rebrand of the visual world**. The incumbent look (blue/gold, current layout) is treated as **evidence and anti-reference**; the product's truth, content, functions, native affordances, and technical constraints are preserved, but the visual language will be replaced. New DESIGN.md work proceeds via the new-work flow.
+The confirmed direction for upcoming design work is **refinement / polish of the incumbent visual world** (ISATech Blue `#203C90` + Gold `#FFAC03` identity is kept). The primary job is **visual impact / distinctiveness** — improving hierarchy, polish, consistency, and weak spots across the whole site **within** the existing identity, not a replacement. An earlier init answer recorded "redesign/rebrand," but the user explicitly corrected this to refine/polish; the incumbent look is preserved as the target of polish (details in the shape brief).
