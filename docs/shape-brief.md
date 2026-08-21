@@ -118,7 +118,7 @@ _Intent only — final CSS belongs to the builder._
 **Closed by user (2026-08-21, planning session):**
 
 - Quiz "generalist" result `from-violet-500` → **realign to the blue/gold brand world** (no out-of-brand exception).
-- Membership capture mechanism → **keep the external Google Form**, but wrap it in the brand shell and set expectations (3 fields / 2 min / no spam / what happens next). Scope note: not replacing the collection process — only the surrounding context + CTA.
+- Membership capture mechanism → **superseded by ADR 0002** (`docs/adr/0002-membership-application-overlap.md`): the native Membership application is built during the H1 polish, replacing the external Google Form (see §9 P0-a). The earlier planning-session decision here — keep the external Google Form and wrap it in the brand shell — was reversed in the roadmap grilling session; the shape brief is not yet the authority on membership capture, the ADR and `CONTEXT.md` are.
 
 ---
 
@@ -126,7 +126,7 @@ _Intent only — final CSS belongs to the builder._
 
 Build order is critique-driven: fix the two P0s first, then the consistency pass that carries the 4H/specificity story.
 
-1. **P0 fixes first** — (a) membership: wrap the external Google Form in a branded, expectation-setting shell (no new collection pipe); (b) hero: replace random-video-on-every-load with a curated hero set or static premium frame + play control, add poster/LCP fallback.
+1. **P0 fixes first** — (a) membership: build the native Membership application (ADR 0002) — the branded Standard Application Form with progressive sections, Notion write for immediate officer review, Turnstile + rate limiting — replacing the external Google Form (the earlier "wrap the GForm in a brand shell" plan is superseded); (b) hero: replace random-video-on-every-load with a curated hero set or static premium frame + play control, add poster/LCP fallback.
 2. **Home first for the polish pass** — hero, stats, about, kwadra, team, offer, contact get the hierarchy / blue-gold-disciplined / motion pass; surface the 4H archetype story earlier (it is currently buried behind the quiz funnel).
 3. **Consistency rollout** — About, Membership, Quiz (incl. realign `from-violet-500` generalist result to brand), Contact + shared Header/Footer/Card/Button/tokens align to the same system; clear the token violations flagged in §10 (hardcoded grays, lanyard text hack, header border no-op, logo context-menu hijack, email-domain mismatch).
 4. **Verify** — one batched desktop + mobile round; fix everything it shows in one batch; confirm with at most one more round; stop.
