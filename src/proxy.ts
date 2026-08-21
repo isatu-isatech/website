@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
 /**
- * Middleware for Next.js Application
+ * Proxy for Next.js Application
  *
- * This middleware implements:
+ * This proxy implements:
  * - Content Security Policy (CSP) for enhanced security
  * - Security headers for protection against common attacks
  *
@@ -11,7 +11,7 @@ import { NextRequest, NextResponse } from "next/server";
  * inline scripts that are difficult to properly nonce. This is the
  * standard approach for Next.js applications.
  */
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // Define Content Security Policy
   // Detect environment: local dev vs preview vs production
   const isDevelopment = process.env.NODE_ENV === "development";
@@ -81,7 +81,7 @@ export function middleware(request: NextRequest) {
 }
 
 /**
- * Configure which routes the middleware should run on
+ * Configure which routes the proxy should run on
  *
  * This matcher excludes static files, images, and Next.js internal routes
  * for better performance while maintaining security on all application routes.

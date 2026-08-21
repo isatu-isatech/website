@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 let ratelimit: Ratelimit | null = null;
 
