@@ -41,3 +41,5 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 ## Notes
 
 <!-- Add project-specific quick-notes here as they come up. -->
+
+- DO NOT MANUALLY COMMIT. Provide the git add command and a commit title grouped by scope or feature for the user to manually review and execute.
