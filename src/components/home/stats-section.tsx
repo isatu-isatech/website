@@ -12,10 +12,10 @@ const heroStats: { quantity: string; description: string }[] = [
 export function HomepageStatsSection() {
   return (
     <section
-      className="flex w-full flex-col items-center justify-center px-6 py-6 lg:py-16 xl:px-16"
+      className="flex w-full flex-col items-center justify-center px-4 py-6 sm:px-6 md:px-8 lg:px-12 lg:py-16 xl:px-16 2xl:px-20"
       id="stats"
     >
-      <div className="flex w-full max-w-6xl flex-wrap items-center justify-center gap-y-4 lg:gap-y-6">
+      <div className="flex w-full max-w-7xl flex-wrap items-center justify-center gap-y-4 lg:gap-y-6">
         {heroStats.map((stat, index) => (
           <div
             key={index}

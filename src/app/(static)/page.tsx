@@ -4,7 +4,6 @@ import { HomepageContactSection } from "@/components/home/contact-section";
 import { HomepageKwadraSection } from "@/components/home/kwadra-section";
 import { HomepageOfferSection } from "@/components/home/offer-section";
 import { HomepagePartnersSection } from "@/components/home/partners-section";
-import { HomepageStatsSection } from "@/components/home/stats-section";
 import { HomepageTeamSection } from "@/components/home/team-section";
 import {
   ScrollVelocityComponent,
@@ -62,11 +61,6 @@ export default function Homepage() {
       {/* Hero section - critical, no error boundary needed as it's simple */}
       <HomepageHeroSection />
 
-      {/* Stats section with error boundary */}
-      <SectionErrorBoundary sectionName="Statistics">
-        <HomepageStatsSection />
-      </SectionErrorBoundary>
-
       {/* About section with error boundary */}
       <SectionErrorBoundary sectionName="About">
         <HomepageAboutSection />
@@ -82,8 +76,8 @@ export default function Homepage() {
         <HomepageKwadraSection />
       </SectionErrorBoundary>
 
-      {/* Team section with error boundary */}
-      <SectionErrorBoundary sectionName="Team">
+      {/* 4H archetype story — leads the recruitment narrative before the quiz funnel (FR-012) */}
+      <SectionErrorBoundary sectionName="4H Archetypes">
         <HomepageTeamSection />
       </SectionErrorBoundary>
 
