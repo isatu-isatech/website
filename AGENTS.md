@@ -47,7 +47,7 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 
 <!-- SPECKIT START -->
 
-**Active plan**: `specs/001-resolve-critique-issues/plan.md`
+**Active plan**: `specs/002-contact-cookie-rate-limit/plan.md`
 <!-- SPECKIT END -->
 
 - **US1 membership deferred (2026-08-21, user decision):** native membership application parked — see `specs/001-resolve-critique-issues/tasks.md` scope note. The membership page keeps its Google Form until the scope reopens; re-enable T002/T004/T006–T011 as one slice (Notion membership DB provisioning + `NOTION_MEMBERSHIP_DATABASE_ID` come with it).
