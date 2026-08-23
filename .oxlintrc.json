@@ -29,7 +29,13 @@
     "import/no-unassigned-import": [
       "error",
       {
-        "allow": ["**/*.css", "**/*.scss", "**/*.sass", "**/*.less"]
+        "allow": [
+          "**/*.css",
+          "**/*.scss",
+          "**/*.sass",
+          "**/*.less",
+          "next-env.d.ts"
+        ]
       }
     ]
   }

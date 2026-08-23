@@ -3,44 +3,34 @@
 import { createPage } from "@/lib/notion/helpers";
 import { contactFormSchema } from "./schema";
 import { env } from "@/lib/env";
-import { Ratelimit } from "@upstash/ratelimit";
-import { kv } from "@vercel/kv";
-import { headers } from "next/headers";
+import { cookies } from "next/headers";
+import {
+  appendSubmissionTimestamp,
+  isRateLimited,
+  parseSubmissionTimes,
+  RATE_LIMIT_COOKIE_NAME,
+  RATE_LIMIT_WINDOW_MS,
+} from "@/lib/services/cookie-rate-limit";
 
-// Initialize rate limiter: 5 requests per hour per IP
-let ratelimit: Ratelimit | null = null;
-
-try {
-  ratelimit = new Ratelimit({
-    redis: kv,
-    limiter: Ratelimit.slidingWindow(5, "1 h"),
-  });
-} catch (error) {
-  console.warn("Rate limiting disabled: Vercel KV not available", error);
-}
-
-// Initialize Resend with the API key from your .env file
 const cloudflareTurnstileSecretKey = env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
 const contactFormDatabaseID = env.NOTION_CONTACT_FORM_DATABASE_ID;
 
 export async function submitMessage(formData: unknown) {
-  // Get client IP for rate limiting
-  const headersList = await headers();
-  const ip =
-    headersList.get("x-forwarded-for") ||
-    headersList.get("x-real-ip") ||
-    "127.0.0.1";
+  // Browser-cookie rate limiting: the visitor's browser holds the record of
+  // recent successful submissions (spec 002 / constitution P5). Browsers
+  // without a readable record are treated as first-time submitters; only
+  // successful submissions are recorded, so failed attempts never count.
+  const cookieStore = await cookies();
+  const submissionTimes = parseSubmissionTimes(
+    cookieStore.get(RATE_LIMIT_COOKIE_NAME)?.value,
+  );
 
-  // Check rate limit (skip if KV not available)
-  if (ratelimit) {
-    const { success } = await ratelimit.limit(ip);
-    if (!success) {
-      return {
-        success: false,
-        error:
-          "You've sent quite a few messages this hour — please try again in about an hour. We read every single message.",
-      };
-    }
+  if (isRateLimited(submissionTimes)) {
+    return {
+      success: false,
+      error:
+        "You've sent quite a few messages this hour — please try again in about an hour. We read every single message.",
+    };
   }
 
   // Validate the incoming form data
@@ -111,6 +101,22 @@ export async function submitMessage(formData: unknown) {
       },
     });
 
+    // Record the successful submission in the browser-held record so later
+    // submissions within the rolling window count against the limit.
+    cookieStore.set(
+      RATE_LIMIT_COOKIE_NAME,
+      JSON.stringify(appendSubmissionTimestamp(submissionTimes)),
+      {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        // Keep the cookie past the window so recent activity survives idle
+        // periods; stale entries are pruned on read.
+        maxAge: Math.ceil((2 * RATE_LIMIT_WINDOW_MS) / 1000),
+        secure: process.env.NODE_ENV === "production",
+      },
+    );
+
     return { success: true };
   } catch (error) {
     console.error("Something went wrong:", error);
@@ -118,20 +124,5 @@ export async function submitMessage(formData: unknown) {
       success: false,
       error: "Something went wrong on our end. Please try again in a moment.",
     };
-  }
-}
-
-// Utility function to check rate limit status (for debugging)
-export async function getRateLimitStatus(
-  ip?: string,
-): Promise<{ remaining: number; reset: number } | null> {
-  if (!ratelimit || !ip) return null;
-
-  try {
-    const { remaining, reset } = await ratelimit.limit(ip);
-    return { remaining, reset };
-  } catch (error) {
-    console.warn("Could not check rate limit status:", error);
-    return null;
   }
 }
