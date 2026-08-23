@@ -108,7 +108,15 @@ export function HomepageHeroSection() {
 
       <div className="z-10 flex w-full flex-1 flex-col items-center justify-center px-6 pt-24 pb-10 md:px-16">
         <div className="flex w-full max-w-7xl">
-          <div className="flex w-full flex-col items-center gap-6 text-center lg:items-start lg:justify-start lg:text-start">
+          {/* The hero's one authored arrival: the lockup assembles first, then
+              the stats band staggers in below (its own motion). Reduced motion
+              renders it statically. */}
+          <motion.div
+            className="flex w-full flex-col items-center gap-6 text-center lg:items-start lg:justify-start lg:text-start"
+            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
             <p className="text-secondary text-caption tracking-[0.35em] uppercase">
               Dream • Innovate • Succeed
             </p>
@@ -129,7 +137,7 @@ export function HomepageHeroSection() {
                 Join ISATech
               </Button>
             </Link>
-          </div>
+          </motion.div>
         </div>
       </div>
 

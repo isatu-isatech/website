@@ -3,7 +3,11 @@ import {
   ISATechDecorationLeft,
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
-import { OptimizedImage, SectionErrorBoundary } from "@/components/common";
+import {
+  OptimizedImage,
+  RevealOnView,
+  SectionErrorBoundary,
+} from "@/components/common";
 import { HomepageContactSection } from "@/components/home/contact-section";
 import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
 import { TopographyTexture } from "@/components/texture/topography";
@@ -164,7 +168,7 @@ function AboutUsDescriptionSection() {
       <AboutDescriptionBand />
       {/* Mission and Vision */}
       <div className="grid w-full max-w-7xl grid-cols-1 gap-6 px-6 py-5 md:px-16 lg:grid-cols-2 lg:py-8">
-        <div className="flex flex-col justify-start gap-4">
+        <RevealOnView className="flex flex-col justify-start gap-4">
           <TargetIcon size={42} className="text-primary" />
           <div className="flex flex-col gap-2">
             <h3 className="text-primary">Mission</h3>
@@ -177,8 +181,11 @@ function AboutUsDescriptionSection() {
               impactful ventures.
             </p>
           </div>
-        </div>
-        <div className="flex flex-col justify-start gap-4">
+        </RevealOnView>
+        <RevealOnView
+          className="flex flex-col justify-start gap-4"
+          delay={0.08}
+        >
           <RocketIcon size={42} className="text-primary" />
           <div className="flex flex-col gap-2">
             <h3 className="text-primary">Vision</h3>
@@ -188,7 +195,7 @@ function AboutUsDescriptionSection() {
               and resources for innovations, producing student technopreneurs.
             </p>
           </div>
-        </div>
+        </RevealOnView>
       </div>
     </section>
   );

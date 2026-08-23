@@ -1,7 +1,7 @@
 import { ISATechDecoration } from "@/components/assets/decorations";
 import { HomepageOfferSection } from "@/components/home/offer-section";
 import { HomepageContactSection } from "@/components/home/contact-section";
-import { OptimizedImage } from "@/components/common";
+import { OptimizedImage, RevealOnView } from "@/components/common";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
 import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
@@ -215,12 +215,13 @@ function MembershipPageTeamSection() {
           </h5>
         </div>
         <div className="divide-primary/10 grid w-full grid-cols-1 divide-y md:grid-cols-4 md:divide-x md:divide-y-0">
-          {members.map((member) => (
-            <div
+          {members.map((member, key) => (
+            <RevealOnView
               key={member.role}
+              delay={key * 0.08}
               className="flex w-full flex-col items-center justify-start gap-3 px-4 py-6"
             >
-              <div className="bg-secondary flex aspect-square w-24 items-center justify-center rounded-md p-4 md:w-28">
+              <div className="bg-secondary flex aspect-square w-24 items-center justify-center rounded-full p-2 md:w-28">
                 <OptimizedImage
                   src={member.path}
                   alt={member.role}
@@ -234,7 +235,7 @@ function MembershipPageTeamSection() {
                 <h5 className="font-bold">Meet the {member.role}!</h5>
                 <p className="text-micro">{member.subtitle}</p>
               </div>
-            </div>
+            </RevealOnView>
           ))}
         </div>
       </div>

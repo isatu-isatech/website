@@ -7,6 +7,7 @@ export {
 } from "./scroll-velocity";
 export { ScrollActivityIndicator } from "./scroll-activity-indicator";
 export { OverlayScrollbarsProvider } from "./overlay-scrollbars-provider";
+export { RevealOnView } from "./reveal-on-view";
 export { ErrorBoundary, withErrorBoundary } from "./error-boundary";
 export { SectionErrorBoundary } from "./section-error-boundary";
 export { OptimizedImage, ImagePlaceholder } from "./optimized-image";
