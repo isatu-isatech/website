@@ -10,10 +10,10 @@ export default function Loading() {
       {/* Animated Logo */}
       <div className="relative flex items-center justify-center">
         {/* Pulse ring */}
-        <div className="bg-primary/20 absolute h-24 w-24 animate-ping rounded-full" />
-        <div className="bg-primary/30 absolute h-20 w-20 animate-pulse rounded-full" />
+        <div className="bg-primary/20 absolute h-24 w-24 animate-ping rounded-full motion-reduce:animate-none" />
+        <div className="bg-primary/30 absolute h-20 w-20 animate-pulse rounded-full motion-reduce:animate-none" />
         {/* Logo */}
-        <div className="relative z-10 animate-pulse">
+        <div className="relative z-10 animate-pulse motion-reduce:animate-none">
           <ISATechLogoMark className="h-16 w-auto" />
         </div>
       </div>
@@ -29,15 +29,15 @@ export default function Loading() {
       {/* Animated dots */}
       <div className="flex gap-1.5">
         <span
-          className="bg-primary h-2 w-2 animate-bounce rounded-full"
+          className="bg-primary h-2 w-2 animate-bounce rounded-full motion-reduce:animate-none"
           style={{ animationDelay: "0ms" }}
         />
         <span
-          className="bg-primary h-2 w-2 animate-bounce rounded-full"
+          className="bg-primary h-2 w-2 animate-bounce rounded-full motion-reduce:animate-none"
           style={{ animationDelay: "150ms" }}
         />
         <span
-          className="bg-primary h-2 w-2 animate-bounce rounded-full"
+          className="bg-primary h-2 w-2 animate-bounce rounded-full motion-reduce:animate-none"
           style={{ animationDelay: "300ms" }}
         />
       </div>

@@ -1,5 +1,5 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
 export interface BlobsConfig {
   id: string;
@@ -56,6 +56,7 @@ export function BlobsAnimatedBackground({
   ];
 
   const blobsToRender = blobs && blobs.length > 0 ? blobs : defaultBlobs;
+  const reduceMotion = useReducedMotion();
 
   return (
     // We combine the default classes with the new className prop
@@ -74,10 +75,14 @@ export function BlobsAnimatedBackground({
             left: blob.left,
             right: blob.right,
           }}
-          animate={{
-            x: blob.animateX,
-            y: blob.animateY,
-          }}
+          animate={
+            reduceMotion
+              ? undefined
+              : {
+                  x: blob.animateX,
+                  y: blob.animateY,
+                }
+          }
           transition={{
             duration: blob.duration,
             repeat: Number.POSITIVE_INFINITY,
