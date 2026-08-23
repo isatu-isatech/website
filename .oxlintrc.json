@@ -25,6 +25,12 @@
     "react/immutability": "warn",
     "jsx-a11y/control-has-associated-label": "warn",
     "jsx-a11y/prefer-tag-over-role": "warn",
-    "jsx-a11y/iframe-has-title": "warn"
+    "jsx-a11y/iframe-has-title": "warn",
+    "import/no-unassigned-import": [
+      "error",
+      {
+        "allow": ["**/*.css", "**/*.scss", "**/*.sass", "**/*.less"]
+      }
+    ]
   }
 }

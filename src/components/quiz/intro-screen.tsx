@@ -1,15 +1,17 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";
-import { archetypeIcons } from "@/lib/quiz-data";
+import { archetypeIcons, questions } from "@/lib/quiz-data";
 
 export function IntroScreen({ onStart }: { onStart: () => void }) {
+  const reduceMotion = useReducedMotion();
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       className="flex flex-col items-center justify-center px-4 py-4 text-center md:py-6"
@@ -17,7 +19,7 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
       {/* Floating 4H images */}
       <div className="relative mb-4 md:mb-6">
         <motion.div
-          animate={{ y: [-3, 3, -3] }}
+          animate={reduceMotion ? undefined : { y: [-3, 3, -3] }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           className="flex items-center justify-center gap-3 md:gap-6"
         >
@@ -68,7 +70,8 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
       </Button>
 
       <p className="text-muted-foreground mt-3 text-xs md:text-sm">
-        ⏱️ Takes about 3-5 minutes
+        {questions.length} questions · at your own pace{" "}
+        {/* TODO(org-copy): org may provide wording for the intro time/count string */}
       </p>
     </motion.div>
   );

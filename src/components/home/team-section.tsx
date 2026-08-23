@@ -34,22 +34,22 @@ const Team4HMembers = [
 export function HomepageTeamSection() {
   return (
     <section
-      className="bg-primary relative flex w-full flex-col items-center justify-center"
+      className="bg-primary relative flex w-full flex-col items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20"
       id="4h"
     >
       {/* Decorations */}
-      <div className="absolute flex h-full w-full items-center justify-center">
+      <div className="pointer-events-none absolute flex h-full w-full items-center justify-center">
         <TopographyTexture
           color={"#ececec"}
           className="absolute h-full w-full opacity-5"
         />
       </div>
-      <div className="flex w-full max-w-6xl flex-col px-6 py-20 lg:px-8 xl:px-16">
+      <div className="flex w-full max-w-7xl flex-col py-16 lg:py-28">
         <div className="flex w-full flex-col items-center justify-center gap-6">
           {/* Header Container */}
           <div className="flex w-full flex-col items-center justify-center gap-2 text-center">
             <h2 className="text-secondary">Are You One of the 4H?</h2>
-            <h5 className="text-primary-foreground flex lg:w-5/6 xl:w-2/3">
+            <h5 className="text-primary-foreground lg:w-5/6 xl:w-2/3">
               At ISATech Society, we believe every great innovation starts with
               a diverse team. Whether you&apos;re a creative, a coder, a
               go-getter, or a researcher — there&apos;s a place for you here.
@@ -57,29 +57,28 @@ export function HomepageTeamSection() {
             </h5>
           </div>
           {/* Cards Container */}
-          <div className="grid w-full grid-cols-2 gap-6 sm:flex sm:items-center sm:justify-center sm:gap-6">
+          <div className="grid w-full grid-cols-2 gap-6 lg:grid-cols-4">
             {Team4HMembers.map((member, key) => (
               <div
                 key={key}
-                className="flex flex-col items-center justify-center gap-4 rounded-2xl border-white bg-gradient-to-b from-white to-gray-500 p-[1px] backdrop-blur-md lg:rounded-4xl"
+                className="border-border/60 bg-card/25 flex flex-col items-center justify-center gap-4 rounded-2xl border px-6 py-8 text-center backdrop-blur-md lg:px-8 lg:py-10"
               >
-                <div className="bg-primary flex flex-col items-center justify-center gap-4 rounded-2xl lg:rounded-4xl">
-                  <div className="bg-card/25 flex flex-col flex-wrap items-center justify-center gap-4 rounded-2xl px-6 py-8 lg:rounded-4xl lg:px-8 lg:py-10">
-                    <div className="bg-secondary flex items-center justify-center rounded-2xl p-2 lg:rounded-3xl lg:p-6 xl:size-40">
-                      <OptimizedImage
-                        src={member.path}
-                        alt={member.role}
-                        height={1000}
-                        width={1000}
-                        className="h-full w-full object-contain"
-                        brandPlaceholder
-                      />
-                    </div>
-                    <h6 className="text-primary-foreground font-bold">
-                      {member.role}
-                    </h6>
-                  </div>
+                <div className="bg-secondary flex size-28 items-center justify-center rounded-2xl p-2 md:size-32 lg:rounded-3xl lg:p-6 xl:size-40">
+                  <OptimizedImage
+                    src={member.path}
+                    alt={member.role}
+                    height={1000}
+                    width={1000}
+                    className="h-full w-full object-contain"
+                    brandPlaceholder
+                  />
                 </div>
+                <h6 className="text-primary-foreground font-bold">
+                  {member.role}
+                </h6>
+                <p className="text-caption text-primary-foreground/90">
+                  {member.subtitle}
+                </p>
               </div>
             ))}
           </div>

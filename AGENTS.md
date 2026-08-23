@@ -42,4 +42,17 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 
 <!-- Add project-specific quick-notes here as they come up. -->
 
-- DO NOT MANUALLY COMMIT. Provide the git add command and a commit title grouped by scope or feature for the user to manually review and execute.
+- Do not manually commit any changes on my behalf. Instead, provide the appropriate git add commands along with one or more commit titles, grouped logically by scope or feature, so that I can manually review the staged changes and execute the commits myself. Each commit title should follow our conventional commit format and clearly reflect the specific area of work so that the commit history remains clean, meaningful, and easy to navigate. Once I've reviewed the proposed commands and titles, I'll stage and commit the changes at my own discretion, ensuring full visibility and control over what gets included in each commit.
+- Do not create the pull request directly. Instead, simply provide me with the proposed pull request title and a detailed description of the changes, so I can review them first before proceeding with the actual PR creation. The title should be concise and follow our conventional commit format, while the description should clearly outline what was changed, why it was done, and any relevant context or testing notes that would help with the review process. Once I've had a chance to review and approve the content, I'll take care of creating the PR myself.
+
+<!-- SPECKIT START -->
+
+**Active plan**: `specs/001-resolve-critique-issues/plan.md`
+<!-- SPECKIT END -->
+
+- **US1 membership deferred (2026-08-21, user decision):** native membership application parked — see `specs/001-resolve-critique-issues/tasks.md` scope note. The membership page keeps its Google Form until the scope reopens; re-enable T002/T004/T006–T011 as one slice (Notion membership DB provisioning + `NOTION_MEMBERSHIP_DATABASE_ID` come with it).
+- **Quiz copy dependencies (organ-supplied):** intro shows a dynamic question count (`{questions.length}`) with `TODO(org-copy)` markers — quiz-time wording awaits the org; canonical contact email is `SOCIAL_LINKS.email` (isatech.isatu@gmail.com).
+- **4H glossary:** "Hound" is canonical (no "Hypeman" anywhere). Archetype hex pairs live in `design-tokens.ts` `COLORS.quiz` — they mirror `quiz-data.ts` `archetypeGradients` Tailwind classes; keep the two in sync.
+- **Hero video:** one video is picked per visit from a curated `HeroYoutubeVideos` list in `hero-section.tsx` (variety for returning visitors). Always ambient — muted autoplay, controls/fullscreen/keyboard all disabled; the section uses `isolate` so the negative-z iframe paints above `bg-primary`, and a branded frame fades on iframe `onLoad`. Hero is `min-h-svh` and embeds the stats band (HERO_STATS + CountUp) at its bottom.
+- **Header:** `fixed` overlay — blends into the hero on the homepage at the top (`overHero` state: transparent, white text/logo), then detaches into the solid bar on scroll (`scrolled`). Non-home pages get an in-flow `HeaderOffset` spacer; anchor scrolling is covered by the existing `scroll-padding-top: 4rem` in `globals.css`.
+- **Gold contrast:** light-surface gold headings use the `text-secondary-dark` token (`#9A6C00`, AA-safe) with `dark:text-secondary`; keep that pairing when adding gold text on light surfaces.

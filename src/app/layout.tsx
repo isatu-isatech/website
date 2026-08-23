@@ -4,7 +4,9 @@ import "@/app/globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { ConsentGatedAnalytics } from "@/components/consent-gated-analytics";
-import NextTopLoader from "nextjs-toploader";
+import { PageTransition } from "@/components/common/page-transition";
+import { ScrollActivityIndicator } from "@/components/common/scroll-activity-indicator";
+import { OverlayScrollbarsProvider } from "@/components/common/overlay-scrollbars-provider";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -161,7 +163,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      data-overlayscrollbars-initialize
+      suppressHydrationWarning
+    >
       <head>
         <link
           rel="preconnect"
@@ -171,17 +178,19 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://challenges.cloudflare.com" />
         <link rel="dns-prefetch" href="https://vitals.vercel-analytics.com" />
       </head>
-      <body className={`${poppins.variable} ${chivo.variable} antialiased`}>
-        <NextTopLoader
-          showSpinner={false}
-          color="linear-gradient(to right, #203c90, #ffac02)"
-          height={3}
-        />
+      <body
+        className={`${poppins.variable} ${chivo.variable} antialiased`}
+        data-overlayscrollbars-initialize
+      >
         <CookieConsentProvider>
-          {children}
+          <PageTransition>{children}</PageTransition>
           <Toaster />
           <ConsentGatedAnalytics />
         </CookieConsentProvider>
+        {/* Toggles .is-scrolling on <html> to emphasize the scrollbar while scrolling */}
+        <ScrollActivityIndicator />
+        {/* Replaces the native page scrollbar with the brand-keyed custom one */}
+        <OverlayScrollbarsProvider />
         {/* Schema.org structured data for SEO */}
         <script
           type="application/ld+json"

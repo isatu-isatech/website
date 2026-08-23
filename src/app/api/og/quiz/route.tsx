@@ -2,6 +2,7 @@ import { ImageResponse } from "next/og";
 import { NextRequest } from "next/server";
 import { Ratelimit } from "@upstash/ratelimit";
 import { kv } from "@vercel/kv";
+import { COLORS } from "@/lib/constants/design-tokens";
 
 export const runtime = "nodejs";
 
@@ -16,19 +17,13 @@ try {
   // Graceful degradation if Vercel KV is not configured
 }
 
-const archetypeColors: Record<string, string> = {
-  Hustler: "#F59E0B",
-  Hacker: "#3B82F6",
-  Hipster: "#EC4899",
-  Hound: "#10B981",
-};
+const defaultPair = COLORS.quiz.archetypes.Hacker;
 
-const archetypeGradients: Record<string, [string, string]> = {
-  Hustler: ["#F59E0B", "#EA580C"],
-  Hacker: ["#3B82F6", "#4F46E5"],
-  Hipster: ["#EC4899", "#9333EA"],
-  Hound: ["#10B981", "#0D9488"],
-};
+// Single source of truth: archetype/quiz colors live in design-tokens (COLORS.quiz).
+const archetypePairs = COLORS.quiz.archetypes as Record<
+  string,
+  { from: string; to: string }
+>;
 
 export async function GET(request: NextRequest) {
   if (ratelimit) {
@@ -48,13 +43,12 @@ export async function GET(request: NextRequest) {
   const archetype = searchParams.get("archetype") || "Hustler";
   const isGeneralist = searchParams.get("generalist") === "true";
 
+  const pair = archetypePairs[archetype] ?? defaultPair;
   const [gradientStart, gradientEnd] = isGeneralist
-    ? ["#8B5CF6", "#7C3AED"]
-    : archetypeGradients[archetype] || ["#3B82F6", "#1D4ED8"];
+    ? [COLORS.quiz.generalist.from, COLORS.quiz.generalist.to]
+    : [pair.from, pair.to];
 
-  const primaryColor = isGeneralist
-    ? "#8B5CF6"
-    : archetypeColors[archetype] || "#3B82F6";
+  const primaryColor = isGeneralist ? COLORS.quiz.generalist.from : pair.from;
 
   const ogResponse = new ImageResponse(
     <div

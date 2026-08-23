@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Share2, RotateCcw } from "lucide-react";
 import {
@@ -9,6 +10,7 @@ import {
   archetypeIcons,
   type ArchetypeKey,
 } from "@/lib/quiz-data";
+import { COLORS } from "@/lib/constants/design-tokens";
 import type { FinalResult } from "./types";
 
 export function ResultScreen({
@@ -20,9 +22,16 @@ export function ResultScreen({
   onReset: () => void;
   onShare: () => void;
 }) {
-  const primaryColor = result.isGeneralist
-    ? "from-violet-500 to-purple-600"
+  const reduceMotion = useReducedMotion();
+
+  // Generalist renders in the brand gold pair (from design tokens);
+  // archetypes keep their gradient classes (quiz-data, mirrors COLORS.quiz.archetypes).
+  const secondaryColor = result.isGeneralist
+    ? undefined
     : archetypeGradients[result.primaryArchetype];
+  const generalistGradient = result.isGeneralist
+    ? `linear-gradient(135deg, ${COLORS.quiz.generalist.from}, ${COLORS.quiz.generalist.to})`
+    : undefined;
 
   const primaryImage = result.isGeneralist
     ? "/assets/decorations/4h-vertical.png"
@@ -37,10 +46,15 @@ export function ResultScreen({
     >
       {/* Result badge */}
       <motion.div
-        initial={{ scale: 0 }}
+        initial={reduceMotion ? false : { scale: 0 }}
         animate={{ scale: 1 }}
-        transition={{ type: "spring", delay: 0.2 }}
-        className={`mb-4 inline-flex h-24 w-24 flex-col items-center justify-center rounded-full bg-gradient-to-br md:mb-6 md:h-32 md:w-32 ${primaryColor} p-3 shadow-2xl md:p-4`}
+        transition={reduceMotion ? undefined : { type: "spring", delay: 0.2 }}
+        className={`mb-4 inline-flex h-24 w-24 flex-col items-center justify-center rounded-full bg-gradient-to-br md:mb-6 md:h-32 md:w-32 ${secondaryColor ?? ""} p-3 shadow-2xl md:p-4`}
+        style={
+          generalistGradient
+            ? { backgroundImage: generalistGradient }
+            : undefined
+        }
       >
         <div className="relative h-full w-full">
           <Image
@@ -53,7 +67,7 @@ export function ResultScreen({
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={reduceMotion ? false : { opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
@@ -61,14 +75,19 @@ export function ResultScreen({
           You are a...
         </p>
         <h2
-          className={`mb-2 bg-gradient-to-r text-2xl font-bold md:mb-3 md:text-3xl lg:text-4xl ${primaryColor} bg-clip-text text-transparent`}
+          className={`mb-2 bg-gradient-to-r text-2xl font-bold md:mb-3 md:text-3xl lg:text-4xl ${secondaryColor ?? ""} bg-clip-text text-transparent`}
+          style={
+            generalistGradient
+              ? { backgroundImage: generalistGradient }
+              : undefined
+          }
         >
           {result.role}
         </h2>
       </motion.div>
 
       <motion.p
-        initial={{ opacity: 0 }}
+        initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.6 }}
         className="text-muted-foreground mx-auto mb-4 max-w-xl text-sm md:mb-6 md:text-base"
@@ -79,7 +98,7 @@ export function ResultScreen({
       {/* Score breakdown */}
       {!result.isGeneralist && (
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={reduceMotion ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
           className="bg-card mx-auto mb-4 max-w-md rounded-xl border p-3 shadow-lg md:mb-6 md:rounded-2xl md:p-4"
@@ -89,7 +108,7 @@ export function ResultScreen({
           </h3>
           <div className="space-y-2">
             {(Object.entries(result.breakdown) as [ArchetypeKey, number][])
-              .sort(([, a], [, b]) => b - a)
+              .toSorted(([, a], [, b]) => b - a)
               .map(([archetype, percentage]) => (
                 <div key={archetype} className="flex items-center gap-2">
                   <div className="relative h-5 w-5 flex-shrink-0 md:h-6 md:w-6">
@@ -109,7 +128,7 @@ export function ResultScreen({
                     </div>
                     <div className="bg-muted h-1.5 overflow-hidden rounded-full">
                       <motion.div
-                        initial={{ width: 0 }}
+                        initial={reduceMotion ? false : { width: 0 }}
                         animate={{ width: `${percentage}%` }}
                         transition={{ duration: 1, delay: 1 }}
                         className={`h-full rounded-full bg-gradient-to-r ${
@@ -126,7 +145,7 @@ export function ResultScreen({
 
       {/* Action buttons */}
       <motion.div
-        initial={{ opacity: 0 }}
+        initial={reduceMotion ? false : { opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 1 }}
         className="flex flex-row justify-center gap-3"
@@ -150,6 +169,21 @@ export function ResultScreen({
           Retake
         </Button>
       </motion.div>
+
+      {/* Funnel hand-off — the quiz peak leads into membership (FR-014) */}
+      <motion.p
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        className="mt-4 text-center"
+      >
+        <Link
+          href="/membership"
+          className="text-muted-foreground hover:text-primary text-sm underline-offset-4 transition-colors hover:underline"
+        >
+          Your {result.primaryArchetype} energy belongs at ISATech — join us →
+        </Link>
+      </motion.p>
     </motion.div>
   );
 }

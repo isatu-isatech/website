@@ -1,4 +1,8 @@
-import { FooterComponent, HeaderComponent } from "@/components/layout";
+import {
+  FooterComponent,
+  HeaderComponent,
+  HeaderOffset,
+} from "@/components/layout";
 
 /**
  * Static pages layout - includes standard header and footer
@@ -11,6 +15,7 @@ export default function StaticLayout({
   return (
     <>
       <HeaderComponent />
+      <HeaderOffset />
       {children}
       <FooterComponent />
     </>

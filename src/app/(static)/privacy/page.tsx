@@ -361,7 +361,7 @@ function PrivacyContactSection() {
         </li>
         <li>
           By visiting our{" "}
-          <Link href="/contact#" className="text-primary underline">
+          <Link href="/contact" className="text-primary underline">
             contact page
           </Link>
         </li>
@@ -378,7 +378,7 @@ function PrivacyContactSection() {
 export default function PrivacyPage() {
   return (
     <main className="flex w-full flex-col items-center justify-center">
-      <section className="w-full px-6 py-16 lg:px-16 lg:py-28">
+      <section className="w-full px-4 py-16 sm:px-6 md:px-8 lg:px-12 lg:py-28 xl:px-16 2xl:px-20">
         <div className="mx-auto flex max-w-4xl flex-col gap-8">
           <PrivacyPageHeader />
           <PrivacyIntroSection />
@@ -394,7 +394,9 @@ export default function PrivacyPage() {
           <PrivacyLinksSection />
           <PrivacyChangesSection />
           <PrivacyContactSection />
-          <ManageCookiesSection />
+          <section id="manage-cookies">
+            <ManageCookiesSection />
+          </section>
         </div>
       </section>
     </main>

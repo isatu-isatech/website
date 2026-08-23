@@ -21,12 +21,12 @@ export function proxy(request: NextRequest) {
   // Production still maintains strong security through other headers and directives.
   const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' ${isDevelopment ? "'unsafe-eval'" : ""} https://challenges.cloudflare.com https://va.vercel-scripts.com ${isDevelopment ? "https://vercel.live https://*.vercel.app https://cdn.jsdelivr.net" : ""};
+    script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' ${isDevelopment ? "'unsafe-eval'" : ""} https://www.youtube.com https://s.ytimg.com https://challenges.cloudflare.com https://va.vercel-scripts.com ${isDevelopment ? "https://vercel.live https://*.vercel.app https://cdn.jsdelivr.net" : ""};
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com ${isDevelopment ? "https://*.githubusercontent.com" : ""};
     font-src 'self' https://fonts.gstatic.com;
-    connect-src 'self' https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ${isDevelopment ? "https://vercel.live ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app" : ""};
-    frame-src 'self' https://www.youtube-nocookie.com https://challenges.cloudflare.com https://www.openstreetmap.org;
+    connect-src 'self' https://www.youtube.com https://s.ytimg.com https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ${isDevelopment ? "https://vercel.live ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app" : ""};
+    frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com https://challenges.cloudflare.com https://www.openstreetmap.org;
     media-src 'self' https://www.youtube-nocookie.com;
     worker-src 'self' blob:;
     child-src 'self' blob:;
@@ -43,11 +43,21 @@ export function proxy(request: NextRequest) {
     .replace(/\s{2,}/g, " ")
     .trim();
 
+  // A service worker's global scope inherits the CSP of its own script
+  // response and enforces it on every fetch the worker makes on behalf of
+  // the app (e.g. serwist's NetworkOnly strategy fetching the YouTube IFrame
+  // API). Exclude the worker script from the CSP so worker-driven requests
+  // aren't blocked by app connect-src policy. All other security headers
+  // below still apply to it.
+  const isServiceWorkerScript = request.nextUrl.pathname === "/sw.js";
+
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set(
-    "Content-Security-Policy",
-    contentSecurityPolicyHeaderValue,
-  );
+  if (!isServiceWorkerScript) {
+    requestHeaders.set(
+      "Content-Security-Policy",
+      contentSecurityPolicyHeaderValue,
+    );
+  }
 
   const response = NextResponse.next({
     request: {
@@ -55,10 +65,12 @@ export function proxy(request: NextRequest) {
     },
   });
 
-  response.headers.set(
-    "Content-Security-Policy",
-    contentSecurityPolicyHeaderValue,
-  );
+  if (!isServiceWorkerScript) {
+    response.headers.set(
+      "Content-Security-Policy",
+      contentSecurityPolicyHeaderValue,
+    );
+  }
 
   // Additional security headers
   response.headers.set("X-Frame-Options", "DENY");

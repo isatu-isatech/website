@@ -60,7 +60,7 @@ export function LoadingSpinner({
           <span
             key={i}
             className={cn(
-              "bg-primary animate-bounce rounded-full",
+              "bg-primary animate-bounce rounded-full motion-reduce:animate-none",
               size === "xs" && "h-1 w-1",
               size === "sm" && "h-1.5 w-1.5",
               size === "md" && "h-2 w-2",
@@ -86,7 +86,7 @@ export function LoadingSpinner({
       <div className={cn("flex items-center gap-2", className)}>
         <div
           className={cn(
-            "bg-primary animate-pulse rounded-full",
+            "bg-primary animate-pulse rounded-full motion-reduce:animate-none",
             sizeClasses[size],
           )}
         />
@@ -103,7 +103,10 @@ export function LoadingSpinner({
   return (
     <div className={cn("flex items-center gap-2", className)}>
       <svg
-        className={cn("text-primary animate-spin", sizeClasses[size])}
+        className={cn(
+          "text-primary animate-spin motion-reduce:animate-none",
+          sizeClasses[size],
+        )}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

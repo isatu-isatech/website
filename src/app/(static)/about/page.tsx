@@ -3,14 +3,19 @@ import {
   ISATechDecorationLeft,
   ISATechDecorationRight,
 } from "@/components/assets/decorations";
-import { ISATechLogoMark } from "@/components/assets/logos";
-import { OptimizedImage, SectionErrorBoundary } from "@/components/common";
+import {
+  OptimizedImage,
+  RevealOnView,
+  SectionErrorBoundary,
+} from "@/components/common";
 import { HomepageContactSection } from "@/components/home/contact-section";
 import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
 import { TopographyTexture } from "@/components/texture/topography";
 import { RocketIcon, TargetIcon } from "lucide-react";
 import { Metadata } from "next";
+import AboutHeroLockup from "./hero-lockup";
 import AboutUsAdvisersSection, { AdviserProps } from "./carousel";
+import AboutDescriptionBand from "./description-band";
 
 /**
  * ################################################################################
@@ -113,22 +118,21 @@ const advisers: AdviserProps[] = [
 function AboutUsHeroSection() {
   return (
     <section
-      className="flex w-full items-center justify-center px-6 py-12 md:px-16 md:py-6"
+      className="flex w-full items-center justify-center px-4 py-12 sm:px-6 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="hero"
     >
-      <div className="relative flex w-full max-w-6xl items-center justify-between py-8 lg:py-16">
+      <div className="grid w-full max-w-7xl grid-cols-1 items-center gap-8 py-8 sm:grid-cols-2 lg:gap-12 lg:py-16">
         {/* Text Content */}
-        <div className="flex w-full gap-8">
-          {/* Divider */}
-          <div className="from-primary to-secondary w-0.5 bg-gradient-to-bl"></div>
+        <div className="flex w-full gap-4 md:gap-8">
+          {/* Divider — bolder brand accent */}
+          <div className="from-primary to-secondary w-1 shrink-0 rounded-full bg-linear-to-bl"></div>
           {/* Text Container */}
           <div className="">
-            <h1>About</h1>
-            <h1 className="text-secondary">ISATech Society</h1>
+            <AboutHeroLockup />
           </div>
         </div>
-        {/* 4H Decoration */}
-        <div className="hidden w-fit items-center justify-center sm:flex sm:w-full">
+        {/* Decorations — right column, centered */}
+        <div className="relative hidden w-full flex-col items-center justify-center gap-6 sm:flex">
           <OptimizedImage
             src="/assets/decorations/4h-vertical.png"
             alt="4H Vertical Pose"
@@ -139,12 +143,11 @@ function AboutUsHeroSection() {
             priority
             brandPlaceholder
           />
+          <ISATechDecorationCenter
+            className="pointer-events-none absolute -z-1 h-auto w-32 md:w-40 lg:w-64"
+            color="#203C90"
+          />
         </div>
-        {/* ISATech Logo Decoration */}
-        <ISATechDecorationCenter
-          className="absolute top-0 right-0 -z-1 h-full w-auto"
-          color="#203C90"
-        />
       </div>
     </section>
   );
@@ -153,65 +156,46 @@ function AboutUsHeroSection() {
 function AboutUsDescriptionSection() {
   return (
     <section
-      className="relative flex w-full items-center justify-center px-6 py-6 md:px-16"
+      className="relative flex w-full flex-col items-center py-6 md:py-10"
       id="description"
     >
-      <div className="absolute flex h-full w-full justify-center">
+      <div className="pointer-events-none absolute inset-0 flex justify-center">
         {/* Decorations */}
         <ISATechDecorationLeft className="absolute top-0 left-0 hidden h-auto w-fit opacity-10 lg:block" />
         <ISATechDecorationRight className="absolute right-0 bottom-0 h-auto w-fit opacity-10" />
       </div>
-      <div className="flex w-full max-w-6xl flex-col items-center">
-        {/* Text Content */}
-        <div className="bg-accent relative flex w-full max-w-6xl flex-col items-center justify-between gap-4 overflow-hidden rounded-3xl px-6 lg:px-20">
-          <OptimizedImage
-            src="/assets/decorations/tradeanovate-grouphoto.jpg"
-            alt="Tradeanovate Group Photo"
-            width={1695}
-            height={706}
-            sizes="(min-width: 1360px) 1153px, (min-width: 1040px) calc(80.33vw + 78px), (min-width: 960px) 709px, (min-width: 740px) 751px, (min-width: 600px) calc(-47.5vw + 1091px), (min-width: 400px) calc(-63.89vw + 1179px), calc(-298.75vw + 2054px)"
-            className="absolute h-full w-auto rounded-3xl object-cover opacity-30 lg:h-auto lg:w-full"
-            priority
-          />
-          <div className="flex flex-col items-center justify-center gap-4 py-16 lg:py-32">
-            <ISATechLogoMark className="h-24 w-auto" />
-            <p className="body text-center">
-              ISATech Society (ISAT U Innovators and Technopreneurs Society) is
-              a student-led organization at Iloilo Science and Technology
-              University dedicated to nurturing innovation, creativity, and
-              entrepreneurship.
+      {/* Full-bleed description photo band (parallax) */}
+      <AboutDescriptionBand />
+      {/* Mission and Vision */}
+      <div className="grid w-full max-w-7xl grid-cols-1 gap-6 px-6 py-5 md:px-16 lg:grid-cols-2 lg:py-8">
+        <RevealOnView className="flex flex-col justify-start gap-4">
+          <TargetIcon size={42} className="text-primary" />
+          <div className="flex flex-col gap-2">
+            <h3 className="text-primary">Mission</h3>
+            <p className="body text-justify">
+              To empower ISAT U students with the mindset, skills, and
+              opportunities to become future-ready innovators and
+              technopreneurs. We provide a platform for students to grow through
+              training, mentorship, and community engagement — connecting them
+              with industry leaders and supporting their journey from ideas to
+              impactful ventures.
             </p>
           </div>
-        </div>
-        {/* Mission and Vission */}
-        <div className="grid w-full max-w-6xl grid-cols-1 gap-6 py-5 lg:grid-cols-2 lg:py-8">
-          <div className="flex flex-col justify-start gap-4">
-            <TargetIcon size={42} />
-            <div className="flex flex-col gap-2">
-              <h3>Mission</h3>
-              <p className="body text-justify">
-                To empower ISAT U students with the mindset, skills, and
-                opportunities to become future-ready innovators and
-                technopreneurs. We provide a platform for students to grow
-                through training, mentorship, and community engagement —
-                connecting them with industry leaders and supporting their
-                journey from ideas to impactful ventures.
-              </p>
-            </div>
+        </RevealOnView>
+        <RevealOnView
+          className="flex flex-col justify-start gap-4"
+          delay={0.08}
+        >
+          <RocketIcon size={42} className="text-primary" />
+          <div className="flex flex-col gap-2">
+            <h3 className="text-primary">Vision</h3>
+            <p className="body text-justify">
+              Our Vision is to be the premier platform for students across ISAT
+              U system wide, raising awareness about startups, providing skills
+              and resources for innovations, producing student technopreneurs.
+            </p>
           </div>
-          <div className="flex flex-col justify-start gap-4">
-            <RocketIcon size={42} />
-            <div className="flex flex-col gap-2">
-              <h3>Vision</h3>
-              <p className="body text-justify">
-                Our Vision is to be the premier platform for students across
-                ISAT U system wide, raising awareness about startups, providing
-                skills and resources for innovations, producing student
-                technopreneurs.
-              </p>
-            </div>
-          </div>
-        </div>
+        </RevealOnView>
       </div>
     </section>
   );
@@ -220,15 +204,15 @@ function AboutUsDescriptionSection() {
 function AboutUsEmpowermentSection() {
   return (
     <section
-      className="bg-primary relative flex w-full items-center justify-center px-6 py-14 md:py-6 lg:px-16"
+      className="bg-primary relative flex w-full items-center justify-center px-4 py-14 sm:px-6 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="empowerment"
     >
       <TopographyTexture
         color="#FFAC03"
-        className="absolute h-full w-full opacity-20"
+        className="pointer-events-none absolute h-full w-full opacity-20"
       />
-      <div className="flex w-full max-w-6xl grid-cols-1 flex-col-reverse gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
-        <div className="w-fill flex items-center justify-center">
+      <div className="flex w-full max-w-7xl flex-col-reverse gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
+        <div className="flex w-full items-center justify-center">
           <h5 className="text-justify text-white">
             We empower students with practical skills, an entrepreneurial
             mindset, and a passion for innovation. Through workshops, training,
@@ -238,10 +222,10 @@ function AboutUsEmpowermentSection() {
             ISAT U’s technology business incubator, Kwadra TBI.
           </h5>
         </div>
-        <div className="w-fill flex items-center justify-center">
+        <div className="flex w-full items-center justify-center">
           <OptimizedImage
             src="/assets/decorations/poststamp-sticker.png"
-            alt="ISATech Society Reseach Hub Stamp"
+            alt="ISATech Society Research Hub Stamp"
             width={436}
             height={346}
             sizes="(min-width: 1040px) 403px, (min-width: 540px) 448px, calc(89.09vw - 15px)"
@@ -257,11 +241,11 @@ function AboutUsEmpowermentSection() {
 function AboutUsInitiativesSection() {
   return (
     <section
-      className="flex w-full items-center justify-center px-6 py-14 md:py-6 lg:px-16"
+      className="flex w-full items-center justify-center px-4 py-14 sm:px-6 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="initiatives"
     >
-      <div className="flex w-full max-w-6xl grid-cols-1 flex-col gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
-        <div className="w-fill flex items-center justify-center">
+      <div className="flex w-full max-w-7xl flex-col gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
+        <div className="flex w-full items-center justify-center">
           <OptimizedImage
             src="/assets/decorations/tagline-sticker.png"
             alt="Dream Innovate Succeed Sticker"
@@ -272,7 +256,7 @@ function AboutUsInitiativesSection() {
             brandPlaceholder
           />
         </div>
-        <div className="w-fill flex items-center justify-center">
+        <div className="flex w-full items-center justify-center">
           <h5 className="text-justify">
             Our initiatives emphasize community impact, continuous learning, and
             sustainable growth. From interdisciplinary problem-solving and IP
