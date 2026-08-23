@@ -38,7 +38,7 @@ export default function AboutUsAdvisersSection({
 }) {
   const adviserSectionBG: BlobsConfig[] = [
     {
-      id: "default-blob-2",
+      id: "advisers-blob",
       top: "-10rem",
       left: "-10rem",
       animateX: [0, -30, 0],
@@ -90,7 +90,7 @@ export default function AboutUsAdvisersSection({
 
   return (
     <section
-      className="relative flex w-full items-center justify-center px-6 py-8 md:py-6 lg:px-16 lg:py-14"
+      className="relative flex w-full items-center justify-center px-4 py-8 sm:px-6 md:px-8 md:py-6 lg:px-12 lg:py-14 xl:px-16 2xl:px-20"
       id="advisers"
     >
       {/* Animated Blobs BG */}
@@ -98,7 +98,7 @@ export default function AboutUsAdvisersSection({
         className="absolute h-full w-full"
         blobs={adviserSectionBG}
       />
-      <div className="flex w-full max-w-6xl flex-col gap-6 lg:flex-row">
+      <div className="flex w-full max-w-7xl flex-col gap-6 lg:flex-row">
         <div className="flex w-full flex-col items-center justify-center gap-4 lg:max-w-2xs">
           <h3 className="text-primary text-center md:text-start">
             Meet our ever supportive Advisers
@@ -107,12 +107,14 @@ export default function AboutUsAdvisersSection({
           <div className="hidden w-full gap-2 lg:flex">
             <Button
               size={"icon"}
+              aria-label="Previous slides"
               onClick={() => scrollToIndex(currentIndex - 1)}
             >
               <ArrowLeftIcon />
             </Button>
             <Button
               size={"icon"}
+              aria-label="Next slides"
               onClick={() => scrollToIndex(currentIndex + 1)}
             >
               <ArrowRightIcon />
@@ -167,9 +169,12 @@ export default function AboutUsAdvisersSection({
               {Array.from({ length: totalItems }).map((_, index) => (
                 <button
                   key={index}
+                  aria-label={`Go to adviser ${index + 1}`}
                   onClick={() => scrollToIndex(index)}
                   className={`h-3 w-3 rounded-full ${
-                    currentIndex === index ? "bg-primary/80" : "bg-gray-400"
+                    currentIndex === index
+                      ? "bg-primary/80"
+                      : "bg-foreground/25"
                   }`}
                 />
               ))}
