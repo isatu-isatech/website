@@ -24,6 +24,8 @@ import { cn } from "@/lib/utils";
 export default function HeaderComponent() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [previousPathname, setPreviousPathname] = useState(pathname);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -31,6 +33,13 @@ export default function HeaderComponent() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Close the mobile menu whenever the route changes (links inside it navigate
+  // away, but the dialog itself would otherwise stay open).
+  if (previousPathname !== pathname) {
+    setPreviousPathname(pathname);
+    setMenuOpen(false);
+  }
 
   // Over the hero (homepage, top of page) the header blends into the hero's brand
   // surface; as soon as the user scrolls it detaches into a solid fixed bar.
@@ -104,7 +113,7 @@ export default function HeaderComponent() {
                 <p className="text-caption">Join Now</p>
               </Button>
             </Link>
-            <Sheet>
+            <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant={"outline"}

@@ -4,10 +4,9 @@ import "@/app/globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { ConsentGatedAnalytics } from "@/components/consent-gated-analytics";
+import { PageTransition } from "@/components/common/page-transition";
 import { ScrollActivityIndicator } from "@/components/common/scroll-activity-indicator";
 import { OverlayScrollbarsProvider } from "@/components/common/overlay-scrollbars-provider";
-import NextTopLoader from "nextjs-toploader";
-import { GRADIENTS } from "@/lib/constants/design-tokens";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -183,13 +182,8 @@ export default async function RootLayout({
         className={`${poppins.variable} ${chivo.variable} antialiased`}
         data-overlayscrollbars-initialize
       >
-        <NextTopLoader
-          showSpinner={false}
-          color={GRADIENTS.primary}
-          height={3}
-        />
         <CookieConsentProvider>
-          {children}
+          <PageTransition>{children}</PageTransition>
           <Toaster />
           <ConsentGatedAnalytics />
         </CookieConsentProvider>
