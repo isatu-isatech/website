@@ -37,7 +37,8 @@ export async function submitMessage(formData: unknown) {
     if (!success) {
       return {
         success: false,
-        error: "Too many requests. Please try again later.",
+        error:
+          "You've sent quite a few messages this hour — please try again in about an hour. We read every single message.",
       };
     }
   }
@@ -46,7 +47,11 @@ export async function submitMessage(formData: unknown) {
   const parsed = contactFormSchema.safeParse(formData);
 
   if (!parsed.success) {
-    return { success: false, error: "Invalid form data." };
+    return {
+      success: false,
+      error:
+        "A couple of details need another look — please double-check the form and resubmit.",
+    };
   }
 
   const { name, email, message, turnstileToken } = parsed.data;
@@ -67,11 +72,18 @@ export async function submitMessage(formData: unknown) {
 
     const data = await response.json();
     if (!data.success) {
-      return { success: false, error: "CAPTCHA verification failed." };
+      return {
+        success: false,
+        error: "The security check didn't go through — please try once more.",
+      };
     }
   } catch (error) {
     console.error("Turnstile verification error:", error);
-    return { success: false, error: "Failed to verify CAPTCHA." };
+    return {
+      success: false,
+      error:
+        "We couldn't reach the security check just now. Please retry in a moment.",
+    };
   }
 
   try {
@@ -102,7 +114,10 @@ export async function submitMessage(formData: unknown) {
     return { success: true };
   } catch (error) {
     console.error("Something went wrong:", error);
-    return { success: false, error: "An unexpected error occurred." };
+    return {
+      success: false,
+      error: "Something went wrong on our end. Please try again in a moment.",
+    };
   }
 }
 

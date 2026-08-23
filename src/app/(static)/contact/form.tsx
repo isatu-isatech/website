@@ -88,7 +88,6 @@ export default function ContactUsForm() {
                   <Input
                     placeholder="Juan Dela Cruz"
                     type="text"
-                    className="border-primary"
                     autoComplete="name"
                     id="name"
                     {...field}
@@ -108,7 +107,6 @@ export default function ContactUsForm() {
                   <Input
                     placeholder="name@example.com"
                     type="email"
-                    className="border-primary"
                     autoComplete="email"
                     id="email"
                     {...field}
@@ -129,7 +127,7 @@ export default function ContactUsForm() {
                 <FormControl>
                   <Textarea
                     placeholder="Your Message"
-                    className="border-primary field-sizing-fixed"
+                    className="field-sizing-fixed"
                     id="message"
                     {...field}
                   />
