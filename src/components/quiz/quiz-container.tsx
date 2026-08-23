@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo, useEffect } from "react";
-import { AnimatePresence } from "motion/react";
+import { AnimatePresence, useReducedMotion } from "motion/react";
 import {
   questions,
   tieBreakers,
@@ -13,6 +13,9 @@ import {
   type Choice,
 } from "@/lib/quiz-data";
 import confetti from "canvas-confetti";
+import { toast } from "sonner";
+import { COLORS } from "@/lib/constants/design-tokens";
+import { archetypeColors } from "@/lib/quiz-data";
 import { IntroScreen } from "./intro-screen";
 import { QuestionScreen } from "./question-screen";
 import { ResultScreen } from "./result-screen";
@@ -84,8 +87,6 @@ export function QuizContainer() {
 
   useEffect(() => {
     if (currentQuestion) {
-      setIsSubmitting(false);
-
       const previousAnswer = state.answers[state.currentQuestionIndex];
       if (previousAnswer) {
         const index = currentQuestion.choices.findIndex(
@@ -103,7 +104,7 @@ export function QuizContainer() {
     const total = Object.values(scores).reduce((a, b) => a + b, 0);
     if (total === 0) return null;
 
-    const sortedScores = Object.entries(scores).sort(
+    const sortedScores = Object.entries(scores).toSorted(
       ([, a], [, b]) => b - a,
     ) as [ArchetypeKey, number][];
 
@@ -184,7 +185,7 @@ export function QuizContainer() {
                 currentQuestionIndex: prev.currentQuestionIndex + 1,
               };
             } else {
-              const sortedScores = Object.entries(newScores).sort(
+              const sortedScores = Object.entries(newScores).toSorted(
                 ([, a], [, b]) => b - a,
               ) as [ArchetypeKey, number][];
               const [top1, top2, top3] = sortedScores;
@@ -197,7 +198,7 @@ export function QuizContainer() {
               return { ...newState, phase: "result" };
             }
           } else if (prev.phase === "tiebreaker") {
-            const sortedScores = Object.entries(newScores).sort(
+            const sortedScores = Object.entries(newScores).toSorted(
               ([, a], [, b]) => b - a,
             ) as [ArchetypeKey, number][];
             const [top1, top2, top3] = sortedScores;
@@ -215,6 +216,7 @@ export function QuizContainer() {
 
           return newState;
         });
+        setIsSubmitting(false);
       }, 600);
     },
     [currentQuestion, state.scores],
@@ -258,10 +260,14 @@ export function QuizContainer() {
         usedTieBreakers: newUsedTieBreakers,
       };
     });
+    setIsSubmitting(false);
   }, []);
+
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (state.phase === "result" && result && !result.needsTieBreaker) {
+      if (reduceMotion) return; // confetti storm off under reduced motion
       const duration = 3000;
       const end = Date.now() + duration;
 
@@ -271,14 +277,24 @@ export function QuizContainer() {
           angle: 60,
           spread: 55,
           origin: { x: 0 },
-          colors: ["#203c90", "#ffac02", "#EC4899", "#10B981"],
+          colors: [
+            COLORS.primary.DEFAULT,
+            COLORS.secondary.DEFAULT,
+            archetypeColors.Hipster,
+            archetypeColors.Hound,
+          ],
         });
         confetti({
           particleCount: 3,
           angle: 120,
           spread: 55,
           origin: { x: 1 },
-          colors: ["#203c90", "#ffac02", "#EC4899", "#10B981"],
+          colors: [
+            COLORS.primary.DEFAULT,
+            COLORS.secondary.DEFAULT,
+            archetypeColors.Hipster,
+            archetypeColors.Hound,
+          ],
         });
 
         if (Date.now() < end) {
@@ -287,7 +303,7 @@ export function QuizContainer() {
       };
       frame();
     }
-  }, [state.phase, result]);
+  }, [state.phase, result, reduceMotion]);
 
   const progress = useMemo(() => {
     if (state.phase === "quiz") {
@@ -296,7 +312,11 @@ export function QuizContainer() {
         100
       );
     } else if (state.phase === "tiebreaker") {
-      return 100;
+      return (
+        ((state.usedTieBreakers + 1) /
+          (state.shuffledQuestions.length + state.shuffledTieBreakers.length)) *
+        100
+      );
     }
     return 0;
   }, [state]);
@@ -328,7 +348,7 @@ export function QuizContainer() {
         navigator.share({ title: "4H Personality Quiz", text, url });
       } else {
         navigator.clipboard.writeText(`${text} ${url}`);
-        alert("Result copied to clipboard!");
+        toast("Result copied to clipboard!");
       }
     }
   }, [result]);
@@ -357,7 +377,8 @@ export function QuizContainer() {
               totalQuestions={
                 state.phase === "quiz"
                   ? state.shuffledQuestions.length
-                  : state.shuffledQuestions.length + 1
+                  : state.shuffledQuestions.length +
+                    state.shuffledTieBreakers.length
               }
               isTieBreaker={state.phase === "tiebreaker"}
               onBack={handleBack}

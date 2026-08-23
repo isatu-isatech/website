@@ -28,7 +28,7 @@ description: "Task list for Resolve Latest Critique Issues (US1 Membership defer
 
 **Purpose**: Baseline and shared config groundwork — the repo already exists; no project init needed
 
-- [ ] T001 Establish baseline: run `npm run type-check`, `npm run lint`, `npm run lint:ox`, `npm run build` and record they pass before any changes (snapshot for the critique gate)
+- [x] T001 Establish baseline: run `npm run type-check`, `npm run lint`, `npm run lint:ox`, `npm run build` and record they pass before any changes (snapshot for the critique gate)
 - [ ] T002 [P] ~~Promote `NOTION_MEMBERSHIP_DATABASE_ID` to required in `src/lib/env.ts` and uncomment it in `.env.example`~~ — **DEFERRED with US1** (making it required would break builds until the membership DB exists)
 
 ---
@@ -39,9 +39,9 @@ description: "Task list for Resolve Latest Critique Issues (US1 Membership defer
 
 **⚠️ CRITICAL**: US2 needs T003 (token frame); US4 needs T003; US6 needs T005 (quiz wording)
 
-- [ ] T003 [P] Add JS-consumed color exports to `src/lib/constants/design-tokens.ts` — single source for: NextTopLoader gradient pair, quiz confetti palette, quiz-generalist gold pair (replaces violet), and the 4-archetype hex pairs shared by `result-screen.tsx` and the OG route — **blocks US2 + US4**
+- [x] T003 [P] Add JS-consumed color exports to `src/lib/constants/design-tokens.ts` — single source for: NextTopLoader gradient pair, quiz confetti palette, quiz-generalist gold pair (replaces violet), and the 4-archetype hex pairs shared by `result-screen.tsx` and the OG route — **blocks US2 + US4**
 - [ ] T004 [P] ~~Provision the Notion membership database per `contracts/membership-application.md` §3 (21 properties + Status select) and set `NOTION_MEMBERSHIP_DATABASE_ID` in `.env.local`~~ — **DEFERRED with US1**
-- [ ] T005 [P] Collect the org-supplied copy dependencies — acronym expansions (KWADRA TBI, IPMO), quiz time wording (FR-023), application review-pipeline/confirmation wording (on hold with US1), canonical contact email — recorded in the feature dir; where unavailable, leave an explicit `TODO(org-copy)` marker. NEVER invent copy (constitution P2)
+- [x] T005 [P] Collect the org-supplied copy dependencies — acronym expansions (KWADRA TBI, IPMO), quiz time wording (FR-023), application review-pipeline/confirmation wording (on hold with US1), canonical contact email — recorded in the feature dir; where unavailable, leave an explicit `TODO(org-copy)` marker. NEVER invent copy (constitution P2)
 
 **Checkpoint**: Foundation ready — active user stories can now begin in parallel
 
@@ -74,11 +74,11 @@ description: "Task list for Resolve Latest Critique Issues (US1 Membership defer
 
 ### Implementation for User Story 2
 
-- [ ] T012 [US2] Refactor `src/components/home/hero-section.tsx` — pin to the single curated video (remove the `Math.random()` selection in the `useEffect`), keep `autoplay/mute/controls=0/loop/playsinline`, remove `loading="lazy"`, replace the flat `bg-black/50` overlay with a designed brand frame from `design-tokens.ts` and add a branded poster layer that fades on player ready — never a blank black box (FR-009, FR-010) (depends on T003)
-- [ ] T013 [US2] Add the credibility lane + primary CTA to `src/components/home/hero-section.tsx` — motto kicker ("DREAM • INNOVATE • SUCCEED" from existing copy) + "Est. 2021" (from `src/lib/constants/site.ts`); one dominant join action (FR-011; FR-014 for the hero) (depends on T012)
-- [ ] T014 [P] [US2] Create the 4H archetype story section (new `src/components/home/archetype-section.tsx`) surfacing Hustler / Hacker / Hipster / Hound from existing 4H content (`src/components/home/team-section.tsx`, `src/lib/quiz-data.ts`) with exactly one dominant CTA (FR-012)
-- [ ] T015 [US2] Wire the archetype section into `src/app/(static)/home/page.tsx` between hero and stats (depends on T014)
-- [ ] T016 [US2] Show org-approved full names on first use for acronyms in visible hero/home copy (KWADRA TBI, IPMO) using T005 strings; leave `TODO(org-copy)` if unavailable (FR-013)
+- [x] T012 [US2] Refactor `src/components/home/hero-section.tsx` — pin to the single curated video (remove the `Math.random()` selection in the `useEffect`), keep `autoplay/mute/controls=0/loop/playsinline`, remove `loading="lazy"`, replace the flat `bg-black/50` overlay with a designed brand frame from `design-tokens.ts` and add a branded poster layer that fades on player ready — never a blank black box (FR-009, FR-010) (depends on T003)
+- [x] T013 [US2] Add the credibility lane + primary CTA to `src/components/home/hero-section.tsx` — motto kicker ("DREAM • INNOVATE • SUCCEED" from existing copy) + "Est. 2021" (from `src/lib/constants/site.ts`); one dominant join action (FR-011; FR-014 for the hero) (depends on T012)
+- [x] T014 [P] [US2] Create the 4H archetype story section (new `src/components/home/archetype-section.tsx`) surfacing Hustler / Hacker / Hipster / Hound from existing 4H content (`src/components/home/team-section.tsx`, `src/lib/quiz-data.ts`) with exactly one dominant CTA (FR-012)
+- [x] T015 [US2] Wire the archetype section into `src/app/(static)/home/page.tsx` between hero and stats (depends on T014)
+- [x] T016 [US2] Show org-approved full names on first use for acronyms in visible hero/home copy (KWADRA TBI, IPMO) using T005 strings; leave `TODO(org-copy)` if unavailable (FR-013)
 
 **Checkpoint**: US2 functional and testable independently — MVP slice complete
 
@@ -94,9 +94,9 @@ description: "Task list for Resolve Latest Critique Issues (US1 Membership defer
 
 ### Implementation for User Story 3
 
-- [ ] T017 [US3] Verify the hero join path: `/` first viewport shows exactly one dominant action (post-US2 hero) (FR-014)
-- [ ] T018 [P] [US3] Remove the redundant second "Learn More" → `/about` in `src/components/home/offer-section.tsx`; keep the section's single dominant action (FR-014)
-- [ ] T019 [US3] CTA audit on `src/components/quiz/intro-screen.tsx` — exactly one dominant, forward-leading action to the quiz. **Membership-page CTA hierarchy defers with US1** (depends on US2 if parallel; shares `intro-screen.tsx` with US4 T024 — hand off or run sequentially)
+- [x] T017 [US3] Verify the hero join path: `/` first viewport shows exactly one dominant action (post-US2 hero) (FR-014)
+- [x] T018 [P] [US3] Remove the redundant second "Learn More" → `/about` in `src/components/home/offer-section.tsx`; keep the section's single dominant action (FR-014)
+- [x] T019 [US3] CTA audit on `src/components/quiz/intro-screen.tsx` — exactly one dominant, forward-leading action to the quiz. **Membership-page CTA hierarchy defers with US1** (depends on US2 if parallel; shares `intro-screen.tsx` with US4 T024 — hand off or run sequentially)
 
 **Checkpoint**: US3 functional and testable independently
 
@@ -110,13 +110,13 @@ description: "Task list for Resolve Latest Critique Issues (US1 Membership defer
 
 ### Implementation for User Story 4
 
-- [ ] T020 [P] [US4] Replace hardcoded grays with token classes in `src/components/home/offer-section.tsx` and the offer cards in `src/app/(static)/membership/page.tsx` (`bg-gray-300/50`, `from-white to-gray-500`, `text-gray-700`) — verify both themes (R-4). Note: the membership page stays live (Google Form until US1); the token fix survives the later rework
-- [ ] T021 [P] [US4] Replace remaining flagged hardcodes: team border trick + lanyard `text-black md:text-white` in `src/components/home/team-section.tsx` and `src/components/lanyard.tsx` (→ `text-foreground` token), gray dot in `src/app/(static)/about/carousel.tsx` — verify dark mode (R-4)
-- [ ] T022 [US4] Header hygiene in `src/components/layout/header.tsx`: remove the logo `onContextMenu` hijack → plain `Link`; remove the `border-b-grey-100` no-op; strip trailing `#` from nav hrefs (`src/lib/constants/site.ts` `NAV_LINKS` + header/mobile); add active-state indicator via `usePathname` (FR-018, FR-022)
-- [ ] T023 [P] [US4] Declutter `src/components/layout/footer.tsx` — keep at most one brand decoration (drop/soften the stacked decoration cluster), strip trailing `#` links, token colors (R-10)
-- [ ] T024 [US4] Quiz palette realignment in `src/components/quiz/result-screen.tsx` — generalist `from-violet-500 to-purple-600` → gold pair from tokens (T003); align `src/components/quiz/intro-screen.tsx` archetype badge colors with the result-screen archetype gradient starts (FR-016). Shares `intro-screen.tsx` with US3 T019 — hand off or run sequentially
-- [ ] T025 [US4] Realign `src/app/api/og/quiz/route.tsx` — generalist hex pair to gold; archetype hex pairs from `design-tokens.ts` (share the T003 exports so result + OG never diverge) (FR-016)
-- [ ] T026 [US4] Read `NextTopLoader` colors in `src/app/layout.tsx` and quiz confetti colors in `src/components/quiz/quiz-container.tsx` from `design-tokens.ts` instead of literals (FR-017)
+- [x] T020 [P] [US4] Replace hardcoded grays with token classes in `src/components/home/offer-section.tsx` and the offer cards in `src/app/(static)/membership/page.tsx` (`bg-gray-300/50`, `from-white to-gray-500`, `text-gray-700`) — verify both themes (R-4). Note: the membership page stays live (Google Form until US1); the token fix survives the later rework
+- [x] T021 [P] [US4] Replace remaining flagged hardcodes: team border trick + lanyard `text-black md:text-white` in `src/components/home/team-section.tsx` and `src/components/lanyard.tsx` (→ `text-foreground` token), gray dot in `src/app/(static)/about/carousel.tsx` — verify dark mode (R-4)
+- [x] T022 [US4] Header hygiene in `src/components/layout/header.tsx`: remove the logo `onContextMenu` hijack → plain `Link`; remove the `border-b-grey-100` no-op; strip trailing `#` from nav hrefs (`src/lib/constants/site.ts` `NAV_LINKS` + header/mobile); add active-state indicator via `usePathname` (FR-018, FR-022)
+- [x] T023 [P] [US4] Declutter `src/components/layout/footer.tsx` — keep at most one brand decoration (drop/soften the stacked decoration cluster), strip trailing `#` links, token colors (R-10)
+- [x] T024 [US4] Quiz palette realignment in `src/components/quiz/result-screen.tsx` — generalist `from-violet-500 to-purple-600` → gold pair from tokens (T003); align `src/components/quiz/intro-screen.tsx` archetype badge colors with the result-screen archetype gradient starts (FR-016). Shares `intro-screen.tsx` with US3 T019 — hand off or run sequentially
+- [x] T025 [US4] Realign `src/app/api/og/quiz/route.tsx` — generalist hex pair to gold; archetype hex pairs from `design-tokens.ts` (share the T003 exports so result + OG never diverge) (FR-016)
+- [x] T026 [US4] Read `NextTopLoader` colors in `src/app/layout.tsx` and quiz confetti colors in `src/components/quiz/quiz-container.tsx` from `design-tokens.ts` instead of literals (FR-017)
 
 **Checkpoint**: US4 functional and testable independently
 
@@ -132,9 +132,9 @@ description: "Task list for Resolve Latest Critique Issues (US1 Membership defer
 
 ### Implementation for User Story 5
 
-- [ ] T027 [P] [US5] Contact identity in `src/app/(static)/contact/page.tsx` — show the canonical email from `src/lib/constants/site.ts` (remove the `mailto:info@isatech.com` hardcode); verify `/privacy#manage-cookies` anchor resolves (it exists — keep) (FR-020, FR-021)
-- [ ] T028 [P] [US5] Humanize rate-limit + error copy in `src/app/(static)/contact/actions.ts` — human-readable hourly-limit message + recovery guidance, never bare error text (FR-005). (The membership action's copy lands with US1 when reopened — deferred)
-- [ ] T029 [US5] Verify trust walkthrough: logo right-click → normal context menu (US4 T022), owned email, resolved privacy link, humanized messages — quickstart scenarios 8–9 (FR-020..022)
+- [x] T027 [P] [US5] Contact identity in `src/app/(static)/contact/page.tsx` — show the canonical email from `src/lib/constants/site.ts` (remove the `mailto:info@isatech.com` hardcode); verify `/privacy#manage-cookies` anchor resolves (it exists — keep) (FR-020, FR-021)
+- [x] T028 [P] [US5] Humanize rate-limit + error copy in `src/app/(static)/contact/actions.ts` — human-readable hourly-limit message + recovery guidance, never bare error text (FR-005). (The membership action's copy lands with US1 when reopened — deferred)
+- [x] T029 [US5] Verify trust walkthrough: logo right-click → normal context menu (US4 T022), owned email, resolved privacy link, humanized messages — quickstart scenarios 8–9 (FR-020..022)
 
 **Checkpoint**: US5 functional and testable independently
 
@@ -148,9 +148,9 @@ description: "Task list for Resolve Latest Critique Issues (US1 Membership defer
 
 ### Implementation for User Story 6
 
-- [ ] T030 [P] [US6] Reduced-motion pass on `src/app/(static)/loading.tsx` and `src/components/common/loading-spinner.tsx` — `animate-bounce`/`animate-ping`/`animate-pulse` swap to calm/disabled under `motion-reduce:` (FR-019)
-- [ ] T031 [P] [US6] Springs respect reduced motion in `src/components/quiz/result-screen.tsx` (badge) and `src/components/common/count-up.tsx` — use `useReducedMotion` to snap to end values (FR-019)
-- [ ] T032 [US6] Replace "Takes about 3-5 minutes" in `src/components/quiz/intro-screen.tsx` with the org-approved honest wording (T005); confirm quiz question count unchanged (still 20) and result is informational-only (FR-023; FR-008)
+- [x] T030 [P] [US6] Reduced-motion pass on `src/app/(static)/loading.tsx` and `src/components/common/loading-spinner.tsx` — `animate-bounce`/`animate-ping`/`animate-pulse` swap to calm/disabled under `motion-reduce:` (FR-019)
+- [x] T031 [P] [US6] Springs respect reduced motion in `src/components/quiz/result-screen.tsx` (badge) and `src/components/common/count-up.tsx` — use `useReducedMotion` to snap to end values (FR-019)
+- [x] T032 [US6] Replace "Takes about 3-5 minutes" in `src/components/quiz/intro-screen.tsx` with the org-approved honest wording (T005); confirm quiz question count unchanged (still 20) and result is informational-only (FR-023; FR-008)
 
 **Checkpoint**: US6 functional and testable independently
 
@@ -160,10 +160,10 @@ description: "Task list for Resolve Latest Critique Issues (US1 Membership defer
 
 **Purpose**: Whole-feature verification and the user-requested acceptance gate
 
-- [ ] T033 Run static gates — `npm run type-check`, `npm run lint`, `npm run lint:ox`, `npm run build` (incl. next-sitemap): all green
-- [ ] T034 Run the `quickstart.md` validation for the ACTIVE scope (scenarios 4–10; scenarios 1–3 are deferred with US1) and fix any failures found (depends on T033)
-- [ ] T035 Re-run the impeccable critique on `src/app/(static)` + `src/components` including the design detector — **gate: score ≥ 8/10, zero open P0/P1 within the implemented scope**. The membership P0 (Google Form) is recorded as **intentionally deferred with reason (user decision 2026-08-21)** in the critique notes — accepted deferral, not a silent drop (depends on T034)
-- [ ] T036 [P] Documentation: record the deferred US1 scope, the "Hound" glossary amendment, and the membership DB provisioning as follow-ups in the feature dir / `AGENTS.md` notes (depends on T005)
+- [x] T033 Run static gates — `npm run type-check`, `npm run lint`, `npm run lint:ox`, `npm run build` (incl. next-sitemap): all green
+- [x] T034 Run the `quickstart.md` validation for the ACTIVE scope (scenarios 4–10; scenarios 1–3 are deferred with US1) and fix any failures found (depends on T033)
+- [x] T035 Re-run the impeccable critique on `src/app/(static)` + `src/components` including the design detector — **gate: score ≥ 8/10, zero open P0/P1 within the implemented scope**. The membership P0 (Google Form) is recorded as **intentionally deferred with reason (user decision 2026-08-21)** in the critique notes — accepted deferral, not a silent drop (depends on T034)
+- [x] T036 [P] Documentation: record the deferred US1 scope, the "Hound" glossary amendment, and the membership DB provisioning as follow-ups in the feature dir / `AGENTS.md` notes (depends on T005)
 
 ---
 

@@ -92,7 +92,6 @@ export function HomepageHeroSection() {
             mute
             hideControls
             disableKeyboard
-            allowFullScreen={false}
             loading="eager"
             onLoad={() => setPlayerReady(true)}
             className="pointer-events-none absolute top-1/2 left-1/2 aspect-video h-full max-w-none min-w-full -translate-x-1/2 -translate-y-1/2"
