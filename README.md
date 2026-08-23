@@ -115,7 +115,7 @@ src/
 - ✅ **Performance** - Image optimization, code splitting, Turbopack
 - ✅ **Accessible** - Radix UI primitives, semantic HTML
 - ✅ **Bot Protection** - Cloudflare Turnstile on forms
-- ✅ **Rate Limiting** - Vercel KV-based rate limiting
+- ✅ **Rate Limiting** - per-browser on the contact form; Vercel KV on the quiz image route
 - ✅ **Cookie Consent** - GDPR-compliant cookie banner
 - ✅ **Analytics** - Privacy-focused Vercel Analytics
 
