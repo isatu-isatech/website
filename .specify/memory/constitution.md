@@ -1,22 +1,24 @@
 <!--
   SYNC IMPACT REPORT
 
-  Version change: (none — initial bootstrap) → v1.0.0
-  Modified principles: n/a (new constitution)
-  Added sections: Preamble; Principles 1–7; Governance
+  Version change: v1.0.0 → v1.1.0
+  Modified principles: P5 (rate-limiting mechanism generalized: Upstash/Vercel KV
+    only → org-decided per surface; chosen mechanism MUST be documented in the
+    feature spec; weaker mechanisms require explicit org acceptance; never
+    silently disabled)
+  Added sections: n/a
   Removed sections: n/a
   Templates requiring updates:
-    - .specify/templates/plan-template.md          ✅ installed (copied from bundled core pack)
-    - .specify/templates/spec-template.md          ✅ installed (copied from bundled core pack)
-    - .specify/templates/tasks-template.md         ✅ installed (copied from bundled core pack)
-    - .specify/templates/constitution-template.md  ✅ installed (structure aligned to this doc on 2026-08-21)
+    - .specify/templates/plan-template.md          ✅ no changes required (no mechanism references)
+    - .specify/templates/spec-template.md          ✅ no changes required
+    - .specify/templates/tasks-template.md         ✅ no changes required
+    - .specify/templates/constitution-template.md  ✅ no changes required
     - .specify/templates/commands/*.md             ✅ n/a (Reasonix layout uses .reasonix/commands/)
-    - .reasonix/commands/speckit.*.md              ✅ updated (all load constitution via "IF EXISTS"; no
-                                                     hardcoded principle names — no edits required)
-    - README.md / AGENTS.md / CONTEXT.md           ✅ no changes required (principles derived verbatim from
-                                                     CONTEXT.md and AGENTS.md; phrase matches)
+    - .reasonix/commands/speckit.*.md              ✅ no changes required
+    - README.md / AGENTS.md                        ✅ updated (mechanism-neutral rate-limiting wording)
+    - CONTEXT.md                                   ✅ no changes required (already mechanism-neutral)
     - docs/shape-brief.md, docs/adr/*.md           ✅ informational only; no principle conflicts
-  Follow-up TODOs: none (all governance fields resolved: ratification 2026-08-21)
+  Follow-up TODOs: none
 -->
 
 # ISATech Website Constitution
@@ -98,8 +100,12 @@ Notion records and the production site.
 Public-facing and data-capturing surfaces MUST be defended against abuse and
 misconfiguration by default.
 
-- Public forms MUST be protected (Cloudflare Turnstile) and rate limited
-  (Upstash / Vercel KV).
+- Public forms MUST be protected (Cloudflare Turnstile) and rate limited.
+  The rate-limiting mechanism is an org decision — server-side (e.g. Upstash /
+  Vercel KV) or browser-held (e.g. cookies) — and the chosen mechanism MUST be
+  documented in the feature spec. A mechanism weaker than a server-side store
+  MUST be accepted explicitly by the org as a recorded decision, and rate
+  limiting MUST never be removed or silently disabled.
 - Secrets MUST NOT be placed in client bundles; security headers and CSP in
   `src/middleware.ts` MUST be maintained.
 - The contact path MUST resolve to an owned domain and human-readable messages; broken
@@ -169,4 +175,4 @@ MUST include the Sync Impact Report at the top of this file.
 - If a principle itself is believed to be wrong, that change MUST be proposed as a
   separate, explicit constitution amendment — not folded into feature work.
 
-**Version**: 1.0.0 | **Ratified**: 2026-08-21 | **Last Amended**: 2026-08-21
+**Version**: 1.1.0 | **Ratified**: 2026-08-21 | **Last Amended**: 2026-08-23

@@ -4,7 +4,7 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 
 ## Project
 
-- **Stack:** Next.js 15 (App Router, Turbopack) + TypeScript, Tailwind CSS v4, Radix UI, Motion (Framer), React Three Fiber, React Hook Form + Zod, Notion API (data), Vercel KV (rate limiting), Serwist (service worker/PWA), next-sitemap.
+- **Stack:** Next.js 15 (App Router, Turbopack) + TypeScript, Tailwind CSS v4, Radix UI, Motion (Framer), React Three Fiber, React Hook Form + Zod, Notion API (data), rate limiting (per-surface mechanism; see constitution P5), Serwist (service worker/PWA), next-sitemap.
 - **Entry point:** `src/app/layout.tsx` (root), pages under `src/app/`.
 - **Path alias:** `@/*` → `src/*`.
 
@@ -33,7 +33,7 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 - **Styling:** Tailwind v4 via `@import` in `src/app/globals.css`; use the `cn()` helper from `src/lib/utils.ts` to merge class strings (clsx + tailwind-merge). Design tokens live in `src/lib/constants/design-tokens.ts`.
 - **Formatting:** Prettier with semicolons, double quotes, trailing commas, `tailwindcss` plugin.
 - **Env config:** All runtime env vars are validated in `src/lib/env.ts` (Zod); public ones are `NEXT_PUBLIC_*`. Add new vars there AND in `.env.example`.
-- **Data/forms:** Server actions (`"use server"`) validate with Zod schemas; rate limiting via Upstash + Vercel KV; Cloudflare Turnstile on public forms.
+- **Data/forms:** Server actions (`"use server"`) validate with Zod schemas; rate-limiting mechanism is org-decided per surface (see constitution P5) — documented in each feature spec; Cloudflare Turnstile on public forms.
 - **Imports/export:** Package directories re-export via an `index.ts` barrel (e.g. `lib/constants/index.ts`, `components/common/index.ts`).
 - **Charts/3D-heavy assets:** Some generated asset files are huge (`components/assets/decorations.tsx` ~300KB, `texture/topography.tsx`) — edit carefully and avoid reformatting wholesale.
 - **Errors:** Server actions return `{ success, error }` objects rather than throwing for expected failures; use `console.error` for logging.
