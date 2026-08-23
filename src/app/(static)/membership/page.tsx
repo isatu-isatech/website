@@ -221,7 +221,7 @@ function MembershipPageTeamSection() {
               delay={key * 0.08}
               className="flex w-full flex-col items-center justify-start gap-3 px-4 py-6"
             >
-              <div className="bg-secondary flex aspect-square w-24 items-center justify-center rounded-full p-2 md:w-28">
+              <div className="bg-secondary flex aspect-square w-24 items-center justify-center rounded-3xl p-4 md:w-28">
                 <OptimizedImage
                   src={member.path}
                   alt={member.role}
