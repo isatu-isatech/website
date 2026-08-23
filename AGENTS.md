@@ -42,7 +42,8 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 
 <!-- Add project-specific quick-notes here as they come up. -->
 
-- DO NOT MANUALLY COMMIT. Provide the git add command and a commit title grouped by scope or feature for the user to manually review and execute.
+- Do not manually commit any changes on my behalf. Instead, provide the appropriate git add commands along with one or more commit titles, grouped logically by scope or feature, so that I can manually review the staged changes and execute the commits myself. Each commit title should follow our conventional commit format and clearly reflect the specific area of work so that the commit history remains clean, meaningful, and easy to navigate. Once I've reviewed the proposed commands and titles, I'll stage and commit the changes at my own discretion, ensuring full visibility and control over what gets included in each commit.
+- Do not create the pull request directly. Instead, simply provide me with the proposed pull request title and a detailed description of the changes, so I can review them first before proceeding with the actual PR creation. The title should be concise and follow our conventional commit format, while the description should clearly outline what was changed, why it was done, and any relevant context or testing notes that would help with the review process. Once I've had a chance to review and approve the content, I'll take care of creating the PR myself.
 
 <!-- SPECKIT START -->
 
