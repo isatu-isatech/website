@@ -4,7 +4,10 @@ import "@/app/globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { ConsentGatedAnalytics } from "@/components/consent-gated-analytics";
+import { ScrollActivityIndicator } from "@/components/common/scroll-activity-indicator";
+import { OverlayScrollbarsProvider } from "@/components/common/overlay-scrollbars-provider";
 import NextTopLoader from "nextjs-toploader";
+import { GRADIENTS } from "@/lib/constants/design-tokens";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -161,7 +164,12 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
+    <html
+      lang="en"
+      data-scroll-behavior="smooth"
+      data-overlayscrollbars-initialize
+      suppressHydrationWarning
+    >
       <head>
         <link
           rel="preconnect"
@@ -171,10 +179,13 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://challenges.cloudflare.com" />
         <link rel="dns-prefetch" href="https://vitals.vercel-analytics.com" />
       </head>
-      <body className={`${poppins.variable} ${chivo.variable} antialiased`}>
+      <body
+        className={`${poppins.variable} ${chivo.variable} antialiased`}
+        data-overlayscrollbars-initialize
+      >
         <NextTopLoader
           showSpinner={false}
-          color="linear-gradient(to right, #203c90, #ffac02)"
+          color={GRADIENTS.primary}
           height={3}
         />
         <CookieConsentProvider>
@@ -182,6 +193,10 @@ export default async function RootLayout({
           <Toaster />
           <ConsentGatedAnalytics />
         </CookieConsentProvider>
+        {/* Toggles .is-scrolling on <html> to emphasize the scrollbar while scrolling */}
+        <ScrollActivityIndicator />
+        {/* Replaces the native page scrollbar with the brand-keyed custom one */}
+        <OverlayScrollbarsProvider />
         {/* Schema.org structured data for SEO */}
         <script
           type="application/ld+json"
