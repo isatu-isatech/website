@@ -24,7 +24,6 @@ import {
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { COLORS } from "@/lib/constants/design-tokens";
-import { archetypeColors } from "@/lib/quiz-data";
 import { useQuizLeaveGuard } from "@/lib/hooks";
 import { IntroScreen } from "./intro-screen";
 import { QuestionScreen } from "./question-screen";
@@ -332,8 +331,8 @@ export function QuizContainer() {
           colors: [
             COLORS.primary.DEFAULT,
             COLORS.secondary.DEFAULT,
-            archetypeColors.Hipster,
-            archetypeColors.Hound,
+            COLORS.quiz.archetypes.Hipster.from,
+            COLORS.quiz.archetypes.Hound.from,
           ],
         });
         confetti({
@@ -344,8 +343,8 @@ export function QuizContainer() {
           colors: [
             COLORS.primary.DEFAULT,
             COLORS.secondary.DEFAULT,
-            archetypeColors.Hipster,
-            archetypeColors.Hound,
+            COLORS.quiz.archetypes.Hipster.from,
+            COLORS.quiz.archetypes.Hound.from,
           ],
         });
 

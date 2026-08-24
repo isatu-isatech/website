@@ -3,6 +3,8 @@ import path from "node:path";
 import { ImageResponse } from "next/og";
 import { NextRequest, NextResponse } from "next/server";
 import { COLORS } from "@/lib/constants/design-tokens";
+import { SITE_CONFIG } from "@/lib/constants/site";
+import { archetypeIcons } from "@/lib/quiz-data";
 import {
   GENERALIST_ROLE,
   deriveArchetype,
@@ -33,12 +35,14 @@ const archetypePairs = COLORS.quiz.archetypes as Record<
   { from: string; to: string }
 >;
 
-const ARCHETYPE_ICON: Record<string, string> = {
-  Hustler: "hustler.png",
-  Hacker: "hacker.png",
-  Hipster: "hipster.png",
-  Hound: "hound.png",
-};
+// Icon filenames derived from the canonical icon map (quiz-data → TEAM_4H),
+// so the asset paths live in exactly one place.
+const ARCHETYPE_ICON: Record<string, string> = Object.fromEntries(
+  Object.entries(archetypeIcons).map(([key, fullPath]) => [
+    key,
+    path.basename(fullPath),
+  ]),
+);
 
 const CACHE_CONTROL =
   "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800";
@@ -224,7 +228,8 @@ export async function GET(request: NextRequest) {
               color: "#64748B",
             }}
           >
-            4H Personality Quiz • isatech.club/quiz
+            4H Personality Quiz •{" "}
+            {`${SITE_CONFIG.url.replace(/^https?:\/\//, "")}/quiz`}
           </p>
         </div>
       </div>
