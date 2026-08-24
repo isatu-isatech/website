@@ -1,12 +1,13 @@
-import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
+import { BlobsAnimatedBackground } from "@/components/ui/blobs";
+import { createBlobConfig } from "@/components/ui/blobs-config";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/common";
 import Link from "next/link";
 
 export function HomepageKwadraSection() {
   // Configuration for the animated blobs in the background
-  const blobsConfig: BlobsConfig[] = [
-    {
+  const blobsConfig = [
+    createBlobConfig({
       id: "kwadra-blob",
       top: "-10rem",
       right: "-10rem",
@@ -14,9 +15,7 @@ export function HomepageKwadraSection() {
       animateY: [0, -40, 0],
       duration: 6,
       colorClass: "bg-secondary/60",
-      sizeClass: "h-96 w-96",
-      blurClass: "blur-[100px]",
-    },
+    }),
   ];
 
   return (

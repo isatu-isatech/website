@@ -1,35 +1,28 @@
 "use client";
 
 import { useEffect } from "react";
-import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
+import { BlobsAnimatedBackground } from "@/components/ui/blobs";
+import { createBlobConfig } from "@/components/ui/blobs-config";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
 
 // Configuration for the animated blobs in the background
-const blobsConfig: BlobsConfig[] = [
-  {
+const blobsConfig = [
+  createBlobConfig({
     id: "error-blob-1",
     top: "-10%",
     left: "-10%",
-    animateX: [0, 20, 0],
-    animateY: [0, 30, 0],
-    duration: 8,
     colorClass: "bg-destructive/40",
-    sizeClass: "h-96 w-96",
-    blurClass: "blur-[100px]",
-  },
-  {
+  }),
+  createBlobConfig({
     id: "error-blob-2",
     bottom: "-10%",
     right: "-10%",
     animateX: [0, -20, 0],
     animateY: [0, -30, 0],
-    duration: 8,
     colorClass: "bg-primary/40",
-    sizeClass: "h-96 w-96",
-    blurClass: "blur-[100px]",
-  },
+  }),
 ];
 
 export default function Error({

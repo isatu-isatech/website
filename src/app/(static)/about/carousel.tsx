@@ -1,6 +1,7 @@
 "use client";
 
-import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
+import { BlobsAnimatedBackground } from "@/components/ui/blobs";
+import { createBlobConfig } from "@/components/ui/blobs-config";
 import { Button } from "@/components/ui/button";
 import {
   Carousel,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
+import { useAutoAdvance } from "@/lib/hooks";
 import { useEffect, useState } from "react";
 
 /**
@@ -36,8 +38,8 @@ export default function AboutUsAdvisersSection({
 }: {
   advisers: AdviserProps[];
 }) {
-  const adviserSectionBG: BlobsConfig[] = [
-    {
+  const adviserSectionBG = [
+    createBlobConfig({
       id: "advisers-blob",
       top: "-10rem",
       left: "-10rem",
@@ -45,16 +47,14 @@ export default function AboutUsAdvisersSection({
       animateY: [0, -40, 0],
       duration: 6,
       colorClass: "bg-secondary/60",
-      sizeClass: "h-96 w-96",
-      blurClass: "blur-[100px]",
-    },
+    }),
   ];
 
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
 
-  // Set up carousel state and auto-scroll behavior
+  // Set up carousel state (selection sync only; auto-advance handled by useAutoAdvance)
   useEffect(() => {
     if (!carouselApi) return;
 
@@ -69,20 +69,20 @@ export default function AboutUsAdvisersSection({
     // Listen for carousel selection changes
     carouselApi.on("select", updateCarouselState);
 
-    // Automatically scroll to the next item every 12 seconds
-    const interval = setInterval(() => {
-      carouselApi.scrollTo(
-        (carouselApi.selectedScrollSnap() + 1) %
-          carouselApi.scrollSnapList().length,
-      );
-    }, 12000);
-
-    // Cleanup listeners and interval on unmount or carouselApi change
+    // Cleanup listeners on unmount or carouselApi change
     return () => {
       carouselApi.off("select", updateCarouselState);
-      clearInterval(interval);
     };
   }, [carouselApi]);
+
+  // Automatically scroll to the next item every 12 seconds
+  useAutoAdvance(12000, () => {
+    if (!carouselApi) return;
+    carouselApi.scrollTo(
+      (carouselApi.selectedScrollSnap() + 1) %
+        carouselApi.scrollSnapList().length,
+    );
+  });
 
   const scrollToIndex = (index: number) => {
     carouselApi?.scrollTo(index);

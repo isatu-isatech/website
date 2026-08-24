@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAutoAdvance } from "@/lib/hooks";
 import { useReducedMotion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
@@ -252,21 +253,16 @@ export default function MembershipPageMemberSection() {
   const reduceMotion = useReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
   const pausedRef = useRef(false);
-  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(
-    undefined,
-  );
 
   useEffect(() => {
     pausedRef.current = false;
-    timerRef.current = setInterval(() => {
-      if (!pausedRef.current) {
-        setActiveIndex((index) => (index + 1) % benefits.length);
-      }
-    }, AUTO_ADVANCE_MS);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
   }, []);
+
+  useAutoAdvance(AUTO_ADVANCE_MS, () => {
+    if (!pausedRef.current) {
+      setActiveIndex((index) => (index + 1) % benefits.length);
+    }
+  });
 
   const focusBenefit = (index: number) => {
     pausedRef.current = true;
