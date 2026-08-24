@@ -28,8 +28,8 @@ description: "Task list for quiz page improvements (003)"
 
 **Purpose**: Baseline + feature assets before any code changes
 
-- [ ] T001 Establish a green baseline: run `npm run type-check`, `npm run lint`, `npm run build` and confirm all pass with zero errors before touching any file
-- [ ] T002 [P] Bundle Poppins woff2 (weights 400 and 700, matching `--font-poppins`) into `src/app/api/og/quiz/fonts/` (e.g. `Poppins-400.woff2`, `Poppins-700.woff2`) with an OFL license note file — per research R1
+- [x] T001 Establish a green baseline: run `npm run type-check`, `npm run lint`, `npm run build` and confirm all pass with zero errors before touching any file
+- [x] T002 [P] Bundle Poppins TTF (weights 400 and 700, matching `--font-poppins`) into `src/app/api/og/quiz/fonts/` (e.g. `Poppins-400.ttf`, `Poppins-700.ttf`) with an OFL license note file — per research R1
 
 ---
 
@@ -39,9 +39,9 @@ description: "Task list for quiz page improvements (003)"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T003 [P] Create `src/lib/quiz/canonical.ts`: canonical outcome set derived from `Object.keys(archetypes)` in `src/lib/quiz-data.ts` (17 roles), `isCanonicalRole(role)`, `ArchetypeKey` type guard, and `buildBannerUrl(role, archetype, isGeneralist)` that percent-encodes all params — per research R3
-- [ ] T004 [P] Create `src/lib/quiz/progress.ts`: sessionStorage schema for `4h-quiz-progress-v1` — `loadProgress()`, `saveProgress(state)`, `clearProgress()`, plus a `version` token derived from quiz-data shape and integrity/version validation that discards mismatched records — per research R4 and `contracts/quiz-progress-session.md`
-- [ ] T005 Create `src/lib/quiz/index.ts` barrel re-exporting both helpers (depends on T003, T004)
+- [x] T003 [P] Create `src/lib/quiz/canonical.ts`: canonical outcome set derived from `Object.keys(archetypes)` in `src/lib/quiz-data.ts` (17 roles), `isCanonicalRole(role)`, `ArchetypeKey` type guard, and `buildBannerUrl(role, archetype, isGeneralist)` that percent-encodes all params — per research R3
+- [x] T004 [P] Create `src/lib/quiz/progress.ts`: sessionStorage schema for `4h-quiz-progress-v1` — `loadProgress()`, `saveProgress(state)`, `clearProgress()`, plus a `version` token derived from quiz-data shape and integrity/version validation that discards mismatched records — per research R4 and `contracts/quiz-progress-session.md`
+- [x] T005 Create `src/lib/quiz/index.ts` barrel re-exporting both helpers (depends on T003, T004)
 
 **Checkpoint**: `src/lib/quiz/` compiles (`npm run type-check`) — user story implementation can begin
 
@@ -55,12 +55,12 @@ description: "Task list for quiz page improvements (003)"
 
 ### Implementation for User Story 1
 
-- [ ] T006 [P] [US1] Replace the fixed-height `h-[calc(100vh-60px)]` + `overflow-hidden` container in `src/app/quiz/page.tsx` with a scroll-safe layout (`min-h` + scrollable quiz area) that keeps the ambient background decorations — per research R8 / FR-001
-- [ ] T007 [US1] Integrate session persistence into `src/components/quiz/quiz-container.tsx` using `src/lib/quiz/progress.ts` (depends on T004, T005): restore once on mount via `useEffect` (client-only), save after every committed state transition, clear on reaching the result and on retake; discard invalid/version-mismatched records — FR-008
-- [ ] T008 [P] [US1] Expose selection and progress to assistive technology in `src/components/quiz/question-screen.tsx` (progress rendered with `role="progressbar"` + `aria-valuenow`; choice buttons announce selected state; visible focus preserved; reduced-motion respected) — FR-002
-- [ ] T009 [P] [US1] Identity-preserving visual polish pass on `src/components/quiz/intro-screen.tsx` (hierarchy, spacing, motion polish within ISATech blue/gold; keep the `TODO(org-copy)` marker and the dynamic `{questions.length}` count) — FR-004/FR-005
-- [ ] T010 [P] [US1] Identity-preserving visual polish pass on `src/components/quiz/result-screen.tsx` (layout rhythm, breakdown card, action buttons; keep membership hand-off link and the reduced-motion confetti gate) — FR-004/FR-006/FR-007
-- [ ] T011 [US1] Remove the artificial 600ms answer-advance delay in `src/components/quiz/quiz-container.tsx` so the quiz advances promptly (same file as T007 — run after it) — FR-003
+- [x] T006 [P] [US1] Replace the fixed-height `h-[calc(100vh-60px)]` + `overflow-hidden` container in `src/app/quiz/page.tsx` with a scroll-safe layout (`min-h` + scrollable quiz area) that keeps the ambient background decorations — per research R8 / FR-001
+- [x] T007 [US1] Integrate session persistence into `src/components/quiz/quiz-container.tsx` using `src/lib/quiz/progress.ts` (depends on T004, T005): restore once on mount via `useEffect` (client-only), save after every committed state transition, clear on reaching the result and on retake; discard invalid/version-mismatched records — FR-008
+- [x] T008 [P] [US1] Expose selection and progress to assistive technology in `src/components/quiz/question-screen.tsx` (progress rendered with `role="progressbar"` + `aria-valuenow`; choice buttons announce selected state; visible focus preserved; reduced-motion respected) — FR-002
+- [x] T009 [P] [US1] Identity-preserving visual polish pass on `src/components/quiz/intro-screen.tsx` (hierarchy, spacing, motion polish within ISATech blue/gold; keep the `TODO(org-copy)` marker and the dynamic `{questions.length}` count) — FR-004/FR-005
+- [x] T010 [P] [US1] Identity-preserving visual polish pass on `src/components/quiz/result-screen.tsx` (layout rhythm, breakdown card, action buttons; keep membership hand-off link and the reduced-motion confetti gate) — FR-004/FR-006/FR-007
+- [x] T011 [US1] Remove the artificial 600ms answer-advance delay in `src/components/quiz/quiz-container.tsx` so the quiz advances promptly (same file as T007 — run after it) — FR-003
 
 **Checkpoint**: US1 is fully functional — run quickstart scenarios 1–3 (viewport reachability, refresh persistence, a11y)
 
@@ -74,9 +74,9 @@ description: "Task list for quiz page improvements (003)"
 
 ### Implementation for User Story 2
 
-- [ ] T012 [US2] Rewrite `src/app/api/og/quiz/route.tsx` (depends on T002, T003): validate `role` against the canonical set — unknown/forged/missing → `302` to the canonical invite banner URL; detect Generalist from `role === "Generalist"` or `generalist === "true"`; embed Poppins woff2 (fs) and archetype icon PNGs (`public/assets/decorations/{hustler,hacker,hipster,hound}.png`, `4h-vertical.png` for Generalist — same mapping as the result screen) as data URIs; keep 1200×630, `runtime = "nodejs"`, and the `Cache-Control: public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800` header; **delete the `Ratelimit`/`kv` block and `x-forwarded-for` parsing** — per research R1/R2/R3/R6 and `contracts/og-quiz-banner.md`
-- [ ] T013 [P] [US2] Update metadata in `src/app/quiz/result/page.tsx` (depends on T003): `robots: { index: false, follow: false }`; percent-encode `role` and `archetype` in every constructed URL; append `generalist=true` to `og:url` when applicable so metadata/OG/share URLs are byte-identical per outcome — FR-014/FR-017, per research R7 and `contracts/result-share-link.md`
-- [ ] T014 [US2] Refactor the share-URL builder in `src/components/quiz/quiz-container.tsx` (`shareResult`) to use `buildBannerUrl` from `src/lib/quiz/canonical.ts` (depends on T003, T013) so the share button, metadata, and OG image URLs are byte-identical, including the `generalist` flag
+- [x] T012 [US2] Rewrite `src/app/api/og/quiz/route.tsx` (depends on T002, T003): validate `role` against the canonical set — unknown/forged/missing → `302` to the canonical invite banner URL; detect Generalist from `role === "Generalist"` or `generalist === "true"`; embed Poppins woff2 (fs) and archetype icon PNGs (`public/assets/decorations/{hustler,hacker,hipster,hound}.png`, `4h-vertical.png` for Generalist — same mapping as the result screen) as data URIs; keep 1200×630, `runtime = "nodejs"`, and the `Cache-Control: public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800` header; **delete the `Ratelimit`/`kv` block and `x-forwarded-for` parsing** — per research R1/R2/R3/R6 and `contracts/og-quiz-banner.md`
+- [x] T013 [P] [US2] Update metadata in `src/app/quiz/result/page.tsx` (depends on T003): `robots: { index: false, follow: false }`; percent-encode `role` and `archetype` in every constructed URL; append `generalist=true` to `og:url` when applicable so metadata/OG/share URLs are byte-identical per outcome — FR-014/FR-017, per research R7 and `contracts/result-share-link.md`
+- [x] T014 [US2] Refactor the share-URL builder in `src/components/quiz/quiz-container.tsx` (`shareResult`) to use `buildBannerUrl` from `src/lib/quiz/canonical.ts` (depends on T003, T013) so the share button, metadata, and OG image URLs are byte-identical, including the `generalist` flag
 
 **Checkpoint**: US2 is fully functional — run quickstart scenarios 4–6
 
@@ -90,9 +90,9 @@ description: "Task list for quiz page improvements (003)"
 
 ### Implementation for User Story 3
 
-- [ ] T015 [US3] Remove `KV_URL`, `KV_REST_API_URL`, `KV_REST_API_TOKEN` from `src/lib/env.ts` (keep the Zod schema valid) and from `.env.example` — FR-019
-- [ ] T016 [P] [US3] Remove `@vercel/kv` and `@upstash/ratelimit` from `dependencies` in `package.json` and run `npm install` to prune the lockfile — FR-018
-- [ ] T017 [US3] Verify removal completeness (depends on T015, T016): `grep -rn "vercel/kv\|upstash\|KV_REST\|KV_URL" src/ package.json .env.example` returns no hits; confirm `src/lib/services/cookie-rate-limit.ts` and the Contact flow are unchanged — FR-020
+- [x] T015 [US3] Remove `KV_URL`, `KV_REST_API_URL`, `KV_REST_API_TOKEN` from `src/lib/env.ts` (keep the Zod schema valid) and from `.env.example` — FR-019
+- [x] T016 [P] [US3] Remove `@vercel/kv` and `@upstash/ratelimit` from `dependencies` in `package.json` and run `npm install` to prune the lockfile — FR-018
+- [x] T017 [US3] Verify removal completeness (depends on T015, T016): `grep -rn "vercel/kv\|upstash\|KV_REST\|KV_URL" src/ package.json .env.example` returns no hits; confirm `src/lib/services/cookie-rate-limit.ts` and the Contact flow are unchanged — FR-020
 
 **Checkpoint**: US3 is complete — run quickstart scenario 7
 
@@ -102,9 +102,9 @@ description: "Task list for quiz page improvements (003)"
 
 **Purpose**: Verification and documentation across all stories
 
-- [ ] T018 [P] Run the full gate: `npm run type-check`, `npm run lint` (zero warnings), `npm run build` — all must pass (depends on all story phases)
-- [ ] T019 [P] Run the complete `specs/003-quiz-page-improvements/quickstart.md` validation (scenarios 1–7): both themes, reduced motion, all 17 banners, forged params, cache headers, KV-free build, contact limit — record results (depends on all story phases)
-- [ ] T020 [P] Housekeeping: run `npm run lint` (prettier auto-format per repo config) over changed files; correct the stale stack facts in `AGENTS.md` notes (Next.js 16 with `--webpack` scripts, middleware at `src/proxy.ts`) and note the KV removal + bundled fonts
+- [x] T018 [P] Run the full gate: `npm run type-check`, `npm run lint` (zero warnings), `npm run build` — all must pass (depends on all story phases)
+- [x] T019 [P] Run the complete `specs/003-quiz-page-improvements/quickstart.md` validation (scenarios 1–7): both themes, reduced motion, all 17 banners, forged params, cache headers, KV-free build, contact limit — record results (depends on all story phases)
+- [x] T020 [P] Housekeeping: run `npm run lint` (prettier auto-format per repo config) over changed files; correct the stale stack facts in `AGENTS.md` notes (Next.js 16 with `--webpack` scripts, middleware at `src/proxy.ts`) and note the KV removal + bundled fonts
 
 **Checkpoint**: All gates green; quickstart scenarios pass; docs reflect the new state
 

@@ -4,13 +4,13 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 
 ## Project
 
-- **Stack:** Next.js 15 (App Router, Turbopack) + TypeScript, Tailwind CSS v4, Radix UI, Motion (Framer), React Three Fiber, React Hook Form + Zod, Notion API (data), rate limiting (per-surface mechanism; see constitution P5), Serwist (service worker/PWA), next-sitemap.
+- **Stack:** Next.js 16 (App Router, webpack — `next dev/build --webpack` in package.json) + TypeScript, Tailwind CSS v4, Radix UI, Motion (Framer), React Three Fiber, React Hook Form + Zod, Notion API (data), rate limiting (per-surface mechanism; see constitution P5), Serwist (service worker/PWA), next-sitemap.
 - **Entry point:** `src/app/layout.tsx` (root), pages under `src/app/`.
 - **Path alias:** `@/*` → `src/*`.
 
 ## Commands
 
-- `npm run dev` — dev server with Turbopack (port 3000).
+- `npm run dev` — dev server (webpack) (port 3000).
 - `npm run build` — production build + generate sitemap.
 - `npm run start` — serve production build.
 - `npm run lint` — ESLint plus `prettier --write src/` (auto-fixes).
@@ -24,8 +24,8 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 - `src/app/api/og/` — OpenGraph image routes (e.g. OG quiz image).
 - `src/app/quiz/` — the interactive quiz feature (pages + `src/components/quiz/`).
 - `src/components/` — UI: `ui/` (Radix-based primitives), `home/` (homepage sections), `layout/` (header/footer), `common/` (shared utilities like `optimized-image`, `error-boundary`), `seo/`, `texture/`, `assets/` (SVG logos/decorations).
-- `src/lib/` — `notion/` (Notion API client + helpers), `services/` (feature services), `constants/` (site config + design tokens), `hooks/` (custom hooks), `env.ts` (Zod-validated env), `utils.ts` (`cn`), `quiz-data.ts`.
-- `src/middleware.ts` — security headers & CSP.
+- `src/lib/` — `notion/` (Notion API client + helpers), `services/` (feature services), `quiz/` (quiz canonical-role helpers + session progress), `constants/` (site config + design tokens), `hooks/` (custom hooks), `env.ts` (Zod-validated env), `utils.ts` (`cn`), `quiz-data.ts`.
+- `src/proxy.ts` — security headers & CSP (Next 16 renamed middleware → proxy).
 - `src/app/sw.ts` — service worker (Serwist), output `public/sw.js`.
 
 ## Conventions
@@ -41,6 +41,9 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 ## Notes
 
 <!-- Add project-specific quick-notes here as they come up. -->
+
+- **Quiz OG banner (spec 003):** `/api/og/quiz` renders only the 17 canonical outcomes (derived from `Object.keys(archetypes)` in `quiz-data.ts` via `src/lib/quiz/canonical.ts`); non-canonical roles 302 to the invite banner. Bundled Poppins TTF lives in `src/app/api/og/quiz/fonts/` (Satori rejects woff2 — keep TTF/OTF). No Vercel KV anywhere: the site is KV-free since 003; contact rate limiting is cookie-based (`src/lib/services/cookie-rate-limit.ts`).
+- **Quiz progress (FR-008):** in-progress quizzes persist to `sessionStorage` (`4h-quiz-progress-v1` via `src/lib/quiz/progress.ts`) — refresh/back-forward resumes; discarded when the tab closes.
 
 - Do not manually commit any changes on my behalf. Instead, provide the appropriate git add commands along with one or more commit titles, grouped logically by scope or feature, so that I can manually review the staged changes and execute the commits myself. Each commit title should follow our conventional commit format and clearly reflect the specific area of work so that the commit history remains clean, meaningful, and easy to navigate. Once I've reviewed the proposed commands and titles, I'll stage and commit the changes at my own discretion, ensuring full visibility and control over what gets included in each commit.
 - Do not create the pull request directly. Instead, simply provide me with the proposed pull request title and a detailed description of the changes, so I can review them first before proceeding with the actual PR creation. The title should be concise and follow our conventional commit format, while the description should clearly outline what was changed, why it was done, and any relevant context or testing notes that would help with the review process. Once I've had a chance to review and approve the content, I'll take care of creating the PR myself.

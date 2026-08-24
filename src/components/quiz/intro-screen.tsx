@@ -55,13 +55,15 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
       </p>
 
       <Button
+        type="button"
         onClick={onStart}
         size="lg"
-        className="group from-primary hover:from-primary/90 relative overflow-hidden bg-gradient-to-r to-blue-600 px-6 py-4 text-base text-white shadow-xl transition-all duration-300 hover:to-blue-500 hover:shadow-2xl md:px-8 md:py-5 md:text-lg"
+        className="group from-primary hover:from-primary/90 relative overflow-hidden bg-gradient-to-r to-blue-600 px-6 py-4 text-base text-white shadow-xl transition-all duration-300 hover:to-blue-500 hover:shadow-2xl active:scale-[0.98] md:px-8 md:py-5 md:text-lg"
       >
         <Sparkles className="mr-2 size-4 md:size-5" />
         Start the Quiz
         <motion.div
+          aria-hidden="true"
           className="absolute inset-0 bg-white/20"
           initial={{ x: "-100%" }}
           whileHover={{ x: "100%" }}
