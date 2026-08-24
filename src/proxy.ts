@@ -80,6 +80,17 @@ export function proxy(request: NextRequest) {
     "Permissions-Policy",
     "camera=(), microphone=(), geolocation=()",
   );
+  // Cross-origin isolation hardening (defense-in-depth; the site embeds
+  // third-party frames via iframe, so COEP stays unset deliberately).
+  response.headers.set("Cross-Origin-Opener-Policy", "same-origin");
+  response.headers.set("Cross-Origin-Resource-Policy", "same-origin");
+  response.headers.set("Origin-Agent-Cluster", "?1");
+
+  // CSP violation reporting: intentionally not wired — there is no report
+  // collector endpoint on this site. If one is added later, register it with
+  // a `Reporting-Endpoints` header and a `report-to csp-endpoint;` directive
+  // in the CSP above; until then violations are silent (accepted tradeoff,
+  // see the 'unsafe-inline' note at the top of this file).
 
   // Only enable HSTS in production to avoid issues in local development
   if (process.env.NODE_ENV === "production") {
@@ -96,13 +107,14 @@ export function proxy(request: NextRequest) {
  * Configure which routes the proxy should run on
  *
  * This matcher excludes static files, images, and Next.js internal routes
- * for better performance while maintaining security on all application routes.
+ * for better performance while maintaining security on all application
+ * routes — including API routes (e.g. `/api/og/quiz`), which previously got
+ * no security headers at all.
  */
 export const config = {
   matcher: [
     /*
      * Match all request paths except:
-     * - api (API routes)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
@@ -111,7 +123,7 @@ export const config = {
      */
     {
       source:
-        "/((?!api|_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|sitemap-.*\\.xml|assets).*)",
+        "/((?!_next/static|_next/image|favicon.ico|robots.txt|sitemap.xml|sitemap-.*\\.xml|assets).*)",
       missing: [
         { type: "header", key: "next-router-prefetch" },
         { type: "header", key: "purpose", value: "prefetch" },
