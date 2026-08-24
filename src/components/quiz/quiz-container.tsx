@@ -5,19 +5,21 @@ import { AnimatePresence, useReducedMotion } from "motion/react";
 import {
   questions,
   tieBreakers,
-  archetypes,
-  adjectives,
-  SCORE_THRESHOLD,
   type ArchetypeKey,
   type Question,
   type Choice,
 } from "@/lib/quiz-data";
 import {
+  deriveResult,
+  isFinalResult,
+  needsTieBreaker,
+  sortScores,
   loadProgress,
   saveProgress,
   clearProgress,
   makeProgressVersion,
   buildShareUrl,
+  type Scores,
 } from "@/lib/quiz";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
@@ -28,7 +30,6 @@ import { IntroScreen } from "./intro-screen";
 import { QuestionScreen } from "./question-screen";
 import { ResultScreen } from "./result-screen";
 import { LeaveQuizDialog } from "./leave-quiz-dialog";
-import { isFinalResult, type QuizResult } from "./types";
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -38,8 +39,6 @@ function shuffleArray<T>(array: T[]): T[] {
   }
   return shuffled;
 }
-
-type Scores = Record<ArchetypeKey, number>;
 
 interface QuizState {
   phase: "intro" | "quiz" | "tiebreaker" | "result";
@@ -194,59 +193,15 @@ export function QuizContainer() {
     }
   }, [state, restored]);
 
-  const result = useMemo((): QuizResult => {
-    const { scores } = state;
-    const total = Object.values(scores).reduce((a, b) => a + b, 0);
-    if (total === 0) return null;
-
-    const sortedScores = Object.entries(scores).toSorted(
-      ([, a], [, b]) => b - a,
-    ) as [ArchetypeKey, number][];
-
-    const [top1, top2, top3, top4] = sortedScores;
-
-    const needsTieBreaker =
-      top1[1] === top2[1] ||
-      (top2[1] === top3[1] && top1[1] - top2[1] < SCORE_THRESHOLD);
-
-    if (
-      needsTieBreaker &&
-      state.usedTieBreakers < state.shuffledTieBreakers.length
-    ) {
-      return { needsTieBreaker: true };
-    }
-
-    const isGeneralist =
-      top1[1] === top2[1] && top2[1] === top3[1] && top3[1] === top4[1];
-
-    let role: string;
-    const primaryArchetype: ArchetypeKey = top1[0];
-    let secondaryArchetype: ArchetypeKey | null = null;
-
-    if (isGeneralist) {
-      role = "Generalist";
-    } else if (top1[1] - top2[1] < SCORE_THRESHOLD) {
-      role = `${adjectives[top2[0]]} ${top1[0]}`;
-      secondaryArchetype = top2[0];
-    } else {
-      role = `True ${top1[0]}`;
-    }
-
-    const breakdown: Record<string, number> = {};
-    for (const [key, value] of sortedScores) {
-      breakdown[key] = Math.round((value / total) * 100);
-    }
-
-    return {
-      needsTieBreaker: false,
-      role,
-      description: archetypes[role] || archetypes["Generalist"],
-      primaryArchetype,
-      secondaryArchetype,
-      breakdown,
-      isGeneralist,
-    };
-  }, [state]);
+  const result = useMemo(
+    () =>
+      deriveResult(
+        state.scores,
+        state.usedTieBreakers,
+        state.shuffledTieBreakers.length,
+      ),
+    [state.scores, state.usedTieBreakers, state.shuffledTieBreakers.length],
+  );
 
   const handleAnswer = useCallback(
     (choiceIndex: number) => {
@@ -281,29 +236,26 @@ export function QuizContainer() {
               currentQuestionIndex: prev.currentQuestionIndex + 1,
             };
           } else {
-            const sortedScores = Object.entries(newScores).toSorted(
-              ([, a], [, b]) => b - a,
-            ) as [ArchetypeKey, number][];
-            const [top1, top2, top3] = sortedScores;
-            const needsTie =
-              top1[1] === top2[1] || (top2 && top2[1] === top3[1]);
-
-            if (needsTie && prev.shuffledTieBreakers.length > 0) {
+            const sortedScores = sortScores(newScores);
+            if (
+              needsTieBreaker(
+                sortedScores,
+                prev.usedTieBreakers,
+                prev.shuffledTieBreakers.length,
+              )
+            ) {
               return { ...newState, phase: "tiebreaker" };
             }
             return { ...newState, phase: "result" };
           }
         } else if (prev.phase === "tiebreaker") {
-          const sortedScores = Object.entries(newScores).toSorted(
-            ([, a], [, b]) => b - a,
-          ) as [ArchetypeKey, number][];
-          const [top1, top2, top3] = sortedScores;
-          const stillNeedsTie =
-            top1[1] === top2[1] || (top2 && top2[1] === top3[1]);
-
+          const sortedScores = sortScores(newScores);
           if (
-            stillNeedsTie &&
-            prev.usedTieBreakers + 1 < prev.shuffledTieBreakers.length
+            needsTieBreaker(
+              sortedScores,
+              prev.usedTieBreakers + 1,
+              prev.shuffledTieBreakers.length,
+            )
           ) {
             return { ...newState, usedTieBreakers: prev.usedTieBreakers + 1 };
           }

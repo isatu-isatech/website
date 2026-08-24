@@ -11,7 +11,7 @@ import {
   type ArchetypeKey,
 } from "@/lib/quiz-data";
 import { COLORS } from "@/lib/constants/design-tokens";
-import type { FinalResult } from "./types";
+import type { FinalResult } from "@/lib/quiz";
 
 export function ResultScreen({
   result,
