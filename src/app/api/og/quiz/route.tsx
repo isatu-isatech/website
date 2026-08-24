@@ -1,21 +1,29 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { ImageResponse } from "next/og";
-import { NextRequest } from "next/server";
-import { Ratelimit } from "@upstash/ratelimit";
-import { kv } from "@vercel/kv";
+import { NextRequest, NextResponse } from "next/server";
 import { COLORS } from "@/lib/constants/design-tokens";
+import {
+  GENERALIST_ROLE,
+  deriveArchetype,
+  isArchetypeKey,
+  isCanonicalRole,
+} from "@/lib/quiz";
 
 export const runtime = "nodejs";
 
-let ratelimit: Ratelimit | null = null;
+/**
+ * Result-share OG banner (spec 003, FR-009…FR-016).
+ *
+ * Abuse defense (org decision, constitution P5): only the 17 canonical quiz
+ * outcomes render — any other `role` value 302-redirects to the invite
+ * default, so the renderable/cacheable URL set is bounded (17 + 1) and no
+ * per-requester rate limiting or key-value store is needed. The response is
+ * public + long-lived cached (FR-016, SC-004).
+ */
 
-try {
-  ratelimit = new Ratelimit({
-    redis: kv,
-    limiter: Ratelimit.slidingWindow(20, "1 h"),
-  });
-} catch {
-  // Graceful degradation if Vercel KV is not configured
-}
+const FONT_DIR = path.join(process.cwd(), "src/app/api/og/quiz/fonts");
+const ICON_DIR = path.join(process.cwd(), "public/assets/decorations");
 
 const defaultPair = COLORS.quiz.archetypes.Hacker;
 
@@ -25,30 +33,93 @@ const archetypePairs = COLORS.quiz.archetypes as Record<
   { from: string; to: string }
 >;
 
-export async function GET(request: NextRequest) {
-  if (ratelimit) {
-    const ip =
-      request.headers.get("x-forwarded-for") ??
-      request.headers.get("x-real-ip") ??
-      "127.0.0.1";
-    const { success } = await ratelimit.limit(ip);
-    if (!success) {
-      return new Response("Too many requests", { status: 429 });
-    }
-  }
+const ARCHETYPE_ICON: Record<string, string> = {
+  Hustler: "hustler.png",
+  Hacker: "hacker.png",
+  Hipster: "hipster.png",
+  Hound: "hound.png",
+};
 
+const CACHE_CONTROL =
+  "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800";
+
+/** Bundled Poppins TTF (latin) — read once per cold start (R1). */
+let fontDataPromise: Promise<{ regular: Buffer; bold: Buffer }> | null = null;
+function loadFonts(): Promise<{ regular: Buffer; bold: Buffer }> {
+  fontDataPromise ??= Promise.all([
+    readFile(path.join(FONT_DIR, "Poppins-400.ttf")),
+    readFile(path.join(FONT_DIR, "Poppins-700.ttf")),
+  ]).then(
+    ([regular, bold]) => ({ regular, bold }),
+    (error: unknown) => {
+      // A transient read failure must not brick the banner until restart:
+      // clear the cached promise so the next request retries.
+      fontDataPromise = null;
+      throw error;
+    },
+  );
+  return fontDataPromise;
+}
+
+/** Local archetype icon PNGs as data URIs — same art as the in-app result (FR-010). */
+const iconCache = new Map<string, Promise<string>>();
+function iconDataUri(name: string): Promise<string> {
+  let pending = iconCache.get(name);
+  if (!pending) {
+    pending = readFile(path.join(ICON_DIR, name)).then(
+      (buffer) => `data:image/png;base64,${buffer.toString("base64")}`,
+      (error: unknown) => {
+        // Don't cache rejections — a transient read failure should not
+        // permanently break this icon.
+        iconCache.delete(name);
+        throw error;
+      },
+    );
+    iconCache.set(name, pending);
+  }
+  return pending;
+}
+
+/** Scale the role title down so long canonical roles never overflow (FR-011). */
+function titleFontSize(role: string): number {
+  if (role.length > 20) return 44;
+  if (role.length > 16) return 56;
+  return 64;
+}
+
+export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
 
-  const role = searchParams.get("role") || "4H Personality Quiz";
-  const archetype = searchParams.get("archetype") || "Hustler";
-  const isGeneralist = searchParams.get("generalist") === "true";
+  const role = searchParams.get("role");
+  const archetypeParam = searchParams.get("archetype");
+  const isGeneralistParam = searchParams.get("generalist") === "true";
 
-  const pair = archetypePairs[archetype] ?? defaultPair;
-  const [gradientStart, gradientEnd] = isGeneralist
-    ? [COLORS.quiz.generalist.from, COLORS.quiz.generalist.to]
-    : [pair.from, pair.to];
+  // Missing params → render the canonical invite banner in place. Present
+  // but non-canonical role → 302 to the invite URL so no unbounded banner
+  // variants can ever be created (FR-009 / SC-003).
+  if (role !== null && !isCanonicalRole(role)) {
+    return NextResponse.redirect(new URL("/api/og/quiz", request.url), 302);
+  }
 
-  const primaryColor = isGeneralist ? COLORS.quiz.generalist.from : pair.from;
+  const displayRole = role ?? "4H Personality Quiz";
+  const isGeneralist = displayRole === GENERALIST_ROLE || isGeneralistParam;
+
+  const archetype =
+    isGeneralist || !isArchetypeKey(archetypeParam)
+      ? (deriveArchetype(displayRole) ?? "Hustler")
+      : archetypeParam;
+
+  const pair = isGeneralist
+    ? COLORS.quiz.generalist
+    : (archetypePairs[archetype] ?? defaultPair);
+  const [gradientStart, gradientEnd] = [pair.from, pair.to];
+  const primaryColor = pair.from;
+
+  const iconName = isGeneralist
+    ? "4h-vertical.png"
+    : (ARCHETYPE_ICON[archetype] ?? "hustler.png");
+  const iconUri = await iconDataUri(iconName);
+  const { regular, bold } = await loadFonts();
 
   const ogResponse = new ImageResponse(
     <div
@@ -61,7 +132,7 @@ export async function GET(request: NextRequest) {
         justifyContent: "center",
         background: `linear-gradient(135deg, ${gradientStart}22 0%, ${gradientEnd}22 100%)`,
         backgroundColor: "#0f172a",
-        fontFamily: "system-ui, sans-serif",
+        fontFamily: "Poppins",
       }}
     >
       {/* Background decorations */}
@@ -88,7 +159,7 @@ export async function GET(request: NextRequest) {
           zIndex: 10,
         }}
       >
-        {/* Badge circle */}
+        {/* Archetype icon badge — same art as the in-app result (FR-010) */}
         <div
           style={{
             display: "flex",
@@ -100,19 +171,15 @@ export async function GET(request: NextRequest) {
             background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
             boxShadow: `0 20px 60px ${primaryColor}50`,
             marginBottom: "32px",
+            overflow: "hidden",
           }}
         >
-          <span style={{ fontSize: "80px" }}>
-            {isGeneralist
-              ? "🌟"
-              : archetype === "Hustler"
-                ? "🚀"
-                : archetype === "Hacker"
-                  ? "💻"
-                  : archetype === "Hipster"
-                    ? "🎨"
-                    : "🔍"}
-          </span>
+          {/* oxlint-disable-next-line next/no-img-element -- Satori/ImageResponse requires a raw <img>; next/image cannot render inside server-generated OG images */}
+          <img
+            src={iconUri}
+            alt=""
+            style={{ width: "132px", height: "132px", objectFit: "contain" }}
+          />
         </div>
 
         {/* "I am a..." text */}
@@ -129,8 +196,8 @@ export async function GET(request: NextRequest) {
         {/* Role title */}
         <h1
           style={{
-            fontSize: "64px",
-            fontWeight: "bold",
+            fontSize: `${titleFontSize(displayRole)}px`,
+            fontWeight: 700,
             background: `linear-gradient(135deg, ${gradientStart}, ${gradientEnd})`,
             backgroundClip: "text",
             color: "transparent",
@@ -139,7 +206,7 @@ export async function GET(request: NextRequest) {
             lineHeight: 1.1,
           }}
         >
-          {role}
+          {displayRole}
         </h1>
 
         {/* Quiz branding */}
@@ -185,13 +252,14 @@ export async function GET(request: NextRequest) {
     {
       width: 1200,
       height: 630,
+      fonts: [
+        { name: "Poppins", data: regular, weight: 400, style: "normal" },
+        { name: "Poppins", data: bold, weight: 700, style: "normal" },
+      ],
     },
   );
 
-  ogResponse.headers.set(
-    "Cache-Control",
-    "public, max-age=86400, s-maxage=86400, stale-while-revalidate=604800",
-  );
+  ogResponse.headers.set("Cache-Control", CACHE_CONTROL);
 
   return ogResponse;
 }

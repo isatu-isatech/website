@@ -16,7 +16,6 @@ export function QuestionScreen({
   isTieBreaker,
   onBack,
   canGoBack,
-  isSubmitting,
 }: {
   question: Question;
   shuffledChoices: Choice[];
@@ -28,7 +27,6 @@ export function QuestionScreen({
   isTieBreaker: boolean;
   onBack: () => void;
   canGoBack: boolean;
-  isSubmitting: boolean;
 }) {
   return (
     <div className="relative w-full px-4 py-4 md:py-6">
@@ -46,7 +44,10 @@ export function QuestionScreen({
             {Math.round(progress)}%
           </span>
         </div>
-        <div className="bg-muted h-1.5 overflow-hidden rounded-full md:h-2">
+        <div
+          aria-hidden="true"
+          className="bg-muted h-1.5 overflow-hidden rounded-full md:h-2"
+        >
           <motion.div
             className="from-primary to-secondary h-full rounded-full bg-gradient-to-r"
             initial={false}
@@ -54,6 +55,13 @@ export function QuestionScreen({
             transition={{ duration: 0.5 }}
           />
         </div>
+        {/* Semantic progress for assistive tech (visual bar is aria-hidden). */}
+        <progress
+          aria-label="Quiz progress"
+          value={Math.round(progress)}
+          max={100}
+          className="sr-only"
+        />
       </div>
 
       {/* Question and Choices */}
@@ -78,18 +86,17 @@ export function QuestionScreen({
         <div className="space-y-2 md:space-y-3">
           {shuffledChoices.map((choice, index) => (
             <motion.button
-              key={`${choice.choice}-${index}`}
+              key={choice.choice}
+              type="button"
+              aria-pressed={selectedChoice === index}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
               onClick={() => onSelect(index)}
-              disabled={isSubmitting}
               className={`w-full rounded-lg border-2 p-3 text-left transition-all duration-300 md:rounded-xl md:p-4 ${
                 selectedChoice === index
                   ? "border-primary bg-primary/10 scale-[1.02]"
-                  : isSubmitting
-                    ? "border-muted bg-muted/30 opacity-50"
-                    : "border-border hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]"
+                  : "border-border hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]"
               } `}
             >
               <div className="flex items-center gap-2 md:gap-3">

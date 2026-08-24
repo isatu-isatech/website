@@ -38,7 +38,7 @@ export const metadata: Metadata = {
 
 export default function QuizPage() {
   return (
-    <main className="from-background via-background to-muted/30 relative h-[calc(100vh-60px)] w-full overflow-hidden bg-gradient-to-b">
+    <main className="from-background via-background to-muted/30 relative h-full w-full overflow-hidden bg-gradient-to-b">
       {/* Background decorations */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="bg-primary/5 absolute top-1/4 left-1/4 h-96 w-96 rounded-full blur-3xl" />
@@ -46,7 +46,9 @@ export default function QuizPage() {
         <div className="absolute top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-pink-500/5 to-blue-500/5 blur-3xl" />
       </div>
 
-      <div className="relative flex h-full w-full items-center justify-center px-4 py-4 md:py-8">
+      {/* Fills the screen (the layout is h-svh flex-col); the quiz area
+          scrolls internally when content exceeds the viewport (never clips). */}
+      <div className="relative flex h-full w-full overflow-y-auto px-4 py-4 md:py-8">
         <QuizContainer />
       </div>
     </main>

@@ -1,6 +1,14 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { archetypes } from "@/lib/quiz-data";
+import { SITE_CONFIG } from "@/lib/constants/site";
+import {
+  GENERALIST_ROLE,
+  buildBannerUrl,
+  buildShareUrl,
+  isArchetypeKey,
+  isCanonicalRole,
+} from "@/lib/quiz";
 
 interface Props {
   searchParams: Promise<{
@@ -15,49 +23,68 @@ interface Props {
  * When a user shares their quiz result, the shared link will have
  * a dynamic OG image showing their result. However, when someone
  * clicks the link, they are redirected to take the quiz themselves.
+ *
+ * The share pages are excluded from search-engine indexing (FR-017):
+ * they only exist to render banners for platforms.
  */
 export async function generateMetadata({
   searchParams,
 }: Props): Promise<Metadata> {
   const params = await searchParams;
-  const role = params.role || "4H Personality Quiz";
-  const archetype = params.archetype || "Hustler";
-  const isGeneralist = params.generalist === "true";
+  const role = params.role ?? "";
+  const archetypeParam = params.archetype ?? "";
+  const isGeneralistParam = params.generalist === "true";
+
+  // Only canonical outcomes get a result banner/share link; forged or
+  // missing params fall back to the quiz invite (the banner route coerces
+  // unknown roles the same way — FR-009).
+  const canonical = isCanonicalRole(role);
+  const archetype = isArchetypeKey(archetypeParam) ? archetypeParam : "Hustler";
+  const isGeneralist = role === GENERALIST_ROLE || isGeneralistParam;
+  const shareParams = canonical ? { role, archetype, isGeneralist } : null;
 
   const description =
-    archetypes[role] ||
+    (canonical ? archetypes[role] : undefined) ||
     "Take the 4H Personality Quiz to discover your founder archetype! Are you a Hustler, Hacker, Hipster, or Hound?";
 
-  const ogImageUrl = new URL("/api/og/quiz", "https://isatech.club");
-  ogImageUrl.searchParams.set("role", role);
-  ogImageUrl.searchParams.set("archetype", archetype);
-  if (isGeneralist) {
-    ogImageUrl.searchParams.set("generalist", "true");
-  }
+  const title = canonical
+    ? `I'm a ${role}!`
+    : "4H Personality Quiz | Discover Your Founder Archetype";
+
+  // Byte-identical with the share button's URL (FR-014).
+  const ogImageUrl = shareParams
+    ? buildBannerUrl(shareParams).toString()
+    : new URL("/api/og/quiz", SITE_CONFIG.url).toString();
+  const pageUrl = shareParams
+    ? buildShareUrl(shareParams).toString()
+    : new URL("/quiz/result", SITE_CONFIG.url).toString();
 
   return {
-    title: `I'm a ${role}! | 4H Personality Quiz`,
+    title,
     description: `${description} Take the quiz to discover your founder archetype!`,
+    robots: { index: false, follow: false },
     openGraph: {
-      title: `I'm a ${role}!`,
+      title,
       description: `${description} Take the quiz to discover YOUR founder archetype!`,
-      url: `https://isatech.club/quiz/result?role=${encodeURIComponent(role)}&archetype=${archetype}`,
-      siteName: "ISATech Society",
+      url: pageUrl,
+      siteName: SITE_CONFIG.name,
       images: [
         {
-          url: ogImageUrl.toString(),
+          url: ogImageUrl,
           width: 1200,
           height: 630,
-          alt: `${role} - 4H Personality Quiz Result`,
+          alt: canonical
+            ? `${role} - 4H Personality Quiz Result`
+            : "4H Personality Quiz - ISATech Society",
         },
       ],
       type: "website",
     },
     twitter: {
       card: "summary_large_image",
-      title: `I'm a ${role}!`,
+      title,
       description: `${description} Take the quiz to discover YOUR founder archetype!`,
-      images: [ogImageUrl.toString()],
+      images: [ogImageUrl],
     },
   };
 }
