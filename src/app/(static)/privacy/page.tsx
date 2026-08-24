@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import ManageCookiesSection from "./cookie-section";
+import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants/site";
 
 /**
  * ################################################################################
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     title: "Privacy Policy",
     description:
       "This Privacy Policy outlines how ISATech Society collects, uses, and protects your information.",
-    url: "https://isatech.club/privacy",
+    url: `${SITE_CONFIG.url}/privacy`,
     siteName: "ISATech Society",
     images: [
       {
@@ -353,10 +354,10 @@ function PrivacyContactSection() {
         <li>
           By email:{" "}
           <a
-            href="mailto:isatech@isatu.edu.ph"
+            href={`mailto:${SOCIAL_LINKS.email}`}
             className="text-primary underline"
           >
-            isatech@isatu.edu.ph
+            {SOCIAL_LINKS.email}
           </a>
         </li>
         <li>

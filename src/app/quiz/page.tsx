@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { QuizContainer } from "@/components/quiz/quiz-container";
+import { SITE_CONFIG } from "@/lib/constants/site";
 
 export const metadata: Metadata = {
   title: "4H Personality Quiz | Discover Your Founder Archetype",
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
     title: "4H Personality Quiz | Discover Your Founder Archetype",
     description:
       "Take the 4H Personality Quiz to discover your founder archetype. Are you a Hustler, Hacker, Hipster, or Hound?",
-    url: "https://isatech.club/quiz",
+    url: `${SITE_CONFIG.url}/quiz`,
     siteName: "ISATech Society",
     images: [
       {
@@ -38,12 +39,12 @@ export const metadata: Metadata = {
 
 export default function QuizPage() {
   return (
-    <main className="from-background via-background to-muted/30 relative h-full w-full overflow-hidden bg-gradient-to-b">
+    <main className="from-background via-background to-muted/30 relative h-full w-full overflow-hidden bg-linear-to-b">
       {/* Background decorations */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="bg-primary/5 absolute top-1/4 left-1/4 h-96 w-96 rounded-full blur-3xl" />
         <div className="bg-secondary/5 absolute right-1/4 bottom-1/4 h-96 w-96 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 h-[800px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-r from-pink-500/5 to-blue-500/5 blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 h-200 w-200 -translate-x-1/2 -translate-y-1/2 rounded-full bg-linear-to-r from-pink-500/5 to-blue-500/5 blur-3xl" />
       </div>
 
       {/* Fills the screen (the layout is h-svh flex-col); the quiz area

@@ -3,6 +3,7 @@ import { Poppins, Chivo } from "next/font/google";
 import "@/app/globals.css";
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { ConsentGatedAnalytics } from "@/components/consent-gated-analytics";
+import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants/site";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -30,7 +31,7 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://isatech.club"),
+  metadataBase: new URL(SITE_CONFIG.url),
   title: {
     default: "ISATech Society",
     template: "%s | ISATech Society",
@@ -83,7 +84,7 @@ export const metadata: Metadata = {
     "entrepreneur personality test",
     "team building quiz",
   ],
-  authors: [{ name: "ISATech Society", url: "https://isatech.club" }],
+  authors: [{ name: SITE_CONFIG.name, url: SITE_CONFIG.url }],
   creator: "ISATech Creatives Team",
   publisher: "ISATech Society",
   robots: {
@@ -140,7 +141,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://isatech.club",
+    canonical: SITE_CONFIG.url,
   },
   manifest: "/manifest.json",
   other: {
@@ -191,8 +192,8 @@ export default async function RootLayout({
               "@type": "Organization",
               name: "ISATech Society",
               alternateName: "ISATech",
-              url: "https://isatech.club",
-              logo: "https://isatech.club/assets/seo/logo.png",
+              url: SITE_CONFIG.url,
+              logo: `${SITE_CONFIG.url}/assets/seo/logo.png`,
               description:
                 "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
               foundingDate: "2021",
@@ -205,13 +206,10 @@ export default async function RootLayout({
               contactPoint: {
                 "@type": "ContactPoint",
                 contactType: "customer support",
-                url: "https://isatech.club/contact",
+                url: `${SITE_CONFIG.url}/contact`,
                 availableLanguage: ["English", "Filipino"],
               },
-              sameAs: [
-                "https://www.facebook.com/ISATech.ISATU",
-                "https://www.linkedin.com/company/isatech-society/",
-              ],
+              sameAs: [SOCIAL_LINKS.facebook, SOCIAL_LINKS.linkedin],
               knowsAbout: [
                 "Technopreneurship",
                 "Innovation",

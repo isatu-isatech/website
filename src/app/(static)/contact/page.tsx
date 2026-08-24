@@ -7,7 +7,7 @@ import {
   MapPin,
 } from "lucide-react";
 import { Metadata } from "next";
-import { SOCIAL_LINKS } from "@/lib/constants/site";
+import { SOCIAL_LINKS, SITE_CONFIG } from "@/lib/constants/site";
 import Link from "next/link";
 import { FacebookIcon, LinkedinIcon } from "@/components/assets/social-icons";
 import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     title: "Contact ISATech Society",
     description:
       "Get in touch with ISATech Society for partnerships, inquiries, or feedback.",
-    url: "https://isatech.club/contact",
+    url: `${SITE_CONFIG.url}/contact`,
     siteName: "ISATech Society",
     images: [
       {
@@ -77,12 +77,12 @@ const socialLinks = [
   {
     emoji: FacebookIcon,
     text: "ISATech Society",
-    href: "https://www.facebook.com/ISATech.ISATU",
+    href: SOCIAL_LINKS.facebook,
   },
   {
     emoji: LinkedinIcon,
     text: "ISATech - Society",
-    href: "https://www.linkedin.com/company/isatech-society/",
+    href: SOCIAL_LINKS.linkedin,
   },
 ];
 

@@ -10,6 +10,7 @@ import { Metadata } from "next";
 import AboutHeroLockup from "./hero-lockup";
 import AboutUsAdvisersSection, { AdviserProps } from "./carousel";
 import AboutDescriptionBand from "./description-band";
+import { SITE_CONFIG } from "@/lib/constants/site";
 
 /**
  * ################################################################################
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
     title: "About ISATech Society",
     description:
       "Learn more about ISATech Society, our mission, vision, and the team behind the innovation.",
-    url: "https://isatech.club/about",
+    url: `${SITE_CONFIG.url}/about`,
     siteName: "ISATech Society",
     images: [
       {
