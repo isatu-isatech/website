@@ -16,7 +16,7 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 - `npm run lint` — ESLint (`eslint . --max-warnings 0`; no auto-fixing).
 - `npm run type-check` — `tsc --noEmit`.
 - `npm run analyze` — bundle analysis (needs `ANALYZE=true`).
-- Husky git hooks + `lint-staged` run `prettier --write`, `eslint --fix`, and `oxlint --fix` on staged `*.{js,jsx,ts,tsx}`.
+- Husky git hooks run `npm run type-check` on pre-commit; `lint-staged` runs `prettier --write` and `eslint --fix` on staged `*.{js,jsx,ts,tsx}`.
 
 ## Architecture
 

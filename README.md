@@ -94,18 +94,16 @@ src/
 
 ## Available Scripts
 
-| Command                | Description                                              |
-| ---------------------- | -------------------------------------------------------- |
-| `npm run dev`          | Start development server (webpack — Serwist requires it) |
-| `npm run build`        | Build for production + generate sitemap                  |
-| `npm run start`        | Start production server                                  |
-| `npm run lint`         | Run ESLint (`eslint . --max-warnings 0`)                 |
-| `npm run lint:eslint`  | Run ESLint (authoritative, fail on warnings)             |
-| `npm run lint:ox`      | Run oxlint (fast pass)                                   |
-| `npm run format:check` | Check formatting with Prettier                           |
-| `npm run type-check`   | Run TypeScript type checking                             |
-| `npm run analyze`      | Analyze bundle size                                      |
-| `npm run commitlint`   | Validate the last commit message (Conventional)          |
+| Command                | Description                                                                  |
+| ---------------------- | ---------------------------------------------------------------------------- |
+| `npm run dev`          | Start development server (webpack — Serwist requires it)                     |
+| `npm run build`        | Build for production + generate sitemap                                      |
+| `npm run start`        | Start production server                                                      |
+| `npm run lint`         | Run ESLint (authoritative; includes oxlint rules via `eslint-plugin-oxlint`) |
+| `npm run format:check` | Check formatting with Prettier                                               |
+| `npm run type-check`   | Run TypeScript type checking                                                 |
+| `npm run analyze`      | Analyze bundle size                                                          |
+| `npm run commitlint`   | Validate the last commit message (Conventional)                              |
 
 ## Key Features
 

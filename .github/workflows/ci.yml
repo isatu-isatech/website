@@ -29,11 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: ESLint (authoritative)
-        run: npm run lint:eslint
-
-      - name: oxlint (fast pass)
-        run: npm run lint:ox
+      - name: ESLint (authoritative; includes oxlint rules via eslint-plugin-oxlint)
+        run: npm run lint
 
       - name: Prettier check
         run: npm run format:check

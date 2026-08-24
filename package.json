@@ -7,8 +7,6 @@
     "build": "next build --webpack && next-sitemap",
     "start": "next start",
     "lint": "eslint . --max-warnings 0",
-    "lint:eslint": "eslint . --max-warnings 0",
-    "lint:ox": "oxlint",
     "format:check": "prettier --check .",
     "commitlint": "commitlint --edit",
     "analyze": "cross-env ANALYZE=true npm run build",
@@ -84,8 +82,7 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
       "prettier --write",
-      "eslint --fix",
-      "oxlint --fix"
+      "eslint --fix"
     ],
     "*.{json,css,md}": [
       "prettier --write"
