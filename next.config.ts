@@ -6,6 +6,18 @@ const withSerwist = withSerwistInit({
   // Note: This is where you point to your service worker file
   swSrc: "src/app/sw.ts",
   swDest: "public/sw.js",
+  // Keep the first-install cache fill light: the large images (advisers,
+  // photos, ogimage) and the 3D model assets are fetched on demand and
+  // runtime-cached by the service worker instead of precached up front.
+  exclude: [
+    /^assets\/advisers\//,
+    /^assets\/decorations\/models\//,
+    /^assets\/decorations\/.*\.jpg$/,
+    /^assets\/decorations\/speaker-collage\.png$/,
+    /^assets\/decorations\/hound\.png$/,
+    /^assets\/logos\/umwad\.png$/,
+    /^assets\/seo\/ogimage\.jpg$/,
+  ],
 });
 
 const nextConfig: NextConfig = {
