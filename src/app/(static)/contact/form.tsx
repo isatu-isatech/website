@@ -52,20 +52,25 @@ export default function ContactUsForm() {
       // Form submission
       const res = await submitMessage(values);
 
-      try {
-        // Reset react-hook-form values (including hidden turnstileToken)
-        contactForm.reset();
-        contactForm.clearErrors("turnstileToken"); // Clear any validation errors for the token field
-        setToken(null); // Clear local token state
-        setWidgetKey((k) => k + 1); // Remount the Turnstile widget by bumping the key so it resets
-      } catch (err) {
-        // In the unlikely case resetting throws, log it but continue
-        console.error("Error resetting contact form:", err);
-      }
-
       if (res.success) {
+        try {
+          // Reset react-hook-form values (including hidden turnstileToken)
+          contactForm.reset();
+          contactForm.clearErrors("turnstileToken"); // Clear any validation errors for the token field
+          setToken(null); // Clear local token state
+          setWidgetKey((k) => k + 1); // Remount the Turnstile widget by bumping the key so it resets
+        } catch (err) {
+          // In the unlikely case resetting throws, log it but continue
+          console.error("Error resetting contact form:", err);
+        }
         toast.success("Message sent successfully!");
       } else {
+        // Keep the user's typed input on failure. The token may have been
+        // consumed by the failed siteverify, so mint a fresh one.
+        setToken(null);
+        contactForm.setValue("turnstileToken", "");
+        contactForm.clearErrors("turnstileToken");
+        setWidgetKey((k) => k + 1);
         toast.error("Failed to send message. Try again later.");
       }
     });

@@ -3,7 +3,6 @@
 import { publicEnv } from "@/lib/public-env";
 import React from "react";
 import Turnstile from "react-turnstile";
-import { useTheme } from "next-themes";
 
 interface TurnstileWidgetProps {
   onVerify: (token: string) => void;
@@ -20,8 +19,6 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({
   action,
   cData,
 }) => {
-  const { theme } = useTheme();
-
   const siteKey = publicEnv.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY;
 
   return (
@@ -33,7 +30,7 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({
         onError={onError}
         action={action}
         cData={cData}
-        theme={theme === "dark" ? "dark" : "light"}
+        theme="light"
         size="normal"
       />
     </div>
