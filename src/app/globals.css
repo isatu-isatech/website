@@ -348,3 +348,51 @@ html.is-scrolling .os-theme-isatech {
     transition: none;
   }
 }
+
+/* ---------------------------------------------------------------------------
+ * Decorative SVG masks.
+ * The ISATech decorations were previously inline React components (~400 KB of
+ * path data) that shipped to every static page twice: inline in the HTML and
+ * again as hydration JS. They now live as static .svg assets under
+ * public/assets/{decorations,textures}/ and are applied here as CSS masks,
+ * so the shape is drawn once (cacheable download) and colored via
+ * `background-color` (bg-current / bg-[...]) exactly like the old
+ * `fill={color}` / `currentColor` behavior. The mask uses the SVG alpha
+ * channel, so path fill color is irrelevant; shape files use #000.
+ * ------------------------------------------------------------------------- */
+@layer utilities {
+  .mask-left,
+  .mask-right,
+  .mask-center,
+  .mask-isatech {
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+  }
+  .mask-left {
+    -webkit-mask-image: url("/assets/decorations/left.svg");
+    mask-image: url("/assets/decorations/left.svg");
+  }
+  .mask-right {
+    -webkit-mask-image: url("/assets/decorations/right.svg");
+    mask-image: url("/assets/decorations/right.svg");
+  }
+  .mask-center {
+    -webkit-mask-image: url("/assets/decorations/center.svg");
+    mask-image: url("/assets/decorations/center.svg");
+  }
+  .mask-isatech {
+    -webkit-mask-image: url("/assets/decorations/isatech.svg");
+    mask-image: url("/assets/decorations/isatech.svg");
+  }
+  /* Seamless 600x600 tile; repeats like the old <pattern patternUnits="userSpaceOnUse"> */
+  .mask-topography {
+    -webkit-mask-image: url("/assets/textures/topography.svg");
+    mask-image: url("/assets/textures/topography.svg");
+    -webkit-mask-size: 600px 600px;
+    mask-size: 600px 600px;
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
+  }
+}

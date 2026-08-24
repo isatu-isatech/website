@@ -1,12 +1,8 @@
-"use client";
-
-import React from "react";
 import type { ComponentType } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Mail } from "lucide-react";
 import type { LucideProps } from "lucide-react";
-import { ISATechDecoration } from "@/components/assets/decorations";
 import { ISATechLogoType } from "@/components/assets/logos";
 import { FacebookIcon, LinkedinIcon } from "@/components/assets/social-icons";
 import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants";
@@ -69,9 +65,9 @@ export default function FooterComponent() {
   return (
     <footer>
       <div className="bg-primary relative flex w-full items-center justify-center px-6 lg:px-8 xl:px-16">
-        <ISATechDecoration
-          className="pointer-events-none absolute right-0 bottom-0 w-fit opacity-10 md:top-0 md:h-full"
-          color="#ffffff"
+        <div
+          aria-hidden
+          className="mask-isatech pointer-events-none absolute right-0 bottom-0 aspect-[667/492] w-full max-w-[667px] bg-white opacity-10 md:top-0 md:h-full md:w-auto"
         />
 
         <div className="flex max-w-7xl flex-col items-center justify-center gap-6 self-stretch pt-8 pb-16">

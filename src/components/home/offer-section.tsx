@@ -1,6 +1,3 @@
-"use client";
-
-import { ISATechDecorationCenter } from "@/components/assets/decorations";
 import { GraduationCap, NotepadText, Rocket, Users } from "lucide-react";
 
 const isatechOffers = [
@@ -38,7 +35,10 @@ export function HomepageOfferSection() {
     >
       {/* Decoration */}
       <div className="absolute -z-1 flex h-full w-full items-center justify-center">
-        <ISATechDecorationCenter className="translate absolute top-1/2 left-1/2 h-11/12 w-auto -translate-x-1/2 -translate-y-1/2 opacity-5 lg:opacity-10" />
+        <div
+          aria-hidden
+          className="absolute top-1/2 left-1/2 aspect-[306/466] h-11/12 w-auto -translate-x-1/2 -translate-y-1/2 bg-current mask-center opacity-5 lg:opacity-10"
+        />
       </div>
       <div className="flex max-w-7xl flex-col items-center justify-center gap-6 text-center">
         <h2 className="text-secondary-dark dark:text-secondary">

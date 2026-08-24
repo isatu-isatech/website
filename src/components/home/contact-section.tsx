@@ -1,7 +1,4 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { TopographyTexture } from "@/components/texture/topography";
 import Link from "next/link";
 
 export function HomepageContactSection() {
@@ -13,7 +10,10 @@ export function HomepageContactSection() {
       <div className="bg-primary relative flex w-full max-w-7xl flex-col items-center justify-center gap-4 rounded-2xl px-4 py-8 sm:gap-6 sm:rounded-3xl">
         {/* Decorations */}
         <div className="pointer-events-none absolute flex h-full w-full items-center justify-center">
-          <TopographyTexture className="absolute inset-0 h-full w-full opacity-10" />
+          <div
+            aria-hidden
+            className="mask-topography absolute inset-0 h-full w-full bg-current opacity-10"
+          />
         </div>
         <div className="text-primary-foreground flex flex-col text-center">
           <h2>Let&apos;s dream big!</h2>

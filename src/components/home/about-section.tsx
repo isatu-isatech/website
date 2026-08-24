@@ -1,6 +1,3 @@
-"use client";
-
-import { ISATechDecorationRight } from "@/components/assets/decorations";
 import { ISATechLogoMark } from "@/components/assets/logos";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
@@ -33,7 +30,10 @@ export function HomepageAboutSection() {
           className="absolute h-full w-full"
           blobs={blobsConfig}
         />
-        <ISATechDecorationRight className="absolute top-0 right-0 h-full w-auto opacity-10" />
+        <div
+          aria-hidden
+          className="absolute top-0 right-0 aspect-[320/528] h-full w-auto bg-current mask-right opacity-10"
+        />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-6 md:flex-row-reverse">
         {/* Main Image Container */}

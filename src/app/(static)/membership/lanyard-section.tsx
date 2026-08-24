@@ -1,6 +1,5 @@
 "use client";
 
-import { TopographyTexture } from "@/components/texture/topography";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 
@@ -14,9 +13,9 @@ export default function MembershipPageReasonSection() {
       id="reason"
       className="bg-primary relative flex w-full items-center justify-center overflow-hidden px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20"
     >
-      <TopographyTexture
-        color="#ececec"
-        className="pointer-events-none absolute h-full w-full opacity-10"
+      <div
+        aria-hidden
+        className="mask-topography pointer-events-none absolute h-full w-full bg-[#ececec] opacity-10"
       />
       <LanyardComponent
         position={[0, 0, 11]}

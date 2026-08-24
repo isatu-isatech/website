@@ -1,8 +1,4 @@
 import {
-  ISATechDecorationLeft,
-  ISATechDecorationRight,
-} from "@/components/assets/decorations";
-import {
   LucideCog,
   LucideGraduationCap,
   LucideHandshake,
@@ -15,7 +11,6 @@ import { SOCIAL_LINKS } from "@/lib/constants/site";
 import Link from "next/link";
 import { FacebookIcon, LinkedinIcon } from "@/components/assets/social-icons";
 import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
-import { Toaster } from "@/components/ui/sonner";
 import ContactUsForm from "./form";
 import ContactHeroLockup from "./contact-hero";
 
@@ -103,8 +98,14 @@ function ContactUsHeroSection() {
       id="contact-hero"
     >
       <div className="pointer-events-none absolute inset-0 flex justify-center">
-        <ISATechDecorationLeft className="absolute top-0 left-0 hidden h-auto w-fit opacity-5 md:block" />
-        <ISATechDecorationRight className="absolute right-0 bottom-0 h-auto w-fit opacity-5" />
+        <div
+          aria-hidden
+          className="absolute top-0 left-0 hidden aspect-364/527 h-auto w-[min(364px,100%)] bg-current mask-left opacity-5 md:block"
+        />
+        <div
+          aria-hidden
+          className="absolute right-0 bottom-0 aspect-320/528 h-auto w-[min(320px,100%)] bg-current mask-right opacity-5"
+        />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-8 py-8 lg:py-16">
         <ContactHeroLockup />
@@ -245,7 +246,6 @@ export default function ContactPage() {
       <ContactUsHeroSection />
       <ContactUsMainSection />
       <ContactUsSocialMapSection />
-      <Toaster />
     </main>
   );
 }

@@ -1,4 +1,3 @@
-import { ISATechDecoration } from "@/components/assets/decorations";
 import { HomepageOfferSection } from "@/components/home/offer-section";
 import { HomepageContactSection } from "@/components/home/contact-section";
 import { OptimizedImage, RevealOnView } from "@/components/common";
@@ -121,9 +120,9 @@ function MembershipPageHeroSection() {
 
           <div className="relative flex w-full items-start justify-end">
             {/* Decoration */}
-            <ISATechDecoration
-              color="#FFAC03"
-              className="absolute top-0 right-0 -z-1 h-full w-auto translate-x-1/2"
+            <div
+              aria-hidden
+              className="mask-isatech absolute top-0 right-0 -z-1 aspect-667/492 h-full w-auto translate-x-1/2 bg-[#FFAC03]"
             />
 
             <Image

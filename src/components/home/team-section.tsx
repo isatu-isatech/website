@@ -1,9 +1,6 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/common";
 import Link from "next/link";
-import { TopographyTexture } from "../texture/topography";
 
 const Team4HMembers = [
   {
@@ -39,9 +36,9 @@ export function HomepageTeamSection() {
     >
       {/* Decorations */}
       <div className="pointer-events-none absolute flex h-full w-full items-center justify-center">
-        <TopographyTexture
-          color={"#ececec"}
-          className="absolute h-full w-full opacity-5"
+        <div
+          aria-hidden
+          className="mask-topography absolute h-full w-full bg-[#ececec] opacity-5"
         />
       </div>
       <div className="flex w-full max-w-7xl flex-col py-16 lg:py-28">

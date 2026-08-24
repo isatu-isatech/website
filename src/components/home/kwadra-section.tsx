@@ -1,6 +1,3 @@
-"use client";
-
-import { ISATechDecorationLeft } from "@/components/assets/decorations";
 import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/common";
@@ -33,7 +30,10 @@ export function HomepageKwadraSection() {
           className="absolute h-full w-full"
           blobs={blobsConfig}
         />
-        <ISATechDecorationLeft className="absolute top-0 left-0 h-auto w-full opacity-10 md:h-full md:w-auto" />
+        <div
+          aria-hidden
+          className="absolute top-0 left-0 aspect-[364/527] h-auto w-full bg-current mask-left opacity-10 md:h-full md:w-auto"
+        />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-6 md:flex-row">
         {/* Main Image Container */}
