@@ -1,12 +1,8 @@
 import { Metadata } from "next";
 import { Poppins, Chivo } from "next/font/google";
 import "@/app/globals.css";
-import { Toaster } from "@/components/ui/sonner";
 import { CookieConsentProvider } from "@/components/cookie-consent";
 import { ConsentGatedAnalytics } from "@/components/consent-gated-analytics";
-import { PageTransition } from "@/components/common/page-transition";
-import { ScrollActivityIndicator } from "@/components/common/scroll-activity-indicator";
-import { OverlayScrollbarsProvider } from "@/components/common/overlay-scrollbars-provider";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -183,14 +179,9 @@ export default async function RootLayout({
         data-overlayscrollbars-initialize
       >
         <CookieConsentProvider>
-          <PageTransition>{children}</PageTransition>
-          <Toaster />
+          {children}
           <ConsentGatedAnalytics />
         </CookieConsentProvider>
-        {/* Toggles .is-scrolling on <html> to emphasize the scrollbar while scrolling */}
-        <ScrollActivityIndicator />
-        {/* Replaces the native page scrollbar with the brand-keyed custom one */}
-        <OverlayScrollbarsProvider />
         {/* Schema.org structured data for SEO */}
         <script
           type="application/ld+json"

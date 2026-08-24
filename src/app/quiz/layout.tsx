@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ISATechLogoMark } from "@/components/assets/logos";
+import { Toaster } from "@/components/ui/sonner";
 
 /**
  * Quiz Layout - Simplified header without navigation, no footer.
@@ -40,6 +41,7 @@ export default function QuizLayout({
 
       {/* Main Content - No Footer; fills the remaining viewport height */}
       <div className="min-h-0 flex-1">{children}</div>
+      <Toaster />
     </div>
   );
 }
