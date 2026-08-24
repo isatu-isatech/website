@@ -36,6 +36,20 @@ export function requestPageTransition(href: string): void {
 }
 
 /**
+ * Instantly jump every scrollable viewport to the top, bypassing the CSS
+ * `scroll-behavior: smooth` on `<html>`. Called at the end of the entry
+ * sweep — the curtain fully covers the viewport — right before the
+ * navigation fires, so the incoming page mounts already at the top and the
+ * browser's own scroll reset (or the clamp to a shorter document) is never
+ * visible as motion.
+ */
+function resetScrollToTop(): void {
+  window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+}
+
+/**
  * Global page transition — a three-phase wipe.
  *
  * Entry: when the user clicks an internal link, a brand panel skewed at 45°
@@ -87,6 +101,10 @@ export function PageTransition({ children }: { children: ReactNode }) {
         busyRef.current = false;
         return;
       }
+      // Reset scroll while the curtain fully covers the viewport (see
+      // resetScrollToTop), then navigate — the new page is revealed already
+      // at the top with no visible scroll motion.
+      resetScrollToTop();
       router.push(target);
       timeoutRef.current = window.setTimeout(() => {
         if (busyRef.current) void reveal();
