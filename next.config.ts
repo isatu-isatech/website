@@ -29,7 +29,6 @@ const nextConfig: NextConfig = {
       "motion",
       "@react-three/drei",
       "@react-three/fiber",
-      "date-fns",
     ],
   },
 };

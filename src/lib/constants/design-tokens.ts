@@ -73,34 +73,10 @@ export const COLORS = {
   secondaryDark: "#9A6C00",
 } as const;
 
-export const GRADIENTS = {
-  primary: "linear-gradient(to right, #203C90, #FFAC03)",
-  primaryVertical: "linear-gradient(to bottom, #203C90, #FFAC03)",
-  goldShine: "linear-gradient(135deg, #FFAC03 0%, #FFD700 50%, #FFAC03 100%)",
-} as const;
-
-export const SHADOWS = {
-  card: "0px 3px 17px 0px hsl(0 0% 0% / 0.1)",
-  elevated: "0px 8px 24px 0px hsl(0 0% 0% / 0.15)",
-} as const;
-
 export const BREAKPOINTS = {
   sm: 640,
   md: 768,
   lg: 1024,
   xl: 1280,
   "2xl": 1536,
-} as const;
-
-export const ANIMATION = {
-  duration: {
-    fast: 150,
-    normal: 300,
-    slow: 500,
-  },
-  easing: {
-    default: "cubic-bezier(0.4, 0, 0.2, 1)",
-    easeOut: "cubic-bezier(0, 0, 0.2, 1)",
-    easeIn: "cubic-bezier(0.4, 0, 1, 1)",
-  },
 } as const;

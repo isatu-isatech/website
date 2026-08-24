@@ -19,15 +19,6 @@ export const SOCIAL_LINKS = {
   email: "isatech@isatu.edu.ph", // Update with actual email
 } as const;
 
-export const CONTACT_INFO = {
-  address: {
-    locality: "Iloilo City",
-    region: "Western Visayas",
-    country: "PH",
-    full: "Iloilo Science and Technology University, Iloilo City, Philippines",
-  },
-} as const;
-
 export const HERO_STATS = [
   { quantity: 5, label: "Startups Established" },
   { quantity: 25, label: "Awards Earned" },
