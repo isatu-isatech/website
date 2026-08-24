@@ -3,6 +3,7 @@ import { Poppins, Chivo } from "next/font/google";
 import "@/app/globals.css";
 import { CookieConsentProvider } from "@/components/providers/cookie-consent";
 import { ConsentGatedAnalytics } from "@/components/providers/consent-gated-analytics";
+import { PageTransition } from "@/components/common/page-transition";
 import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants/site";
 
 const poppins = Poppins({
@@ -180,7 +181,7 @@ export default async function RootLayout({
         data-overlayscrollbars-initialize
       >
         <CookieConsentProvider>
-          {children}
+          <PageTransition>{children}</PageTransition>
           <ConsentGatedAnalytics />
         </CookieConsentProvider>
         {/* Schema.org structured data for SEO */}

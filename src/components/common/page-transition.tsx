@@ -16,6 +16,26 @@ const EXIT_DURATION = 0.5;
 const SAFETY_TIMEOUT_MS = 15_000;
 
 /**
+ * Custom event name for programmatic page-transition requests
+ * (see `requestPageTransition`).
+ */
+export const PAGE_TRANSITION_NAVIGATE_EVENT = "page-transition:navigate";
+
+/**
+ * Request the wipe sequence for a programmatic navigation.
+ *
+ * Programmatic navigations can't be intercepted as link clicks, so the quiz
+ * leave-guard (which confirms a leave with `router.push`) dispatches this
+ * event instead; `PageTransition` listens for it and runs the same
+ * cover → navigate → reveal sequence a link click would get.
+ */
+export function requestPageTransition(href: string): void {
+  window.dispatchEvent(
+    new CustomEvent(PAGE_TRANSITION_NAVIGATE_EVENT, { detail: { href } }),
+  );
+}
+
+/**
  * Global page transition — a three-phase wipe.
  *
  * Entry: when the user clicks an internal link, a brand panel skewed at 45°
@@ -26,10 +46,11 @@ const SAFETY_TIMEOUT_MS = 15_000;
  * the incoming page.
  *
  * The navigation is driven by intercepting left-clicks on same-origin anchors
- * (every client-side route change in this app is a link click — there are no
- * programmatic router.push calls). Browser back/forward and server-side
- * redirects land without a click and swap instantly, by design. Reduced motion
- * renders pages statically with no curtain and no interception.
+ * (every client-side route change in this app is a link click; programmatic
+ * navigations — the quiz leave-guard — request the same wipe via
+ * `requestPageTransition`). Browser back/forward and server-side redirects
+ * land without a click and swap instantly, by design. Reduced motion renders
+ * pages statically with no curtain and no interception.
  */
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
@@ -115,6 +136,28 @@ export function PageTransition({ children }: { children: ReactNode }) {
     document.addEventListener("click", onDocumentClick, true);
     return () => document.removeEventListener("click", onDocumentClick, true);
   }, [reduceMotion, beginNavigation]);
+
+  // Programmatic navigations (the quiz leave-guard confirms a leave by
+  // dispatching the navigate event) get the same wipe sequence as a link
+  // click. Reduced motion falls through to a plain push.
+  useEffect(() => {
+    const onNavigateRequest = (event: Event) => {
+      const href = (event as CustomEvent<{ href?: string }>).detail?.href;
+      if (!href || href === pathnameRef.current) return;
+      if (reduceMotion) {
+        router.push(href);
+        return;
+      }
+      if (busyRef.current) return;
+      void beginNavigation(href);
+    };
+    window.addEventListener(PAGE_TRANSITION_NAVIGATE_EVENT, onNavigateRequest);
+    return () =>
+      window.removeEventListener(
+        PAGE_TRANSITION_NAVIGATE_EVENT,
+        onNavigateRequest,
+      );
+  }, [reduceMotion, router, beginNavigation]);
 
   // Reveal when the pending navigation lands; back/forward and server
   // redirects (pathname changed while idle) swap instantly.
