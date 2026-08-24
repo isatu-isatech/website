@@ -32,32 +32,12 @@ module.exports = {
     ],
   },
 
-  // Additional paths to include (in case static export doesn't catch them)
-  additionalPaths: async () => {
-    const result = [];
-
-    // Define all pages with custom config
-    const pages = [
-      { path: "/", priority: 1.0, changefreq: "daily" },
-      { path: "/quiz", priority: 0.7, changefreq: "weekly" },
-      { path: "/about", priority: 0.9, changefreq: "monthly" },
-      { path: "/membership", priority: 0.9, changefreq: "monthly" },
-      { path: "/contact", priority: 0.8, changefreq: "monthly" },
-      { path: "/privacy", priority: 0.3, changefreq: "yearly" },
-    ];
-
-    for (const page of pages) {
-      result.push({
-        loc: page.path,
-        changefreq: page.changefreq,
-        priority: page.priority,
-        lastmod: new Date().toISOString(),
-      });
-    }
-
-    return result;
-  },
-
-  // Exclude patterns
-  exclude: ["/api/*", "/404", "/_next/*"],
+  // Exclude patterns.
+  // - `/quiz/result` is a server-side redirect page (its OG tags are only
+  //   meaningful to social crawlers that don't follow redirects); it must not
+  //   be in the sitemap.
+  // - Pages under app routes are auto-discovered, so no `additionalPaths`
+  //   (the previous block stamped a fresh `lastmod` on every build, churning
+  //   the sitemap on each deploy).
+  exclude: ["/api/*", "/404", "/_next/*", "/quiz/result"],
 };
