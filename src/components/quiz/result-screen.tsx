@@ -5,9 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Share2, RotateCcw } from "lucide-react";
-import { archetypeIcons, type ArchetypeKey } from "@/lib/quiz-data";
+import {
+  archetypeIcons,
+  type ArchetypeKey,
+  type FinalResult,
+} from "@/lib/quiz";
 import { COLORS } from "@/lib/constants/design-tokens";
-import type { FinalResult } from "@/lib/quiz";
 
 export function ResultScreen({
   result,

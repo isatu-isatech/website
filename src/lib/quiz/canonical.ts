@@ -8,7 +8,7 @@
  * else is coerced to the canonical invite banner by the route.
  */
 
-import { archetypes, archetypeIcons, type ArchetypeKey } from "@/lib/quiz-data";
+import { archetypes, archetypeIcons, type ArchetypeKey } from "./data";
 import { SITE_CONFIG } from "@/lib/constants/site";
 
 /** The 17 canonical shareable outcomes, derived from quiz-data. */

@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { Poppins, Chivo } from "next/font/google";
 import "@/app/globals.css";
-import { CookieConsentProvider } from "@/components/cookie-consent";
-import { ConsentGatedAnalytics } from "@/components/consent-gated-analytics";
+import { CookieConsentProvider } from "@/components/providers/cookie-consent";
+import { ConsentGatedAnalytics } from "@/components/providers/consent-gated-analytics";
 import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants/site";
 
 const poppins = Poppins({

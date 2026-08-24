@@ -1,8 +1,8 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { archetypes } from "@/lib/quiz-data";
 import { SITE_CONFIG } from "@/lib/constants/site";
 import {
+  archetypes,
   GENERALIST_ROLE,
   buildBannerUrl,
   buildShareUrl,

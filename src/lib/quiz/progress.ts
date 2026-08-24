@@ -14,7 +14,7 @@ import {
   type ArchetypeKey,
   type Choice,
   type Question,
-} from "@/lib/quiz-data";
+} from "./data";
 import { ARCHETYPE_KEYS } from "./canonical";
 
 export const QUIZ_PROGRESS_KEY = "4h-quiz-progress-v1";

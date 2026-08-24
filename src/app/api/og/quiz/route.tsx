@@ -4,8 +4,8 @@ import { ImageResponse } from "next/og";
 import { NextRequest, NextResponse } from "next/server";
 import { COLORS } from "@/lib/constants/design-tokens";
 import { SITE_CONFIG } from "@/lib/constants/site";
-import { archetypeIcons } from "@/lib/quiz-data";
 import {
+  archetypeIcons,
   GENERALIST_ROLE,
   deriveArchetype,
   isArchetypeKey,

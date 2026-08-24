@@ -3,7 +3,7 @@
 import { motion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import type { Question, Choice } from "@/lib/quiz-data";
+import type { Question, Choice } from "@/lib/quiz";
 
 export function QuestionScreen({
   question,

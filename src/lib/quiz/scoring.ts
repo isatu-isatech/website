@@ -14,7 +14,7 @@ import {
   archetypes,
   SCORE_THRESHOLD,
   type ArchetypeKey,
-} from "@/lib/quiz-data";
+} from "./data";
 
 export type Scores = Record<ArchetypeKey, number>;
 

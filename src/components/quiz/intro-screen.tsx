@@ -4,8 +4,7 @@ import { motion, useReducedMotion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";
-import { archetypeIcons, questions } from "@/lib/quiz-data";
-import { ARCHETYPE_KEYS } from "@/lib/quiz";
+import { archetypeIcons, questions, ARCHETYPE_KEYS } from "@/lib/quiz";
 import { COLORS } from "@/lib/constants/design-tokens";
 
 export function IntroScreen({ onStart }: { onStart: () => void }) {

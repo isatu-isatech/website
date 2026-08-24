@@ -17,7 +17,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import TurnstileWidget from "@/components/turnstile-widget";
+import TurnstileWidget from "@/components/ui/turnstile-widget";
 import { contactFormSchema } from "./schema";
 
 /**

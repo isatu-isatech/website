@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 
-const LanyardComponent = dynamic(() => import("@/components/lanyard"), {
+const LanyardComponent = dynamic(() => import("@/components/three/lanyard"), {
   ssr: false,
 });
 

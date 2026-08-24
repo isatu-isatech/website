@@ -5,11 +5,6 @@ import { AnimatePresence, useReducedMotion } from "motion/react";
 import {
   questions,
   tieBreakers,
-  type ArchetypeKey,
-  type Question,
-  type Choice,
-} from "@/lib/quiz-data";
-import {
   deriveResult,
   isFinalResult,
   needsTieBreaker,
@@ -19,6 +14,9 @@ import {
   clearProgress,
   makeProgressVersion,
   buildShareUrl,
+  type ArchetypeKey,
+  type Question,
+  type Choice,
   type Scores,
 } from "@/lib/quiz";
 import confetti from "canvas-confetti";

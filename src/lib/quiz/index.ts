@@ -8,5 +8,6 @@
  */
 
 export * from "./canonical";
+export * from "./data";
 export * from "./progress";
 export * from "./scoring";
