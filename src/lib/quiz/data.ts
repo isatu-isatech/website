@@ -3,6 +3,8 @@
  * Archetypes: Hustler, Hacker, Hipster, Hound
  */
 
+import { TEAM_4H } from "@/lib/constants/site";
+
 export type ArchetypeKey = "Hustler" | "Hacker" | "Hipster" | "Hound";
 
 export interface Choice {
@@ -470,26 +472,14 @@ export const adjectives: Record<ArchetypeKey, string> = {
   Hound: "Analytical",
 };
 
-export const archetypeColors: Record<ArchetypeKey, string> = {
-  Hustler: "#F59E0B", // Amber
-  Hacker: "#3B82F6", // Blue
-  Hipster: "#EC4899", // Pink
-  Hound: "#10B981", // Emerald
-};
-
-export const archetypeGradients: Record<ArchetypeKey, string> = {
-  Hustler: "from-amber-500 to-orange-600",
-  Hacker: "from-blue-500 to-indigo-600",
-  Hipster: "from-pink-500 to-purple-600",
-  Hound: "from-emerald-500 to-teal-600",
-};
-
-export const archetypeIcons: Record<ArchetypeKey, string> = {
-  Hustler: "/assets/decorations/hustler.png",
-  Hacker: "/assets/decorations/hacker.png",
-  Hipster: "/assets/decorations/hipster.png",
-  Hound: "/assets/decorations/hound.png",
-};
+/**
+ * Archetype → icon map, derived from the canonical 4H catalog (TEAM_4H) so
+ * the icon paths live in exactly one place. Colors/gradients live in
+ * design-tokens (`COLORS.quiz.archetypes`) — single source per concern.
+ */
+export const archetypeIcons: Record<ArchetypeKey, string> = Object.fromEntries(
+  TEAM_4H.map((member) => [member.role, member.imagePath]),
+) as Record<ArchetypeKey, string>;
 
 export const archetypes: Record<string, string> = {
   "True Hustler":

@@ -5,41 +5,40 @@ import { AnimatePresence, useReducedMotion } from "motion/react";
 import {
   questions,
   tieBreakers,
-  archetypes,
-  adjectives,
-  SCORE_THRESHOLD,
-  type ArchetypeKey,
-  type Question,
-  type Choice,
-} from "@/lib/quiz-data";
-import {
+  deriveResult,
+  isFinalResult,
+  needsTieBreaker,
+  sortScores,
   loadProgress,
   saveProgress,
   clearProgress,
   makeProgressVersion,
   buildShareUrl,
+  type ArchetypeKey,
+  type Question,
+  type Choice,
+  type Scores,
 } from "@/lib/quiz";
 import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { COLORS } from "@/lib/constants/design-tokens";
-import { archetypeColors } from "@/lib/quiz-data";
 import { useQuizLeaveGuard } from "@/lib/hooks";
 import { IntroScreen } from "./intro-screen";
 import { QuestionScreen } from "./question-screen";
 import { ResultScreen } from "./result-screen";
 import { LeaveQuizDialog } from "./leave-quiz-dialog";
-import { isFinalResult, type QuizResult } from "./types";
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    // i and j are always in-bounds (0 ≤ j ≤ i < length).
+    const swap = shuffled[i]!;
+    shuffled[i] = shuffled[j]!;
+    shuffled[j] = swap;
   }
   return shuffled;
 }
-
-type Scores = Record<ArchetypeKey, number>;
 
 interface QuizState {
   phase: "intro" | "quiz" | "tiebreaker" | "result";
@@ -85,22 +84,22 @@ export function QuizContainer() {
     const questionOrder = shuffleArray(questions.map((_, i) => i));
     const choiceOrders: number[][] = [];
     const shuffledQ = questionOrder.map((i) => {
-      const order = shuffleArray(questions[i].choices.map((_, j) => j));
+      const order = shuffleArray(questions[i]!.choices.map((_, j) => j));
       choiceOrders.push(order);
       return {
-        ...questions[i],
-        choices: order.map((j) => questions[i].choices[j]),
+        ...questions[i]!,
+        choices: order.map((j) => questions[i]!.choices[j]!),
       };
     });
 
     const tieBreakerOrder = shuffleArray(tieBreakers.map((_, i) => i));
     const tieChoiceOrders: number[][] = [];
     const shuffledTB = tieBreakerOrder.map((i) => {
-      const order = shuffleArray(tieBreakers[i].choices.map((_, j) => j));
+      const order = shuffleArray(tieBreakers[i]!.choices.map((_, j) => j));
       tieChoiceOrders.push(order);
       return {
-        ...tieBreakers[i],
-        choices: order.map((j) => tieBreakers[i].choices[j]),
+        ...tieBreakers[i]!,
+        choices: order.map((j) => tieBreakers[i]!.choices[j]!),
       };
     });
 
@@ -153,13 +152,13 @@ export function QuizContainer() {
         currentQuestionIndex: saved.currentQuestionIndex,
         scores: saved.scores,
         shuffledQuestions: saved.questionOrder.map((i) => ({
-          ...questions[i],
-          choices: saved.choiceOrders[i].map((j) => questions[i].choices[j]),
+          ...questions[i]!,
+          choices: saved.choiceOrders[i]!.map((j) => questions[i]!.choices[j]!),
         })),
         shuffledTieBreakers: saved.tieBreakerOrder.map((i) => ({
-          ...tieBreakers[i],
-          choices: saved.tieChoiceOrders[i].map(
-            (j) => tieBreakers[i].choices[j],
+          ...tieBreakers[i]!,
+          choices: saved.tieChoiceOrders[i]!.map(
+            (j) => tieBreakers[i]!.choices[j]!,
           ),
         })),
         usedTieBreakers: saved.usedTieBreakers,
@@ -194,65 +193,22 @@ export function QuizContainer() {
     }
   }, [state, restored]);
 
-  const result = useMemo((): QuizResult => {
-    const { scores } = state;
-    const total = Object.values(scores).reduce((a, b) => a + b, 0);
-    if (total === 0) return null;
-
-    const sortedScores = Object.entries(scores).toSorted(
-      ([, a], [, b]) => b - a,
-    ) as [ArchetypeKey, number][];
-
-    const [top1, top2, top3, top4] = sortedScores;
-
-    const needsTieBreaker =
-      top1[1] === top2[1] ||
-      (top2[1] === top3[1] && top1[1] - top2[1] < SCORE_THRESHOLD);
-
-    if (
-      needsTieBreaker &&
-      state.usedTieBreakers < state.shuffledTieBreakers.length
-    ) {
-      return { needsTieBreaker: true };
-    }
-
-    const isGeneralist =
-      top1[1] === top2[1] && top2[1] === top3[1] && top3[1] === top4[1];
-
-    let role: string;
-    const primaryArchetype: ArchetypeKey = top1[0];
-    let secondaryArchetype: ArchetypeKey | null = null;
-
-    if (isGeneralist) {
-      role = "Generalist";
-    } else if (top1[1] - top2[1] < SCORE_THRESHOLD) {
-      role = `${adjectives[top2[0]]} ${top1[0]}`;
-      secondaryArchetype = top2[0];
-    } else {
-      role = `True ${top1[0]}`;
-    }
-
-    const breakdown: Record<string, number> = {};
-    for (const [key, value] of sortedScores) {
-      breakdown[key] = Math.round((value / total) * 100);
-    }
-
-    return {
-      needsTieBreaker: false,
-      role,
-      description: archetypes[role] || archetypes["Generalist"],
-      primaryArchetype,
-      secondaryArchetype,
-      breakdown,
-      isGeneralist,
-    };
-  }, [state]);
+  const result = useMemo(
+    () =>
+      deriveResult(
+        state.scores,
+        state.usedTieBreakers,
+        state.shuffledTieBreakers.length,
+      ),
+    [state.scores, state.usedTieBreakers, state.shuffledTieBreakers.length],
+  );
 
   const handleAnswer = useCallback(
     (choiceIndex: number) => {
       if (!currentQuestion || answerLockRef.current) return;
 
       const choice = currentQuestion.choices[choiceIndex];
+      if (!choice) return; // index always in-bounds; guard for noUncheckedIndexedAccess
       const newScores = { ...state.scores };
 
       for (const [key, value] of Object.entries(choice.weight)) {
@@ -281,29 +237,26 @@ export function QuizContainer() {
               currentQuestionIndex: prev.currentQuestionIndex + 1,
             };
           } else {
-            const sortedScores = Object.entries(newScores).toSorted(
-              ([, a], [, b]) => b - a,
-            ) as [ArchetypeKey, number][];
-            const [top1, top2, top3] = sortedScores;
-            const needsTie =
-              top1[1] === top2[1] || (top2 && top2[1] === top3[1]);
-
-            if (needsTie && prev.shuffledTieBreakers.length > 0) {
+            const sortedScores = sortScores(newScores);
+            if (
+              needsTieBreaker(
+                sortedScores,
+                prev.usedTieBreakers,
+                prev.shuffledTieBreakers.length,
+              )
+            ) {
               return { ...newState, phase: "tiebreaker" };
             }
             return { ...newState, phase: "result" };
           }
         } else if (prev.phase === "tiebreaker") {
-          const sortedScores = Object.entries(newScores).toSorted(
-            ([, a], [, b]) => b - a,
-          ) as [ArchetypeKey, number][];
-          const [top1, top2, top3] = sortedScores;
-          const stillNeedsTie =
-            top1[1] === top2[1] || (top2 && top2[1] === top3[1]);
-
+          const sortedScores = sortScores(newScores);
           if (
-            stillNeedsTie &&
-            prev.usedTieBreakers + 1 < prev.shuffledTieBreakers.length
+            needsTieBreaker(
+              sortedScores,
+              prev.usedTieBreakers + 1,
+              prev.shuffledTieBreakers.length,
+            )
           ) {
             return { ...newState, usedTieBreakers: prev.usedTieBreakers + 1 };
           }
@@ -380,8 +333,8 @@ export function QuizContainer() {
           colors: [
             COLORS.primary.DEFAULT,
             COLORS.secondary.DEFAULT,
-            archetypeColors.Hipster,
-            archetypeColors.Hound,
+            COLORS.quiz.archetypes.Hipster.from,
+            COLORS.quiz.archetypes.Hound.from,
           ],
         });
         confetti({
@@ -392,8 +345,8 @@ export function QuizContainer() {
           colors: [
             COLORS.primary.DEFAULT,
             COLORS.secondary.DEFAULT,
-            archetypeColors.Hipster,
-            archetypeColors.Hound,
+            COLORS.quiz.archetypes.Hipster.from,
+            COLORS.quiz.archetypes.Hound.from,
           ],
         });
 

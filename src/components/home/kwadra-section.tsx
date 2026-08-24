@@ -1,15 +1,13 @@
-"use client";
-
-import { ISATechDecorationLeft } from "@/components/assets/decorations";
-import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
+import { BlobsAnimatedBackground } from "@/components/ui/blobs";
+import { createBlobConfig } from "@/components/ui/blobs-config";
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/common";
 import Link from "next/link";
 
 export function HomepageKwadraSection() {
   // Configuration for the animated blobs in the background
-  const blobsConfig: BlobsConfig[] = [
-    {
+  const blobsConfig = [
+    createBlobConfig({
       id: "kwadra-blob",
       top: "-10rem",
       right: "-10rem",
@@ -17,9 +15,7 @@ export function HomepageKwadraSection() {
       animateY: [0, -40, 0],
       duration: 6,
       colorClass: "bg-secondary/60",
-      sizeClass: "h-96 w-96",
-      blurClass: "blur-[100px]",
-    },
+    }),
   ];
 
   return (
@@ -33,7 +29,10 @@ export function HomepageKwadraSection() {
           className="absolute h-full w-full"
           blobs={blobsConfig}
         />
-        <ISATechDecorationLeft className="absolute top-0 left-0 h-auto w-full opacity-10 md:h-full md:w-auto" />
+        <div
+          aria-hidden
+          className="absolute top-0 left-0 aspect-[364/527] h-auto w-full bg-current mask-left opacity-10 md:h-full md:w-auto"
+        />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-6 md:flex-row">
         {/* Main Image Container */}

@@ -1,35 +1,7 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
 import { OptimizedImage } from "@/components/common";
+import { TEAM_4H } from "@/lib/constants/site";
 import Link from "next/link";
-import { TopographyTexture } from "../texture/topography";
-
-const Team4HMembers = [
-  {
-    role: "Hustler",
-    path: "/assets/decorations/hustler.png",
-    subtitle:
-      "The strategic brain who drives momentum and turns vision into action.",
-  },
-  {
-    role: "Hacker",
-    path: "/assets/decorations/hacker.png",
-    subtitle: "The builder, coder, and architect who makes ideas real.",
-  },
-  {
-    role: "Hipster",
-    path: "/assets/decorations/hipster.png",
-    subtitle:
-      "The creative who shapes innovation with design, branding, and vibe.",
-  },
-  {
-    role: "Hound",
-    path: "/assets/decorations/hound.png",
-    subtitle:
-      "The researcher and analyst who keeps the team grounded and informed.",
-  },
-];
 
 export function HomepageTeamSection() {
   return (
@@ -39,9 +11,9 @@ export function HomepageTeamSection() {
     >
       {/* Decorations */}
       <div className="pointer-events-none absolute flex h-full w-full items-center justify-center">
-        <TopographyTexture
-          color={"#ececec"}
-          className="absolute h-full w-full opacity-5"
+        <div
+          aria-hidden
+          className="mask-topography absolute h-full w-full bg-[#ececec] opacity-5"
         />
       </div>
       <div className="flex w-full max-w-7xl flex-col py-16 lg:py-28">
@@ -58,14 +30,14 @@ export function HomepageTeamSection() {
           </div>
           {/* Cards Container */}
           <div className="grid w-full grid-cols-2 gap-6 lg:grid-cols-4">
-            {Team4HMembers.map((member, key) => (
+            {TEAM_4H.map((member, key) => (
               <div
                 key={key}
                 className="border-border/60 bg-card/25 flex flex-col items-center justify-center gap-4 rounded-2xl border px-6 py-8 text-center backdrop-blur-md lg:px-8 lg:py-10"
               >
                 <div className="bg-secondary flex size-28 items-center justify-center rounded-2xl p-2 md:size-32 lg:rounded-3xl lg:p-6 xl:size-40">
                   <OptimizedImage
-                    src={member.path}
+                    src={member.imagePath}
                     alt={member.role}
                     height={1000}
                     width={1000}

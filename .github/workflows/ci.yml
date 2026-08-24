@@ -29,11 +29,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: ESLint (authoritative)
-        run: npm run lint:eslint
-
-      - name: oxlint (fast pass)
-        run: npm run lint:ox
+      - name: ESLint (authoritative; includes oxlint rules via eslint-plugin-oxlint)
+        run: npm run lint
 
       - name: Prettier check
         run: npm run format:check
@@ -68,9 +65,6 @@ jobs:
       NOTION_CONTACT_FORM_DATABASE_ID: ${{ secrets.NOTION_CONTACT_FORM_DATABASE_ID }}
       CLOUDFLARE_TURNSTILE_SECRET_KEY: ${{ secrets.CLOUDFLARE_TURNSTILE_SECRET_KEY }}
       NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY: ${{ secrets.NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY }}
-      KV_URL: ${{ secrets.KV_URL }}
-      KV_REST_API_URL: ${{ secrets.KV_REST_API_URL }}
-      KV_REST_API_TOKEN: ${{ secrets.KV_REST_API_TOKEN }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v5

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCookieConsent } from "@/components/cookie-consent";
+import { useCookieConsent } from "./cookie-consent";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 

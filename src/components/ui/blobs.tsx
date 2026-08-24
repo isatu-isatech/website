@@ -1,20 +1,8 @@
 "use client";
 import { motion, useReducedMotion } from "framer-motion";
+import type { BlobsConfig } from "./blobs-config";
 
-export interface BlobsConfig {
-  id: string;
-  top?: string;
-  bottom?: string;
-  left?: string;
-  right?: string;
-  animateX: number[];
-  animateY: number[];
-  duration: number;
-  repeatType?: "loop" | "reverse" | "mirror";
-  colorClass: string;
-  sizeClass?: string;
-  blurClass?: string;
-}
+export type { BlobsConfig } from "./blobs-config";
 
 // Added the className prop to the interface
 interface BlobsAnimatedBackgroundProps {

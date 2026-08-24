@@ -19,15 +19,6 @@ export const SOCIAL_LINKS = {
   email: "isatech@isatu.edu.ph", // Update with actual email
 } as const;
 
-export const CONTACT_INFO = {
-  address: {
-    locality: "Iloilo City",
-    region: "Western Visayas",
-    country: "PH",
-    full: "Iloilo Science and Technology University, Iloilo City, Philippines",
-  },
-} as const;
-
 export const HERO_STATS = [
   { quantity: 5, label: "Startups Established" },
   { quantity: 25, label: "Awards Earned" },
@@ -35,26 +26,34 @@ export const HERO_STATS = [
   // { quantity: 100, label: "Members Registered" },
 ] as const;
 
+/**
+ * Canonical 4H archetype catalog — single source for the archetype icons,
+ * the "Meet the 4H" sections (homepage + membership), and the quiz icon map.
+ * Keep `role` values exactly aligned with the quiz `ArchetypeKey` union.
+ */
 export const TEAM_4H = [
   {
     role: "Hustler",
-    description: "The business mind - drives growth and builds connections",
     imagePath: "/assets/decorations/hustler.png",
+    subtitle:
+      "The strategic brain who drives momentum and turns vision into action.",
   },
   {
     role: "Hacker",
-    description: "The builder - turns ideas into working products",
     imagePath: "/assets/decorations/hacker.png",
+    subtitle: "The builder, coder, and architect who makes ideas real.",
   },
   {
     role: "Hipster",
-    description: "The designer - creates beautiful user experiences",
     imagePath: "/assets/decorations/hipster.png",
+    subtitle:
+      "The creative who shapes innovation with design, branding, and vibe.",
   },
   {
     role: "Hound",
-    description: "The researcher - validates ideas with data",
     imagePath: "/assets/decorations/hound.png",
+    subtitle:
+      "The researcher and analyst who keeps the team grounded and informed.",
   },
 ] as const;
 

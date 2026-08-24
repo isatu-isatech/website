@@ -27,7 +27,7 @@ A specific role/listing within a Core Committee (e.g. within Marketing: Graphic 
 _Avoid_: role, job, seat
 
 **4H archetype**:
-A personality / founder perspective frame (Hustler, Hypeman, Hacker, Hipster); who you are as a founder. Lightly captured in the standard form as Primary and Secondary 4H Role selections. Not an application target and never a vetting criterion.
+A personality / founder perspective frame (Hustler, Hound, Hacker, Hipster); who you are as a founder. Lightly captured in the standard form as Primary and Secondary 4H Role selections. Not an application target and never a vetting criterion.
 _Avoid_: 4H role (the form labels it “4H Role”, but the canonical term is archetype to avoid clashing with committee/position), persona, type
 
 **Event**:

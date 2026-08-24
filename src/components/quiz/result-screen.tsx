@@ -6,12 +6,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Share2, RotateCcw } from "lucide-react";
 import {
-  archetypeGradients,
   archetypeIcons,
   type ArchetypeKey,
-} from "@/lib/quiz-data";
+  type FinalResult,
+} from "@/lib/quiz";
 import { COLORS } from "@/lib/constants/design-tokens";
-import type { FinalResult } from "./types";
 
 export function ResultScreen({
   result,
@@ -25,10 +24,10 @@ export function ResultScreen({
   const reduceMotion = useReducedMotion();
 
   // Generalist renders in the brand gold pair (from design tokens);
-  // archetypes keep their gradient classes (quiz-data, mirrors COLORS.quiz.archetypes).
+  // archetypes use their canonical gradient classes (COLORS.quiz.archetypes).
   const secondaryColor = result.isGeneralist
     ? undefined
-    : archetypeGradients[result.primaryArchetype];
+    : COLORS.quiz.archetypes[result.primaryArchetype].gradient;
   const generalistGradient = result.isGeneralist
     ? `linear-gradient(135deg, ${COLORS.quiz.generalist.from}, ${COLORS.quiz.generalist.to})`
     : undefined;
@@ -49,7 +48,7 @@ export function ResultScreen({
         initial={reduceMotion ? false : { scale: 0 }}
         animate={{ scale: 1 }}
         transition={reduceMotion ? undefined : { type: "spring", delay: 0.2 }}
-        className={`mb-2.5 inline-flex h-16 w-16 flex-col items-center justify-center rounded-full bg-gradient-to-br md:mb-3 md:h-20 md:w-20 ${secondaryColor ?? ""} p-1.5 shadow-2xl md:p-2`}
+        className={`mb-2.5 inline-flex h-16 w-16 flex-col items-center justify-center rounded-full bg-linear-to-br md:mb-3 md:h-20 md:w-20 ${secondaryColor ?? ""} p-1.5 shadow-2xl md:p-2`}
         style={
           generalistGradient
             ? { backgroundImage: generalistGradient }
@@ -74,7 +73,7 @@ export function ResultScreen({
       >
         <p className="text-muted-foreground mb-0.5 text-xs">You are a...</p>
         <h2
-          className={`mb-1.5 bg-gradient-to-r text-lg font-bold md:mb-2 md:text-xl lg:text-2xl ${secondaryColor ?? ""} bg-clip-text text-transparent`}
+          className={`mb-1.5 bg-linear-to-r text-lg font-bold md:mb-2 md:text-xl lg:text-2xl ${secondaryColor ?? ""} bg-clip-text text-transparent`}
           style={
             generalistGradient
               ? { backgroundImage: generalistGradient }
@@ -113,7 +112,7 @@ export function ResultScreen({
                   key={archetype}
                   className="flex items-center gap-2 py-1 first:pt-0.5 last:pb-0.5 md:py-1.5"
                 >
-                  <div className="relative h-4 w-4 flex-shrink-0 md:h-5 md:w-5">
+                  <div className="relative h-4 w-4 shrink-0 md:h-5 md:w-5">
                     <Image
                       src={archetypeIcons[archetype as ArchetypeKey]}
                       alt={archetype}
@@ -133,8 +132,9 @@ export function ResultScreen({
                         initial={reduceMotion ? false : { width: 0 }}
                         animate={{ width: `${percentage}%` }}
                         transition={{ duration: 0.8, delay: 0.9 }}
-                        className={`h-full rounded-full bg-gradient-to-r ${
-                          archetypeGradients[archetype as ArchetypeKey]
+                        className={`h-full rounded-full bg-linear-to-r ${
+                          COLORS.quiz.archetypes[archetype as ArchetypeKey]
+                            .gradient
                         }`}
                       />
                     </div>

@@ -4,7 +4,8 @@ import { motion, useReducedMotion } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";
-import { archetypeIcons, questions } from "@/lib/quiz-data";
+import { archetypeIcons, questions, ARCHETYPE_KEYS } from "@/lib/quiz";
+import { COLORS } from "@/lib/constants/design-tokens";
 
 export function IntroScreen({ onStart }: { onStart: () => void }) {
   const reduceMotion = useReducedMotion();
@@ -23,42 +24,46 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           className="flex items-center justify-center gap-3 md:gap-6"
         >
-          {(["Hustler", "Hacker", "Hipster", "Hound"] as const).map(
-            (archetype) => (
-              <div
-                key={archetype}
-                className="relative h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16"
-              >
-                <Image
-                  src={archetypeIcons[archetype]}
-                  alt={archetype}
-                  fill
-                  className="object-contain"
-                />
-              </div>
-            ),
-          )}
+          {ARCHETYPE_KEYS.map((archetype) => (
+            <div
+              key={archetype}
+              className="relative h-12 w-12 md:h-14 md:w-14 lg:h-16 lg:w-16"
+            >
+              <Image
+                src={archetypeIcons[archetype]}
+                alt={archetype}
+                fill
+                className="object-contain"
+              />
+            </div>
+          ))}
         </motion.div>
       </div>
 
-      <h1 className="from-primary via-secondary to-primary mb-2 bg-gradient-to-r bg-clip-text text-2xl font-bold text-transparent md:mb-3 md:text-3xl lg:text-4xl">
+      <h1 className="from-primary via-secondary to-primary mb-2 bg-linear-to-r bg-clip-text text-2xl font-bold text-transparent md:mb-3 md:text-3xl lg:text-4xl">
         4H Personality Quiz
       </h1>
 
       <p className="text-muted-foreground mb-4 max-w-xl text-base md:mb-6 md:text-lg">
         Discover your founder archetype!
         <br />
-        Are you a <strong className="text-amber-500">Hustler</strong>,{" "}
-        <strong className="text-blue-500">Hacker</strong>,{" "}
-        <strong className="text-pink-500">Hipster</strong>, or{" "}
-        <strong className="text-emerald-500">Hound</strong>?
+        Are you a{" "}
+        {ARCHETYPE_KEYS.map((archetype, index) => (
+          <span key={archetype}>
+            {index > 0 && (index === ARCHETYPE_KEYS.length - 1 ? " or " : ", ")}
+            <strong className={COLORS.quiz.archetypes[archetype].text}>
+              {archetype}
+            </strong>
+          </span>
+        ))}
+        ?
       </p>
 
       <Button
         type="button"
         onClick={onStart}
         size="lg"
-        className="group from-primary hover:from-primary/90 relative overflow-hidden bg-gradient-to-r to-blue-600 px-6 py-4 text-base text-white shadow-xl transition-all duration-300 hover:to-blue-500 hover:shadow-2xl active:scale-[0.98] md:px-8 md:py-5 md:text-lg"
+        className="group from-primary hover:from-primary/90 relative overflow-hidden bg-linear-to-r to-blue-600 px-6 py-4 text-base text-white shadow-xl transition-all duration-300 hover:to-blue-500 hover:shadow-2xl active:scale-[0.98] md:px-8 md:py-5 md:text-lg"
       >
         <Sparkles className="mr-2 size-4 md:size-5" />
         Start the Quiz

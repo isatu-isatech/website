@@ -1,6 +1,3 @@
-"use client";
-
-import { TopographyTexture } from "@/components/texture/topography";
 import { OptimizedImage } from "@/components/common";
 
 const homepagePartners = [
@@ -44,9 +41,9 @@ export function HomepagePartnersSection() {
       className="relative flex w-full flex-col items-center justify-center px-4 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20"
       id="partners"
     >
-      <TopographyTexture
-        color={"#dfdfdf"}
-        className="absolute top-0 left-0 -z-1 h-full w-full opacity-30"
+      <div
+        aria-hidden
+        className="mask-topography absolute top-0 left-0 -z-1 h-full w-full bg-[#dfdfdf] opacity-30"
       />
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-6 py-16 lg:py-28">
         <h2 className="text-secondary-dark dark:text-secondary">

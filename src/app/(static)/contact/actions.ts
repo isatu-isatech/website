@@ -15,6 +15,18 @@ import {
 const cloudflareTurnstileSecretKey = env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
 const contactFormDatabaseID = env.NOTION_CONTACT_FORM_DATABASE_ID;
 
+/**
+ * Contact-form database property names (the Notion schema keys). The
+ * property VALUES are built from validated form data below; only the keys
+ * are pinned here so a Notion schema rename is a single, findable change
+ * instead of three scattered string literals.
+ */
+const CONTACT_PROPERTIES = {
+  name: "Name",
+  email: "Email",
+  message: "Message",
+} as const;
+
 export async function submitMessage(formData: unknown) {
   // Browser-cookie rate limiting: the visitor's browser holds the record of
   // recent successful submissions (spec 002 / constitution P5). Browsers
@@ -78,7 +90,7 @@ export async function submitMessage(formData: unknown) {
 
   try {
     await createPage(contactFormDatabaseID, {
-      Name: {
+      [CONTACT_PROPERTIES.name]: {
         title: [
           {
             text: {
@@ -87,10 +99,10 @@ export async function submitMessage(formData: unknown) {
           },
         ],
       },
-      Email: {
+      [CONTACT_PROPERTIES.email]: {
         email: email,
       },
-      Message: {
+      [CONTACT_PROPERTIES.message]: {
         rich_text: [
           {
             text: {

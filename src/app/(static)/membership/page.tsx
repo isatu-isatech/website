@@ -1,10 +1,11 @@
-import { ISATechDecoration } from "@/components/assets/decorations";
 import { HomepageOfferSection } from "@/components/home/offer-section";
 import { HomepageContactSection } from "@/components/home/contact-section";
 import { OptimizedImage, RevealOnView } from "@/components/common";
-import { BlobsAnimatedBackground, BlobsConfig } from "@/components/ui/blobs";
+import { BlobsAnimatedBackground } from "@/components/ui/blobs";
+import { createBlobConfig } from "@/components/ui/blobs-config";
 import { Button } from "@/components/ui/button";
 import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
+import { TEAM_4H, SITE_CONFIG } from "@/lib/constants/site";
 import { Check } from "lucide-react";
 import { Metadata } from "next";
 import dynamic from "next/dynamic";
@@ -46,7 +47,7 @@ export const metadata: Metadata = {
     title: "Become a Member of ISATech Society",
     description:
       "Join the ISATech Society to enhance your skills, network with peers, and contribute to innovative projects that shape the future.",
-    url: "https://isatech.club/membership",
+    url: `${SITE_CONFIG.url}/membership`,
     siteName: "ISATech Society",
     type: "website",
   },
@@ -58,8 +59,8 @@ export const metadata: Metadata = {
  * ################################################################################
  */
 function MembershipPageHeroSection() {
-  const blobsConfig: BlobsConfig[] = [
-    {
+  const blobsConfig = [
+    createBlobConfig({
       id: "default-blob-1",
       top: "-10rem",
       left: "-10rem",
@@ -67,10 +68,8 @@ function MembershipPageHeroSection() {
       animateY: [0, -40, 0],
       duration: 6,
       colorClass: "bg-primary/60",
-      sizeClass: "h-96 w-96",
-      blurClass: "blur-[100px]",
-    },
-    {
+    }),
+    createBlobConfig({
       id: "default-blob-2",
       bottom: "-10rem",
       right: "-10rem",
@@ -78,9 +77,7 @@ function MembershipPageHeroSection() {
       animateY: [0, -40, 0],
       duration: 6,
       colorClass: "bg-primary/60",
-      sizeClass: "h-96 w-96",
-      blurClass: "blur-[100px]",
-    },
+    }),
   ];
 
   return (
@@ -121,9 +118,9 @@ function MembershipPageHeroSection() {
 
           <div className="relative flex w-full items-start justify-end">
             {/* Decoration */}
-            <ISATechDecoration
-              color="#FFAC03"
-              className="absolute top-0 right-0 -z-1 h-full w-auto translate-x-1/2"
+            <div
+              aria-hidden
+              className="mask-isatech absolute top-0 right-0 -z-1 aspect-667/492 h-full w-auto translate-x-1/2 bg-[#FFAC03]"
             />
 
             <Image
@@ -144,34 +141,8 @@ function MembershipPageHeroSection() {
 }
 
 function MembershipPageTeamSection() {
-  const members = [
-    {
-      role: "Hustler",
-      path: "/assets/decorations/hustler.png",
-      subtitle:
-        "The strategic brain who drives momentum and turns vision into action.",
-    },
-    {
-      role: "Hacker",
-      path: "/assets/decorations/hacker.png",
-      subtitle: "The builder, coder, and architect who makes ideas real.",
-    },
-    {
-      role: "Hipster",
-      path: "/assets/decorations/hipster.png",
-      subtitle:
-        "The creative who shapes innovation with design, branding, and vibe.",
-    },
-    {
-      role: "Hound",
-      path: "/assets/decorations/hound.png",
-      subtitle:
-        "The researcher and analyst who keeps the team grounded and informed.",
-    },
-  ];
-
-  const blobsConfig: BlobsConfig[] = [
-    {
+  const blobsConfig = [
+    createBlobConfig({
       id: "blob-1",
       top: "-10rem",
       left: "-10rem",
@@ -179,10 +150,8 @@ function MembershipPageTeamSection() {
       animateY: [0, -40, 0],
       duration: 6,
       colorClass: "bg-secondary/60",
-      sizeClass: "h-96 w-96",
-      blurClass: "blur-[100px]",
-    },
-    {
+    }),
+    createBlobConfig({
       id: "blob-2",
       bottom: "-10rem",
       right: "-10rem",
@@ -190,9 +159,7 @@ function MembershipPageTeamSection() {
       animateY: [0, -40, 0],
       duration: 6,
       colorClass: "bg-secondary/60",
-      sizeClass: "h-96 w-96",
-      blurClass: "blur-[100px]",
-    },
+    }),
   ];
 
   return (
@@ -215,7 +182,7 @@ function MembershipPageTeamSection() {
           </h5>
         </div>
         <div className="divide-primary/10 grid w-full grid-cols-1 divide-y md:grid-cols-4 md:divide-x md:divide-y-0">
-          {members.map((member, key) => (
+          {TEAM_4H.map((member, key) => (
             <RevealOnView
               key={member.role}
               delay={key * 0.08}
@@ -223,7 +190,7 @@ function MembershipPageTeamSection() {
             >
               <div className="bg-secondary flex aspect-square w-24 items-center justify-center rounded-3xl p-4 md:w-28">
                 <OptimizedImage
-                  src={member.path}
+                  src={member.imagePath}
                   alt={member.role}
                   height={1000}
                   width={1000}

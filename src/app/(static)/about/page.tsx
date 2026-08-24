@@ -1,21 +1,16 @@
 import {
-  ISATechDecorationCenter,
-  ISATechDecorationLeft,
-  ISATechDecorationRight,
-} from "@/components/assets/decorations";
-import {
   OptimizedImage,
   RevealOnView,
   SectionErrorBoundary,
 } from "@/components/common";
 import { HomepageContactSection } from "@/components/home/contact-section";
 import { BreadcrumbSchema } from "@/components/seo/breadcrumb-schema";
-import { TopographyTexture } from "@/components/texture/topography";
 import { RocketIcon, TargetIcon } from "lucide-react";
 import { Metadata } from "next";
 import AboutHeroLockup from "./hero-lockup";
 import AboutUsAdvisersSection, { AdviserProps } from "./carousel";
 import AboutDescriptionBand from "./description-band";
+import { SITE_CONFIG } from "@/lib/constants/site";
 
 /**
  * ################################################################################
@@ -43,7 +38,7 @@ export const metadata: Metadata = {
     title: "About ISATech Society",
     description:
       "Learn more about ISATech Society, our mission, vision, and the team behind the innovation.",
-    url: "https://isatech.club/about",
+    url: `${SITE_CONFIG.url}/about`,
     siteName: "ISATech Society",
     images: [
       {
@@ -143,9 +138,9 @@ function AboutUsHeroSection() {
             priority
             brandPlaceholder
           />
-          <ISATechDecorationCenter
-            className="pointer-events-none absolute -z-1 h-auto w-32 md:w-40 lg:w-64"
-            color="#203C90"
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -z-1 aspect-306/466 h-auto w-32 bg-[#203C90] mask-center md:w-40 lg:w-64"
           />
         </div>
       </div>
@@ -161,8 +156,14 @@ function AboutUsDescriptionSection() {
     >
       <div className="pointer-events-none absolute inset-0 flex justify-center">
         {/* Decorations */}
-        <ISATechDecorationLeft className="absolute top-0 left-0 hidden h-auto w-fit opacity-10 lg:block" />
-        <ISATechDecorationRight className="absolute right-0 bottom-0 h-auto w-fit opacity-10" />
+        <div
+          aria-hidden
+          className="absolute top-0 left-0 hidden aspect-364/527 h-auto w-[min(364px,100%)] bg-current mask-left opacity-10 lg:block"
+        />
+        <div
+          aria-hidden
+          className="absolute right-0 bottom-0 aspect-320/528 h-auto w-[min(320px,100%)] bg-current mask-right opacity-10"
+        />
       </div>
       {/* Full-bleed description photo band (parallax) */}
       <AboutDescriptionBand />
@@ -207,9 +208,9 @@ function AboutUsEmpowermentSection() {
       className="bg-primary relative flex w-full items-center justify-center px-4 py-14 sm:px-6 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="empowerment"
     >
-      <TopographyTexture
-        color="#FFAC03"
-        className="pointer-events-none absolute h-full w-full opacity-20"
+      <div
+        aria-hidden
+        className="mask-topography pointer-events-none absolute h-full w-full bg-[#FFAC03] opacity-20"
       />
       <div className="flex w-full max-w-7xl flex-col-reverse gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
         <div className="flex w-full items-center justify-center">

@@ -53,7 +53,9 @@ export function HomepageHeroSection() {
   useEffect(() => {
     if (!pickedRef.current) {
       pickedRef.current =
-        HeroYoutubeVideos[Math.floor(Math.random() * HeroYoutubeVideos.length)];
+        HeroYoutubeVideos[
+          Math.floor(Math.random() * HeroYoutubeVideos.length)
+        ] ?? null;
     }
     setVideoId(pickedRef.current);
   }, []);

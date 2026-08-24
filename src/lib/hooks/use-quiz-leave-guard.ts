@@ -1,8 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
 import { clearProgress, loadProgress } from "@/lib/quiz";
+import { requestPageTransition } from "@/components/common/page-transition";
 
 type LeaveAction = { type: "back" } | { type: "navigate"; href: string };
 
@@ -47,7 +47,6 @@ export function useQuizLeaveGuard(armed: boolean, onResetToIntro: () => void) {
   const allowNavigation = useRef(false);
   /** Number of our duplicate same-URL sentinels currently in the stack. */
   const sentinelCount = useRef(0);
-  const router = useRouter();
 
   const cancelLeave = useCallback(() => {
     pending.current = null;
@@ -78,11 +77,13 @@ export function useQuizLeaveGuard(armed: boolean, onResetToIntro: () => void) {
         allowNavigation.current = false;
       }, 1000);
     } else if (action.href.startsWith("/")) {
-      router.push(action.href);
+      // Route through the global page transition so leaving the quiz gets the
+      // same cover → navigate → reveal wipe as a regular link click.
+      requestPageTransition(action.href);
     } else {
       window.location.href = action.href;
     }
-  }, [router]);
+  }, []);
 
   /** Programmatic entry point — also used internally by the listeners. */
   const triggerLeave = useCallback((action: LeaveAction) => {

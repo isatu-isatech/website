@@ -1,4 +1,4 @@
-import React from "react";
+import { SITE_CONFIG } from "@/lib/constants/site";
 
 interface BreadcrumbItem {
   name: string;
@@ -17,7 +17,7 @@ export function BreadcrumbSchema({ items }: BreadcrumbSchemaProps) {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `https://isatech.club${item.path}`,
+      item: `${SITE_CONFIG.url}${item.path}`,
     })),
   };
 

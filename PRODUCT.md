@@ -45,7 +45,7 @@ All four goals are active and shared:
 
 - **Brand colors (current incumbent):** ISATech Blue `#203C90`, ISATech Gold `#FFAC03`; dark (`#1A1F35`) and light (`#F5F7FC`) backgrounds. (These are the incumbent visual identity — subject to redesign decisions.)
 - **Identity:** full name "ISAT U Innovators and Technopreneurs Society"; short name "ISATech"; locale `en_PH`.
-- **Org contact:** email `isatech.isatu@gmail.com`; Facebook / Facebook page, LinkedIn company page, Twitter/X.
+- **Org contact:** email `isatech@isatu.edu.ph`; Facebook / Facebook page, LinkedIn company page, Twitter/X.
 - **Affiliation:** Iloilo Science and Technology University; close partner KWADRA TBI (technology business incubator); advisers hold university roles (VP for Research & Extension, IPMO Director, etc.).
 - **Programs/events:** Codelympics (a recurring competition), office/space showcase, seminars/events.
 - **Hero media:** rotating YouTube videos (office showcase, teasers, Codelympics recaps).

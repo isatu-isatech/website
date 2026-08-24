@@ -10,6 +10,7 @@ import {
   SectionErrorBoundary,
 } from "@/components/common";
 import { Metadata } from "next";
+import { SITE_CONFIG } from "@/lib/constants/site";
 
 /**
  * ################################################################################
@@ -36,7 +37,7 @@ export const metadata: Metadata = {
     title: "Empowering the Next Generation of Innovators",
     description:
       "ISATech Society is a student-led organization at ISAT U dedicated to empowering student founders through innovation, collaboration, and community.",
-    url: "https://isatech.club/",
+    url: `${SITE_CONFIG.url}/`,
     siteName: "ISATech Society",
     images: [
       {

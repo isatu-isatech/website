@@ -37,30 +37,40 @@ export const COLORS = {
     4: "#9567A3",
     5: "#5B9BD5",
   },
-  /* Quiz + brand surfaces — single JS-consumed source for result-screen, OG route, confetti.
-     Mirrors src/lib/quiz-data.ts archetypeGradients (Tailwind classes) — keep in sync. */
+  /* Quiz + brand surfaces — single JS-consumed source for result-screen, OG route, confetti,
+     intro-screen and the quiz gradients/text classes. Tailwind class strings must stay
+     literal here (Tailwind's scanner picks them up verbatim). */
   quiz: {
     generalist: { from: "#FFAC03", to: "#E08D00" }, // gold pair (secondary → deeper gold) — was violet
     archetypes: {
-      Hustler: { from: "#F59E0B", to: "#EA580C" },
-      Hacker: { from: "#3B82F6", to: "#4F46E5" },
-      Hipster: { from: "#EC4899", to: "#9333EA" },
-      Hound: { from: "#10B981", to: "#0D9488" },
+      Hustler: {
+        from: "#F59E0B",
+        to: "#EA580C",
+        gradient: "from-amber-500 to-orange-600",
+        text: "text-amber-500",
+      },
+      Hacker: {
+        from: "#3B82F6",
+        to: "#4F46E5",
+        gradient: "from-blue-500 to-indigo-600",
+        text: "text-blue-500",
+      },
+      Hipster: {
+        from: "#EC4899",
+        to: "#9333EA",
+        gradient: "from-pink-500 to-purple-600",
+        text: "text-pink-500",
+      },
+      Hound: {
+        from: "#10B981",
+        to: "#0D9488",
+        gradient: "from-emerald-500 to-teal-600",
+        text: "text-emerald-500",
+      },
     },
   },
   /* Dark gold for AA-safe headings on light surfaces (used via text-secondary-dark) */
   secondaryDark: "#9A6C00",
-} as const;
-
-export const GRADIENTS = {
-  primary: "linear-gradient(to right, #203C90, #FFAC03)",
-  primaryVertical: "linear-gradient(to bottom, #203C90, #FFAC03)",
-  goldShine: "linear-gradient(135deg, #FFAC03 0%, #FFD700 50%, #FFAC03 100%)",
-} as const;
-
-export const SHADOWS = {
-  card: "0px 3px 17px 0px hsl(0 0% 0% / 0.1)",
-  elevated: "0px 8px 24px 0px hsl(0 0% 0% / 0.15)",
 } as const;
 
 export const BREAKPOINTS = {
@@ -69,17 +79,4 @@ export const BREAKPOINTS = {
   lg: 1024,
   xl: 1280,
   "2xl": 1536,
-} as const;
-
-export const ANIMATION = {
-  duration: {
-    fast: 150,
-    normal: 300,
-    slow: 500,
-  },
-  easing: {
-    default: "cubic-bezier(0.4, 0, 0.2, 1)",
-    easeOut: "cubic-bezier(0, 0, 0.2, 1)",
-    easeIn: "cubic-bezier(0.4, 0, 1, 1)",
-  },
 } as const;
