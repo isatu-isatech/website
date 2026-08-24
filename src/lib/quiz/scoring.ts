@@ -18,6 +18,9 @@ import {
 
 export type Scores = Record<ArchetypeKey, number>;
 
+/** One (archetype, score) pair from a sorted score list. */
+type ScorePair = [ArchetypeKey, number];
+
 /* ---------------------------------------------------------------------------
  * Result shapes (moved here from components/quiz/types.ts so lib/quiz owns
  * the full scoring domain and no lib module imports from components).
@@ -68,7 +71,10 @@ export function needsTieBreaker(
   usedTieBreakers: number,
   totalTieBreakers: number,
 ): boolean {
-  const [top1, top2, top3] = sortedScores;
+  // `scores` always holds every archetype key, so the sorted list has exactly
+  // three (or four) entries — the tuple casts pin that invariant for
+  // noUncheckedIndexedAccess.
+  const [top1, top2, top3] = sortedScores as [ScorePair, ScorePair, ScorePair];
   const tied =
     top1[1] === top2[1] ||
     (top2[1] === top3[1] && top1[1] - top2[1] < SCORE_THRESHOLD);
@@ -88,7 +94,12 @@ export function deriveResult(
   if (total === 0) return null;
 
   const sortedScores = sortScores(scores);
-  const [top1, top2, top3, top4] = sortedScores;
+  const [top1, top2, top3, top4] = sortedScores as [
+    ScorePair,
+    ScorePair,
+    ScorePair,
+    ScorePair,
+  ];
 
   if (needsTieBreaker(sortedScores, usedTieBreakers, totalTieBreakers)) {
     return { needsTieBreaker: true };
@@ -118,7 +129,7 @@ export function deriveResult(
   return {
     needsTieBreaker: false,
     role,
-    description: archetypes[role] || archetypes["Generalist"],
+    description: archetypes[role] ?? archetypes["Generalist"] ?? "Generalist",
     primaryArchetype,
     secondaryArchetype,
     breakdown,

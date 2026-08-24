@@ -56,7 +56,7 @@ export default function CountUpComponent({
     const str = num.toString();
     if (str.includes(".")) {
       const decimals = str.split(".")[1];
-      if (parseInt(decimals) !== 0) {
+      if (decimals && parseInt(decimals) !== 0) {
         return decimals.length;
       }
     }

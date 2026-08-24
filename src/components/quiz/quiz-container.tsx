@@ -32,7 +32,10 @@ function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    // i and j are always in-bounds (0 ≤ j ≤ i < length).
+    const swap = shuffled[i]!;
+    shuffled[i] = shuffled[j]!;
+    shuffled[j] = swap;
   }
   return shuffled;
 }
@@ -81,22 +84,22 @@ export function QuizContainer() {
     const questionOrder = shuffleArray(questions.map((_, i) => i));
     const choiceOrders: number[][] = [];
     const shuffledQ = questionOrder.map((i) => {
-      const order = shuffleArray(questions[i].choices.map((_, j) => j));
+      const order = shuffleArray(questions[i]!.choices.map((_, j) => j));
       choiceOrders.push(order);
       return {
-        ...questions[i],
-        choices: order.map((j) => questions[i].choices[j]),
+        ...questions[i]!,
+        choices: order.map((j) => questions[i]!.choices[j]!),
       };
     });
 
     const tieBreakerOrder = shuffleArray(tieBreakers.map((_, i) => i));
     const tieChoiceOrders: number[][] = [];
     const shuffledTB = tieBreakerOrder.map((i) => {
-      const order = shuffleArray(tieBreakers[i].choices.map((_, j) => j));
+      const order = shuffleArray(tieBreakers[i]!.choices.map((_, j) => j));
       tieChoiceOrders.push(order);
       return {
-        ...tieBreakers[i],
-        choices: order.map((j) => tieBreakers[i].choices[j]),
+        ...tieBreakers[i]!,
+        choices: order.map((j) => tieBreakers[i]!.choices[j]!),
       };
     });
 
@@ -149,13 +152,13 @@ export function QuizContainer() {
         currentQuestionIndex: saved.currentQuestionIndex,
         scores: saved.scores,
         shuffledQuestions: saved.questionOrder.map((i) => ({
-          ...questions[i],
-          choices: saved.choiceOrders[i].map((j) => questions[i].choices[j]),
+          ...questions[i]!,
+          choices: saved.choiceOrders[i]!.map((j) => questions[i]!.choices[j]!),
         })),
         shuffledTieBreakers: saved.tieBreakerOrder.map((i) => ({
-          ...tieBreakers[i],
-          choices: saved.tieChoiceOrders[i].map(
-            (j) => tieBreakers[i].choices[j],
+          ...tieBreakers[i]!,
+          choices: saved.tieChoiceOrders[i]!.map(
+            (j) => tieBreakers[i]!.choices[j]!,
           ),
         })),
         usedTieBreakers: saved.usedTieBreakers,
@@ -205,6 +208,7 @@ export function QuizContainer() {
       if (!currentQuestion || answerLockRef.current) return;
 
       const choice = currentQuestion.choices[choiceIndex];
+      if (!choice) return; // index always in-bounds; guard for noUncheckedIndexedAccess
       const newScores = { ...state.scores };
 
       for (const [key, value] of Object.entries(choice.weight)) {

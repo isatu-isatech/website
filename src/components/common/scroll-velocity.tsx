@@ -125,7 +125,7 @@ export const ScrollVelocityComponent: React.FC<ScrollVelocityProps> = ({
     });
 
     const directionFactor = useRef<number>(1);
-    useAnimationFrame((t, delta) => {
+    useAnimationFrame((_time, delta) => {
       let moveBy = directionFactor.current * baseVelocity * (delta / 1000);
 
       if (velocityFactor.get() < 0) {
@@ -142,7 +142,7 @@ export const ScrollVelocityComponent: React.FC<ScrollVelocityProps> = ({
     for (let i = 0; i < numCopies!; i++) {
       spans.push(
         <span
-          className={`flex-shrink-0 ${className}`}
+          className={`shrink-0 ${className}`}
           key={i}
           ref={i === 0 ? copyRef : null}
         >
@@ -157,7 +157,7 @@ export const ScrollVelocityComponent: React.FC<ScrollVelocityProps> = ({
         style={parallaxStyle}
       >
         <motion.div
-          className={`${scrollerClassName} flex text-center font-sans text-4xl font-bold tracking-[-0.02em] whitespace-nowrap drop-shadow md:text-[5rem] md:leading-[5rem]`}
+          className={`${scrollerClassName} flex text-center font-sans text-4xl font-bold tracking-[-0.02em] whitespace-nowrap drop-shadow md:text-[5rem] md:leading-20`}
           style={{ x, ...scrollerStyle }}
         >
           {spans}

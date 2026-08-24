@@ -81,7 +81,7 @@ function isValidChoiceOrders(
 ): orders is number[][] {
   if (!Array.isArray(orders) || orders.length !== set.length) return false;
   return orders.every((order, index) =>
-    isValidOrder(order, set[index].choices.length),
+    isValidOrder(order, set[index]!.choices.length),
   );
 }
 

@@ -1,4 +1,3 @@
-import React from "react";
 import { SITE_CONFIG } from "@/lib/constants/site";
 
 interface BreadcrumbItem {
