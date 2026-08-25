@@ -6,6 +6,9 @@ const envSchema = z.object({
   NOTION_CONTACT_FORM_DATABASE_ID: z
     .string()
     .min(1, "NOTION_CONTACT_FORM_DATABASE_ID is required"),
+  // Membership applications DB (ADR 0002 — native Membership form built in H1;
+  // optional until that form lands, then required)
+  NOTION_MEMBERSHIP_DATABASE_ID: z.string().optional(),
 
   // Cloudflare Turnstile Configuration
   CLOUDFLARE_TURNSTILE_SECRET_KEY: z
@@ -17,11 +20,6 @@ const envSchema = z.object({
 
   // Optional: Add other environment variables as needed
   // RESEND_API_KEY: z.string().optional(),
-
-  // Vercel KV Configuration (optional for local development)
-  KV_URL: z.string().optional(),
-  KV_REST_API_URL: z.string().optional(),
-  KV_REST_API_TOKEN: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

@@ -1,15 +1,10 @@
-"use client";
-
-import React from "react";
+import type { ComponentType } from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Facebook, Linkedin, LucideIcon, Mail } from "lucide-react";
-import { OptimizedImage } from "@/components/common";
-import {
-  FooterArchDecoration,
-  ISATechDecoration,
-} from "@/components/assets/decorations";
+import { Mail } from "lucide-react";
+import type { LucideProps } from "lucide-react";
 import { ISATechLogoType } from "@/components/assets/logos";
+import { FacebookIcon, LinkedinIcon } from "@/components/assets/social-icons";
 import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants";
 
 /**
@@ -27,11 +22,11 @@ const navLinks: {
   {
     section: "Sitemap",
     links: [
-      { label: "Homepage", href: "/#" },
+      { label: "Homepage", href: "/" },
       // { label: "Achievements", href: "/" },
-      { label: "About Us", href: "/about#" },
-      { label: "Contact Us", href: "/contact#" },
-      { label: "Quiz", href: "/quiz#" },
+      { label: "About Us", href: "/about" },
+      { label: "Contact Us", href: "/contact" },
+      { label: "Quiz", href: "/quiz" },
     ],
   },
   {
@@ -44,7 +39,7 @@ const navLinks: {
   {
     section: "Legal",
     links: [
-      { label: "Privacy Policy", href: "/privacy#" },
+      { label: "Privacy Policy", href: "/privacy" },
       { label: "Cookie Preferences", href: "/privacy#manage-cookies" },
     ],
   },
@@ -52,13 +47,13 @@ const navLinks: {
 
 // List of social links using centralized constants
 const socialLinks: {
-  icon: LucideIcon;
+  icon: ComponentType<LucideProps>;
   href: string;
   label: string;
 }[] = [
   { icon: Mail, href: `mailto:${SOCIAL_LINKS.email}`, label: "Email" },
-  { icon: Facebook, href: SOCIAL_LINKS.facebook, label: "Facebook" },
-  { icon: Linkedin, href: SOCIAL_LINKS.linkedin, label: "LinkedIn" },
+  { icon: FacebookIcon, href: SOCIAL_LINKS.facebook, label: "Facebook" },
+  { icon: LinkedinIcon, href: SOCIAL_LINKS.linkedin, label: "LinkedIn" },
 ];
 
 /**
@@ -70,27 +65,12 @@ export default function FooterComponent() {
   return (
     <footer>
       <div className="bg-primary relative flex w-full items-center justify-center px-6 lg:px-8 xl:px-16">
-        <ISATechDecoration
-          className="pointer-events-none absolute right-0 bottom-0 w-fit opacity-10 md:top-0 md:h-full"
-          color="#ffffff"
+        <div
+          aria-hidden
+          className="mask-isatech pointer-events-none absolute right-0 bottom-0 aspect-[667/492] w-full max-w-[667px] bg-white opacity-10 md:top-0 md:h-full md:w-auto"
         />
-        <FooterArchDecoration
-          className="pointer-events-none absolute right-0 -bottom-0.5 h-fit w-fit"
-          color="#FFAC03"
-        />
-        <div className="absolute right-0 bottom-0 h-fit w-2/3 lg:w-1/3 xl:w-1/4">
-          <OptimizedImage
-            src="/assets/decorations/4h-horizontal.png"
-            alt="4H Footer Decoration"
-            width={1060}
-            height={385}
-            sizes="(min-width: 1280px) 25.06vw, (min-width: 1040px) 33.64vw, 50.14vw"
-            className="pointer-events-none h-auto w-full object-cover"
-            brandPlaceholder
-          />
-        </div>
 
-        <div className="flex max-w-6xl flex-col items-center justify-center gap-6 self-stretch pt-8 pb-32">
+        <div className="flex max-w-7xl flex-col items-center justify-center gap-6 self-stretch pt-8 pb-16">
           <div className="flex w-full flex-col gap-6 lg:flex-row lg:justify-between">
             <div className="flex w-full flex-col items-start justify-start gap-2 self-stretch sm:gap-4 lg:max-w-1/3">
               <div className="flex max-h-28">
@@ -150,7 +130,7 @@ export default function FooterComponent() {
       </div>
 
       <div className="bg-secondary flex w-full justify-center">
-        <div className="flex w-full max-w-6xl items-center justify-center px-12 py-2 text-center">
+        <div className="flex w-full max-w-7xl items-center justify-center px-12 py-2 text-center">
           <p className="text-micro">
             © {new Date().getFullYear()} {SITE_CONFIG.name}. All rights
             reserved. All logos and brands are property of their respective

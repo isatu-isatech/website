@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import ManageCookiesSection from "./cookie-section";
+import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants/site";
 
 /**
  * ################################################################################
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     title: "Privacy Policy",
     description:
       "This Privacy Policy outlines how ISATech Society collects, uses, and protects your information.",
-    url: "https://isatech.club/privacy",
+    url: `${SITE_CONFIG.url}/privacy`,
     siteName: "ISATech Society",
     images: [
       {
@@ -353,15 +354,15 @@ function PrivacyContactSection() {
         <li>
           By email:{" "}
           <a
-            href="mailto:isatech@isatu.edu.ph"
+            href={`mailto:${SOCIAL_LINKS.email}`}
             className="text-primary underline"
           >
-            isatech@isatu.edu.ph
+            {SOCIAL_LINKS.email}
           </a>
         </li>
         <li>
           By visiting our{" "}
-          <Link href="/contact#" className="text-primary underline">
+          <Link href="/contact" className="text-primary underline">
             contact page
           </Link>
         </li>
@@ -378,7 +379,7 @@ function PrivacyContactSection() {
 export default function PrivacyPage() {
   return (
     <main className="flex w-full flex-col items-center justify-center">
-      <section className="w-full px-6 py-16 lg:px-16 lg:py-28">
+      <section className="w-full px-4 py-16 sm:px-6 md:px-8 lg:px-12 lg:py-28 xl:px-16 2xl:px-20">
         <div className="mx-auto flex max-w-4xl flex-col gap-8">
           <PrivacyPageHeader />
           <PrivacyIntroSection />
@@ -394,7 +395,9 @@ export default function PrivacyPage() {
           <PrivacyLinksSection />
           <PrivacyChangesSection />
           <PrivacyContactSection />
-          <ManageCookiesSection />
+          <section id="manage-cookies">
+            <ManageCookiesSection />
+          </section>
         </div>
       </section>
     </main>

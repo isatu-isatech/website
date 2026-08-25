@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useInView, useMotionValue, useSpring } from "framer-motion";
+import {
+  useInView,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  type MotionValue,
+} from "framer-motion";
 
 interface CountUpProps {
   to: number;
@@ -29,6 +35,7 @@ export default function CountUpComponent({
   onEnd,
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
+  const reduceMotion = useReducedMotion();
   const motionValue = useMotionValue(direction === "down" ? to : from);
 
   const damping = 20 + 40 * (1 / duration);
@@ -39,6 +46,9 @@ export default function CountUpComponent({
     stiffness,
   });
 
+  // Reduced motion: read the raw value (instant snap) instead of spring-animating
+  const source: MotionValue<number> = reduceMotion ? motionValue : springValue;
+
   const isInView = useInView(ref, { once: true, margin: "0px" });
 
   // Get number of decimal places in a number
@@ -46,7 +56,7 @@ export default function CountUpComponent({
     const str = num.toString();
     if (str.includes(".")) {
       const decimals = str.split(".")[1];
-      if (parseInt(decimals) !== 0) {
+      if (decimals && parseInt(decimals) !== 0) {
         return decimals.length;
       }
     }
@@ -65,6 +75,15 @@ export default function CountUpComponent({
     if (isInView && startWhen) {
       if (typeof onStart === "function") {
         onStart();
+      }
+
+      if (reduceMotion) {
+        // Reduced motion: snap straight to the final value — no spring, no delay
+        motionValue.set(direction === "down" ? from : to);
+        if (typeof onEnd === "function") {
+          onEnd();
+        }
+        return;
       }
 
       const timeoutId = setTimeout(() => {
@@ -96,10 +115,11 @@ export default function CountUpComponent({
     onStart,
     onEnd,
     duration,
+    reduceMotion,
   ]);
 
   useEffect(() => {
-    const unsubscribe = springValue.on("change", (latest) => {
+    const unsubscribe = source.on("change", (latest) => {
       if (ref.current) {
         const hasDecimals = maxDecimals > 0;
 
@@ -120,7 +140,7 @@ export default function CountUpComponent({
     });
 
     return () => unsubscribe();
-  }, [springValue, separator, maxDecimals]);
+  }, [source, separator, maxDecimals]);
 
   return <span className={className} ref={ref} />;
 }

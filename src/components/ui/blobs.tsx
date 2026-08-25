@@ -1,20 +1,8 @@
 "use client";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+import type { BlobsConfig } from "./blobs-config";
 
-export interface BlobsConfig {
-  id: string;
-  top?: string;
-  bottom?: string;
-  left?: string;
-  right?: string;
-  animateX: number[];
-  animateY: number[];
-  duration: number;
-  repeatType?: "loop" | "reverse" | "mirror";
-  colorClass: string;
-  sizeClass?: string;
-  blurClass?: string;
-}
+export type { BlobsConfig } from "./blobs-config";
 
 // Added the className prop to the interface
 interface BlobsAnimatedBackgroundProps {
@@ -56,6 +44,7 @@ export function BlobsAnimatedBackground({
   ];
 
   const blobsToRender = blobs && blobs.length > 0 ? blobs : defaultBlobs;
+  const reduceMotion = useReducedMotion();
 
   return (
     // We combine the default classes with the new className prop
@@ -74,10 +63,14 @@ export function BlobsAnimatedBackground({
             left: blob.left,
             right: blob.right,
           }}
-          animate={{
-            x: blob.animateX,
-            y: blob.animateY,
-          }}
+          animate={
+            reduceMotion
+              ? undefined
+              : {
+                  x: blob.animateX,
+                  y: blob.animateY,
+                }
+          }
           transition={{
             duration: blob.duration,
             repeat: Number.POSITIVE_INFINITY,

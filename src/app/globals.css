@@ -14,6 +14,7 @@
   --primary-foreground: oklch(0.9496 0.0167 271.239);
   --secondary: oklch(0.8052 0.1701 74.2189);
   --secondary-foreground: oklch(0.2077 0.0398 265.7549);
+  --secondary-dark: #9a6c00;
   --muted: oklch(0.9496 0.0167 271.239);
   --muted-foreground: oklch(0.5544 0.0407 257.4166);
   --accent: oklch(0.9496 0.0167 271.239);
@@ -70,6 +71,7 @@
   --primary-foreground: oklch(0.9634 0.0175 279.0619);
   --secondary: oklch(0.7904 0.1679 73.4899);
   --secondary-foreground: oklch(0.2077 0.0398 265.7549);
+  --secondary-dark: #9a6c00;
   --muted: oklch(0.3717 0.0392 257.287);
   --muted-foreground: oklch(0.7107 0.0351 256.7878);
   --accent: oklch(0.8962 0.0464 249.3432);
@@ -119,6 +121,7 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary-dark: var(--secondary-dark);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
@@ -167,11 +170,16 @@
   html {
     scroll-behavior: smooth !important;
     scroll-padding-top: 4rem;
+    /* Vertical-only scrolling: the page never scrolls horizontally, even
+       before hydration / with JS disabled (OverlayScrollbars additionally
+       pins overflow.x to "hidden" at init). */
+    overflow-x: hidden;
   }
 
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-chivo), sans-serif;
+    overflow-x: hidden;
   }
 
   h1,
@@ -237,5 +245,154 @@
 @keyframes shimmer {
   100% {
     transform: translateX(100%);
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Custom scrollbar — subtle when idle, emphasized while scrolling/hovering.
+   Keyed to the brand `--primary` token so it adapts to both palettes and
+   blends with the interface instead of competing with the content.
+   ──────────────────────────────────────────────────────────────────────────── */
+:root {
+  --scrollbar-thumb-idle: color-mix(
+    in oklab,
+    var(--color-white) 25%,
+    transparent
+  );
+  --scrollbar-thumb-active: color-mix(
+    in oklab,
+    var(--secondary) 75%,
+    transparent
+  );
+}
+
+@supports (scrollbar-width: thin) {
+  /* Firefox and other engines supporting the standard properties.
+     No CSS transitions here — emphasis follows the `.is-scrolling` class. */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb-idle) transparent;
+  }
+
+  html.is-scrolling {
+    scrollbar-color: var(--scrollbar-thumb-active) transparent;
+  }
+}
+
+/* WebKit/Blink (Chrome, Edge, Safari) — sharp square thumb, transparent track,
+   no arrow buttons. Unprefixed so every scrollable surface (modals, inner
+   panels) adopts the same understated design language. */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+/* Remove the up/down arrow indicators at the ends of the scrollbar. */
+::-webkit-scrollbar-button {
+  display: none;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-idle);
+  border: 3px solid transparent;
+  border-radius: 0;
+  background-clip: padding-box;
+  transition: background-color 0.25s ease;
+}
+
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active,
+html.is-scrolling::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb-active);
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.os-theme-isatech.os-theme-isatech {
+  --os-size: 12px;
+  --os-padding-perpendicular: 0px;
+  --os-padding-axis: 0;
+  --os-track-bg: color-mix(in oklab, var(--color-white) 5%, transparent);
+  --os-track-border-radius: 0;
+  --os-handle-border-radius: 0;
+  --os-handle-bg: var(--scrollbar-thumb-idle);
+  --os-handle-bg-hover: var(--scrollbar-thumb-active);
+  --os-handle-bg-active: var(--scrollbar-thumb-active);
+  --os-handle-min-size: 40px;
+  --os-handle-interactive-area-offset: 2px;
+}
+
+.os-theme-isatech .os-scrollbar-handle {
+  transition: background-color 0.25s ease;
+}
+
+/* Emphasize the handle while the user is actively scrolling, mirroring the
+   native `.is-scrolling` behavior above. */
+html.is-scrolling .os-theme-isatech {
+  --os-handle-bg: var(--scrollbar-thumb-active);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::-webkit-scrollbar-thumb {
+    transition: none;
+  }
+
+  .os-theme-isatech .os-scrollbar-handle {
+    transition: none;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Decorative SVG masks.
+ * The ISATech decorations were previously inline React components (~400 KB of
+ * path data) that shipped to every static page twice: inline in the HTML and
+ * again as hydration JS. They now live as static .svg assets under
+ * public/assets/{decorations,textures}/ and are applied here as CSS masks,
+ * so the shape is drawn once (cacheable download) and colored via
+ * `background-color` (bg-current / bg-[...]) exactly like the old
+ * `fill={color}` / `currentColor` behavior. The mask uses the SVG alpha
+ * channel, so path fill color is irrelevant; shape files use #000.
+ * ------------------------------------------------------------------------- */
+@layer utilities {
+  .mask-left,
+  .mask-right,
+  .mask-center,
+  .mask-isatech {
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-size: 100% 100%;
+  }
+  .mask-left {
+    -webkit-mask-image: url("/assets/decorations/left.svg");
+    mask-image: url("/assets/decorations/left.svg");
+  }
+  .mask-right {
+    -webkit-mask-image: url("/assets/decorations/right.svg");
+    mask-image: url("/assets/decorations/right.svg");
+  }
+  .mask-center {
+    -webkit-mask-image: url("/assets/decorations/center.svg");
+    mask-image: url("/assets/decorations/center.svg");
+  }
+  .mask-isatech {
+    -webkit-mask-image: url("/assets/decorations/isatech.svg");
+    mask-image: url("/assets/decorations/isatech.svg");
+  }
+  /* Seamless 600x600 tile; repeats like the old <pattern patternUnits="userSpaceOnUse"> */
+  .mask-topography {
+    -webkit-mask-image: url("/assets/textures/topography.svg");
+    mask-image: url("/assets/textures/topography.svg");
+    -webkit-mask-size: 600px 600px;
+    mask-size: 600px 600px;
+    -webkit-mask-repeat: repeat;
+    mask-repeat: repeat;
   }
 }
