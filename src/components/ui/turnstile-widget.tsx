@@ -32,6 +32,9 @@ const TurnstileWidget: React.FC<TurnstileWidgetProps> = ({
         cData={cData}
         theme="light"
         size="normal"
+        // Auto-retrigger the challenge when a token expires so the applicant
+        // never gets stuck with a stale verification.
+        refreshExpired="auto"
       />
     </div>
   );

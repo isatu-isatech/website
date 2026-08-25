@@ -32,8 +32,8 @@ const navLinks: {
   {
     section: "Membership",
     links: [
-      { label: "Member Application", href: "/membership#member" },
-      { label: "Core Member Application", href: "/membership#core" },
+      { label: "Member Application", href: "/membership" },
+      // { label: "Core Member Application", href: "/membership#core" },
     ],
   },
   {
@@ -67,7 +67,7 @@ export default function FooterComponent() {
       <div className="bg-primary relative flex w-full items-center justify-center px-6 lg:px-8 xl:px-16">
         <div
           aria-hidden
-          className="mask-isatech pointer-events-none absolute right-0 bottom-0 aspect-[667/492] w-full max-w-[667px] bg-white opacity-10 md:top-0 md:h-full md:w-auto"
+          className="mask-isatech pointer-events-none absolute right-0 bottom-0 aspect-667/492 w-full max-w-166.75 bg-white opacity-10 md:top-0 md:h-full md:w-auto"
         />
 
         <div className="flex max-w-7xl flex-col items-center justify-center gap-6 self-stretch pt-8 pb-16">
