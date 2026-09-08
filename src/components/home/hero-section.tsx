@@ -27,6 +27,12 @@ const HeroYoutubeVideos: readonly string[] = [
   "Hy5PPhihZZc", // ISATech 2023 Teaser
 ];
 
+// Portrait (9:16) library for tall viewports where height ≫ width.
+// Bare 11-char IDs only — add more Shorts here; picked randomly per visit
+// just like the 16:9 pool.
+const HeroYoutubeShorts: readonly string[] = ["krwS02Di0PA"];
+const TALL_MEDIA_QUERY = "(max-aspect-ratio: 3/4)";
+
 export function HomepageHeroSection() {
   const reduceMotion = useReducedMotion();
 
@@ -47,15 +53,19 @@ export function HomepageHeroSection() {
   // (videoId = null) so the randomized src can never mismatch the server HTML —
   // the branded loading frame covers the gap until the pick lands. The ref guard
   // makes the pick idempotent under React Strict Mode's double-invoked effects.
+  // Tall viewports (max-aspect-ratio 3/4) use the 9:16 Shorts pool; wide uses
+  // the 16:9 pool. Picked once per visit — no live rotation swap (avoids
+  // YT.Player destroy/remount flash).
   const [videoId, setVideoId] = useState<string | null>(null);
   const pickedRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!pickedRef.current) {
-      pickedRef.current =
-        HeroYoutubeVideos[
-          Math.floor(Math.random() * HeroYoutubeVideos.length)
-        ] ?? null;
+      const tall =
+        typeof window !== "undefined" &&
+        window.matchMedia(TALL_MEDIA_QUERY).matches;
+      const pool = tall ? HeroYoutubeShorts : HeroYoutubeVideos;
+      pickedRef.current = pool[Math.floor(Math.random() * pool.length)] ?? null;
     }
     setVideoId(pickedRef.current);
   }, []);
