@@ -33,9 +33,12 @@ export default function QuizLayout({
             </Button>
           </Link>
 
-          <Link href="/">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none opacity-60 select-none"
+          >
             <ISATechLogoMark />
-          </Link>
+          </div>
         </div>
       </header>
 
