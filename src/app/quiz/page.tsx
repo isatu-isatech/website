@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { QuizContainer } from "@/components/quiz/quiz-container";
+import { BlobsAnimatedBackground } from "@/components/ui/blobs";
 import { SITE_CONFIG } from "@/lib/constants/site";
 
 export const metadata: Metadata = {
@@ -39,17 +40,44 @@ export const metadata: Metadata = {
 
 export default function QuizPage() {
   return (
-    <main className="from-background via-background to-muted/30 relative h-full w-full overflow-hidden bg-linear-to-b">
-      {/* Background decorations */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden">
-        <div className="bg-primary/5 absolute top-1/4 left-1/4 h-96 w-96 rounded-full blur-3xl" />
-        <div className="bg-secondary/5 absolute right-1/4 bottom-1/4 h-96 w-96 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 h-200 w-200 -translate-x-1/2 -translate-y-1/2 rounded-full bg-linear-to-r from-pink-500/5 to-blue-500/5 blur-3xl" />
+    <main className="bg-background relative isolate h-full w-full overflow-hidden">
+      <div
+        className="pointer-events-none absolute inset-0 z-0 flex justify-center overflow-hidden"
+        aria-hidden="true"
+      >
+        <div className="bg-primary absolute top-0 left-0 hidden aspect-364/527 w-[min(364px,100%)] mask-left opacity-10 md:block" />
+        <div className="bg-secondary absolute right-0 bottom-0 aspect-320/528 w-[min(320px,100%)] mask-right opacity-10" />
       </div>
-
-      {/* Fills the screen (the layout is h-svh flex-col); the quiz area
-          scrolls internally when content exceeds the viewport (never clips). */}
-      <div className="relative flex h-full w-full overflow-y-auto px-4 py-4 md:py-8">
+      <BlobsAnimatedBackground
+        blobs={[
+          {
+            id: "quiz-blob-primary",
+            top: "-6rem",
+            left: "-6rem",
+            colorClass: "bg-primary/30",
+            sizeClass: "h-[28rem] w-[28rem]",
+            blurClass: "blur-[80px]",
+            animateX: [0, 20, 0],
+            animateY: [0, 30, 0],
+            duration: 8,
+          },
+          {
+            id: "quiz-blob-secondary",
+            bottom: "-6rem",
+            right: "-6rem",
+            colorClass: "bg-secondary/30",
+            sizeClass: "h-[28rem] w-[28rem]",
+            blurClass: "blur-[80px]",
+            animateX: [0, -20, 0],
+            animateY: [0, -30, 0],
+            duration: 10,
+          },
+        ]}
+        className="absolute inset-0 !z-0 h-full w-full opacity-100"
+        gridPatternOpacity="opacity-0"
+        gridPatternDarkOpacity="opacity-0"
+      />
+      <div className="relative z-10 flex h-full w-full overflow-y-auto px-4 py-4 md:py-8">
         <QuizContainer />
       </div>
     </main>
