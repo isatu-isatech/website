@@ -21,7 +21,7 @@ submitMembershipApplication(formData: unknown): Promise<
 
 1. **Rate limit (cookie)** — read `membership_rate_limit` via `next/headers` `cookies()`, `parseSubmissionTimes(raw)` (prune >60 min, cap 64, malformed → `[]`); if `isRateLimited(timestamps)` → `{ success: false, error: "You've submitted quite a few applications this hour — please try again in about an hour." }`. No record.
 2. **Zod validation** — `membershipFormSchema.safeParse(formData)` where select enums are **live Notion option lists** fetched via `src/lib/notion/membership-options.ts` (College/Year Level/Sex/Primary/Secondary Role). Failure → `{ success: false, error: "A couple of details need another look — please double-check the form and resubmit." }`.
-3. **Campaign resolve** — `getActiveCampaign()` queries `NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID` for `Status = "In progress"` (single active). If none → `{ success: false, error: "Applications are currently closed — please check back when the next campaign opens." }`, no record. If multiple, pick most recent `Academic Year` (admin convention). Runs BEFORE Turnstile so closed states never burn a single-use token.
+3. **Campaign resolve** — `getActiveCampaign()` queries `NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID` for `Status = "In progress"` (single active). If none → `{ success: false, error: "Applications are currently closed — please check back when the next campaign opens." }`, no record. If multiple, pick most recent `Academic Year` (admin convention). Runs BEFORE Turnstile so closed states never burn a single-use token. The helper **throws** on infrastructure failure (outage/misconfig) — the action catches it and returns `"We couldn't reach our records just now — your answers are safe, please retry in a moment."` so outages are never misreported as closed.
 4. **Turnstile** — `POST https://challenges.cloudflare.com/turnstile/v0/siteverify` with `{ secret: env.CLOUDFLARE_TURNSTILE_SECRET_KEY, response: turnstileToken }`; `data.success !== true` or exception → security-check message, no record.
 5. **Notion write** — `createPage(NOTION_MEMBERSHIP_SUBMISSIONS_DATABASE_ID, properties)` via `src/lib/notion/helpers.ts` (`withRetry` for 429/5xx, `Retry-After` honored). `Campaign` relation is set to the active campaign page URL/ID. On success: append timestamp to `membership_rate_limit` cookie (`httpOnly: true`, `sameSite: lax`, `path: /`, `maxAge = 2×window`, `secure: production`) → `{ success: true }`. On throw: `console.error` + `{ success: false, error: "Something went wrong on our end. Please try again in a moment." }` — retry preserves data in-session.
 
@@ -46,7 +46,7 @@ z.object({
   sex: z.enum(liveSexOptions), // Notion live
   facebookUrl: z
     .string()
-    .refine((v) => v === "" || isHttpsUrl(v))
+    .refine((v) => v === "" || isFacebookProfileUrl(v)) // facebook.com / fb.com hosts only
     .optional()
     .or(z.literal("")),
   college: z.enum(liveCollegeOptions),
@@ -123,11 +123,12 @@ Keys pinned in `MEMBERSHIP_PROPERTIES` constant.
 
 ## 6. Success / error semantics
 
-| Outcome            | Contract                    | UX                                             |
-| ------------------ | --------------------------- | ---------------------------------------------- |
-| Success            | `{ success: true }`         | Confirmation, record linked to active campaign |
-| Invalid data       | `{ success: false, error }` | Inline field messages, data retained           |
-| No active campaign | `{ success: false, error }` | Closed message, no record, data retained       |
-| Write failure      | `{ success: false, error }` | Retry with data retained                       |
-| Rate limited       | `{ success: false, error }` | Hourly-limit message, no record, data retained |
-| Turnstile fail     | `{ success: false, error }` | Security-check message, no record              |
+| Outcome             | Contract                    | UX                                                              |
+| ------------------- | --------------------------- | --------------------------------------------------------------- |
+| Success             | `{ success: true }`         | Confirmation, record linked to active campaign                  |
+| Invalid data        | `{ success: false, error }` | Inline field messages, data retained                            |
+| No active campaign  | `{ success: false, error }` | Closed message, no record, data retained                        |
+| Records unreachable | `{ success: false, error }` | Outage message (distinct from closed), no record, data retained |
+| Write failure       | `{ success: false, error }` | Retry with data retained                                        |
+| Rate limited        | `{ success: false, error }` | Hourly-limit message, no record, data retained                  |
+| Turnstile fail      | `{ success: false, error }` | Security-check message, no record                               |

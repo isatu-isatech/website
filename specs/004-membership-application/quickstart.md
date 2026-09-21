@@ -72,7 +72,7 @@ All navigations start at `http://localhost:3000/membership`. The wizard lives on
 - Unchecked consent → Submit blocked ("You must accept…").
 - Unchecked event-attendance willingness → blocked ("willing to attend events").
 - Availability left unselected → required-field message.
-- Facebook `not-a-url` → invalid URL message (field is optional — label has no `*`).
+- Facebook `not-a-url` → invalid message; `https://example.com/juan` → "must be a facebook.com profile link" (field is optional — label has no `*`).
 - Pick a College value not in live Notion options (tamper via devtools) → server rejects "outside live option set".
 
 **Expected**: Human-readable inline messages; no technical throw; values retained; fixing clears error.
@@ -101,7 +101,8 @@ On Review, double-click **Submit** rapidly → only one network request / one `F
 1. PATCH active campaign `Status` to `Closed` (or delete it) via Notion dashboard or admin UI `POST /admin/membership` if built.
 2. Reload `/membership/apply` — the page shows the closed/not-yet-open state (e.g., "Applications are currently closed — please check back when the next campaign opens.") instead of the form.
 3. Attempt to POST directly to the server action while closed → `{ success: false, error: closed message }`, zero page, data retained for later.
-4. PATCH back to `In progress` → form reopens; pending form data can be retried and now succeeds under the reopened campaign.
+4. Simulate an outage instead (temporarily break `NOTION_API_KEY`) with the campaign still `In progress` → submit returns the records-unreachable message, NOT the closed message; data retained.
+5. PATCH back to `In progress` (and restore the key) → form reopens; pending form data can be retried and now succeeds under the reopened campaign.
 
 ### 8. Accessibility + themes + motion
 
