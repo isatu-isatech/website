@@ -42,13 +42,6 @@ const MEMBERSHIP_PROPERTIES = {
   campaign: "Campaign",
 } as const;
 
-function normalizeMobileToNumber(input: string): number | null {
-  const digits = input.replace(/\D/g, "");
-  if (!digits) return null;
-  const n = Number(digits);
-  return Number.isFinite(n) ? n : null;
-}
-
 /**
  * Client-loadable campaign status. Lets the apply page render instantly
  * (no server round-trip to Notion on the critical path) and hydrate the
@@ -110,6 +103,33 @@ export async function submitMembershipApplication(formData: unknown) {
     turnstileToken,
   } = parsed.data;
 
+  // 3. Campaign resolve — must have an active In progress campaign.
+  // Checked BEFORE Turnstile so closed-campaign visitors never burn a
+  // single-use challenge token on a submission that cannot succeed.
+  const activeCampaign = await getActiveCampaign();
+  if (!activeCampaign) {
+    return {
+      success: false,
+      error:
+        "Applications are currently closed — please check back when the next campaign opens.",
+    };
+  }
+
+  // Resolve per-campaign Form Submissions data source ID dynamically from the campaign page's
+  // inline database block (varies per campaign). Fallback to env var for campaigns created without template (blank).
+  const submissionsDataSourceId =
+    activeCampaign.submissionsDataSourceId ??
+    env.NOTION_MEMBERSHIP_SUBMISSIONS_DATABASE_ID ??
+    env.NOTION_MEMBERSHIP_DATABASE_ID ??
+    "";
+  if (!submissionsDataSourceId) {
+    console.error("[membership] No submissions data source ID available");
+    return {
+      success: false,
+      error: "Applications are currently closed — please try again later.",
+    };
+  }
+
   // 4. Turnstile verification
   try {
     const response = await fetch(
@@ -139,32 +159,7 @@ export async function submitMembershipApplication(formData: unknown) {
     };
   }
 
-  // 5. Campaign resolve — must have an active In progress campaign
-  const activeCampaign = await getActiveCampaign();
-  if (!activeCampaign) {
-    return {
-      success: false,
-      error:
-        "Applications are currently closed — please check back when the next campaign opens.",
-    };
-  }
-
-  // Resolve per-campaign Form Submissions data source ID dynamically from the campaign page's
-  // inline database block (varies per campaign). Fallback to env var for campaigns created without template (blank).
-  const submissionsDataSourceId =
-    activeCampaign.submissionsDataSourceId ??
-    env.NOTION_MEMBERSHIP_SUBMISSIONS_DATABASE_ID ??
-    env.NOTION_MEMBERSHIP_DATABASE_ID ??
-    "";
-  if (!submissionsDataSourceId) {
-    console.error("[membership] No submissions data source ID available");
-    return {
-      success: false,
-      error: "Applications are currently closed — please try again later.",
-    };
-  }
-
-  // 5b. Live Notion option validation (source of truth) — against the active campaign's submissions DB
+  // 5. Live Notion option validation (source of truth) — against the active campaign's submissions DB
   try {
     const live = await getMembershipOptions(submissionsDataSourceId);
     const checks: Array<[string, string, readonly string[]]> = [
@@ -188,15 +183,9 @@ export async function submitMembershipApplication(formData: unknown) {
   }
 
   // 6. Notion write
-  const mobileNum = normalizeMobileToNumber(mobileNumber);
-  if (mobileNum === null) {
-    return {
-      success: false,
-      error: "Mobile Number looks invalid — please check it.",
-    };
-  }
-
-  // Build properties per verified schema types
+  // Build properties per verified schema types.
+  // NOTE: `Mobile Number` must be a text/phone column in Notion (officer
+  // action) — the old number column dropped leading zeros and `+63`.
   const properties: Record<string, unknown> = {
     [MEMBERSHIP_PROPERTIES.studentId]: {
       title: [{ text: { content: studentId } }],
@@ -205,10 +194,10 @@ export async function submitMembershipApplication(formData: unknown) {
       rich_text: [{ text: { content: fullName } }],
     },
     [MEMBERSHIP_PROPERTIES.email]: {
-      email: email,
+      email: email.trim().toLowerCase(),
     },
     [MEMBERSHIP_PROPERTIES.mobileNumber]: {
-      number: mobileNum,
+      rich_text: [{ text: { content: mobileNumber.trim() } }],
     },
     [MEMBERSHIP_PROPERTIES.birthdate]: {
       date: { start: new Date(birthdate).toISOString().split("T")[0] },

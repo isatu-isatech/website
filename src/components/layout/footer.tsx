@@ -31,10 +31,7 @@ const navLinks: {
   },
   {
     section: "Membership",
-    links: [
-      { label: "Member Application", href: "/membership" },
-      // { label: "Core Member Application", href: "/membership#core" },
-    ],
+    links: [{ label: "Member Application", href: "/membership/apply" }],
   },
   {
     section: "Legal",

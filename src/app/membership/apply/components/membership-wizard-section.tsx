@@ -72,12 +72,12 @@ export function MembershipWizardSection() {
           neither is a place to start an application. */}
       {campaign && !submitted && (
         <div className="flex flex-col items-center gap-2 text-center">
-          <h1 className="text-secondary-dark dark:text-secondary text-2xl font-bold md:text-3xl">
+          <h1 className="text-secondary-dark text-2xl font-bold md:text-3xl">
             Membership Application
           </h1>
           <p className="text-muted-foreground max-w-xl text-sm">
-            Complete the steps below. Your progress is saved while this tab
-            stays open.
+            Complete the steps below. Keep this tab open until you submit —
+            refreshing will discard your answers.
           </p>
         </div>
       )}
