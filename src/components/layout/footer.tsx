@@ -129,9 +129,12 @@ export default function FooterComponent() {
       <div className="bg-secondary flex w-full justify-center">
         <div className="flex w-full max-w-7xl items-center justify-center px-12 py-2 text-center">
           <p className="text-micro">
-            © {new Date().getFullYear()} {SITE_CONFIG.name}. All rights
-            reserved. All logos and brands are property of their respective
-            owners. Made by ISATech Creatives.
+            © 2025-
+            <span suppressHydrationWarning>
+              {new Date().getFullYear()}
+            </span>{" "}
+            {SITE_CONFIG.name}. All rights reserved. All logos and brands are
+            property of their respective owners. Made by ISATech Creatives.
           </p>
         </div>
       </div>

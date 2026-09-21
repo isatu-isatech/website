@@ -119,7 +119,7 @@ export default function HeaderComponent() {
                   variant={"outline"}
                   size={"icon"}
                   className={cn(
-                    "md:hidden",
+                    "h-10 w-10 md:hidden",
                     overHero &&
                       "border-white/40 text-white hover:bg-white/10 hover:text-white",
                   )}
@@ -138,8 +138,9 @@ export default function HeaderComponent() {
                   ).map((link) => (
                     <Link
                       href={link.href}
+                      onClick={() => setMenuOpen(false)}
                       className={cn(
-                        "w-full px-2 py-1",
+                        "active:bg-accent/50 w-full px-2 py-3 transition-colors",
                         currentPath === link.href &&
                           "text-secondary font-semibold",
                       )}
@@ -151,6 +152,19 @@ export default function HeaderComponent() {
                       <h3>{link.label}</h3>
                     </Link>
                   ))}
+                  <Link
+                    href="/membership"
+                    onClick={() => setMenuOpen(false)}
+                    className="w-full pt-2"
+                  >
+                    <Button
+                      variant="default"
+                      size="lg"
+                      className="min-h-12 w-full"
+                    >
+                      Join Now
+                    </Button>
+                  </Link>
                 </div>
               </SheetContent>
             </Sheet>
