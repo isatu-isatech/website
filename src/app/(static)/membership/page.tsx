@@ -103,7 +103,7 @@ function MembershipPageHeroSection() {
               </h5>
             </div>
             <div className="flex w-full justify-center gap-2 md:justify-start">
-              <Link href="#apply" className="text-caption">
+              <Link href="/membership/apply" className="text-caption">
                 <Button variant={"default"} size={"lg"}>
                   Apply Now
                 </Button>
@@ -231,10 +231,7 @@ function MembershipPageRequirementsSection() {
   ];
 
   return (
-    <section
-      className="flex w-full items-center justify-center px-4 py-16 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20"
-      id="apply"
-    >
+    <section className="flex w-full items-center justify-center px-4 py-16 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
       <div className="flex w-full max-w-7xl flex-col items-center gap-8">
         <h2 className="text-secondary-dark dark:text-secondary text-center">
           Requirements for Membership Application

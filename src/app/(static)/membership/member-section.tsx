@@ -194,7 +194,6 @@ function GradientBlob2Decoration(props: SVGProps<SVGSVGElement>) {
  * #################################### CONFIG ####################################
  * ################################################################################
  */
-const membershipFormLink = "https://forms.gle/ViNChagDv6Xcfp3bA";
 const AUTO_ADVANCE_MS = 3500;
 
 const benefits = [
@@ -331,11 +330,7 @@ export default function MembershipPageMemberSection() {
             ))}
           </div>
         </div>
-        <Link
-          href={membershipFormLink}
-          target="_blank"
-          className="text-caption"
-        >
+        <Link href="/membership/apply" className="text-caption">
           <Button variant={"default"} size={"lg"}>
             Apply as Member
           </Button>

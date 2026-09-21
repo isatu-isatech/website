@@ -50,10 +50,10 @@ Official site for ISATech Society (ISAT U Innovators and Technopreneurs Society)
 
 <!-- SPECKIT START -->
 
-**Active plan**: `specs/003-quiz-page-improvements/plan.md`
+**Active plan**: `specs/004-membership-application/plan.md`
 <!-- SPECKIT END -->
 
-- **US1 membership deferred (2026-08-21, user decision):** native membership application parked — see `specs/001-resolve-critique-issues/tasks.md` scope note. The membership page keeps its Google Form until the scope reopens; re-enable T002/T004/T006–T011 as one slice (Notion membership DB provisioning + `NOTION_MEMBERSHIP_DATABASE_ID` come with it).
+- **Membership application shipped (spec 004):** native wizard at `/membership/apply` (`src/app/membership/apply/`), campaign-gated on one `In progress` campaign, writing to that campaign's Form Submissions data source with a `Campaign` relation. The Google Form link is removed; CTAs on `/membership` point at `/membership/apply`. Email is restricted to `firstname.lastname@students.isatu.edu.ph`; `Mobile Number` is written as text (Notion column must be text/phone type — number columns drop leading zeros).
 - **Quiz copy dependencies (organ-supplied):** intro shows a dynamic question count (`{questions.length}`) with `TODO(org-copy)` markers — quiz-time wording awaits the org; canonical contact email is `SOCIAL_LINKS.email` (isatech@isatu.edu.ph).
 - **4H glossary:** "Hound" is canonical (no "Hypeman" anywhere). Archetype hex pairs live in `design-tokens.ts` `COLORS.quiz` — they mirror `quiz-data.ts` `archetypeGradients` Tailwind classes; keep the two in sync.
 - **Hero video:** one video is picked per visit from a curated `HeroYoutubeVideos` list in `hero-section.tsx` (variety for returning visitors). Always ambient — muted autoplay, controls/fullscreen/keyboard all disabled; the section uses `isolate` so the negative-z iframe paints above `bg-primary`, and a branded frame fades on iframe `onLoad`. Hero is `min-h-svh` and embeds the stats band (HERO_STATS + CountUp) at its bottom.
