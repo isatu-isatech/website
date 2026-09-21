@@ -46,8 +46,9 @@ export type MembershipOptions = {
   secondaryRole: readonly string[];
 };
 
-let cached: MembershipOptions | null = null;
-let cachedAt = 0;
+// Cache is keyed by data-source ID so per-campaign (parameterized) fetches
+// can never poison the shared unparameterized entry or each other.
+const cache = new Map<string, { value: MembershipOptions; at: number }>();
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 min
 
 function toOptionNames(prop: unknown): string[] | null {
@@ -70,16 +71,24 @@ export async function getMembershipOptions(
   dataSourceId?: string,
 ): Promise<MembershipOptions> {
   const now = Date.now();
-  const useCache = !dataSourceId;
-  if (useCache && cached && now - cachedAt < CACHE_TTL_MS) return cached;
+  const dbId =
+    dataSourceId ??
+    env.NOTION_MEMBERSHIP_SUBMISSIONS_DATABASE_ID ??
+    env.NOTION_MEMBERSHIP_DATABASE_ID ??
+    "";
+  // Unresolvable IDs share one fallback entry; every real data source gets
+  // its own so campaigns never serve each other's option sets.
+  const cacheKey = dbId || "<unconfigured>";
+  const hit = cache.get(cacheKey);
+  if (hit && now - hit.at < CACHE_TTL_MS) return hit.value;
+
+  const put = (value: MembershipOptions): MembershipOptions => {
+    cache.set(cacheKey, { value, at: Date.now() });
+    return value;
+  };
 
   try {
     const notion = getNotionClient();
-    const dbId =
-      dataSourceId ??
-      env.NOTION_MEMBERSHIP_SUBMISSIONS_DATABASE_ID ??
-      env.NOTION_MEMBERSHIP_DATABASE_ID ??
-      "";
     if (!dbId) throw new Error("No submissions data source ID available");
     // Use generic request() so we can handle both data-source IDs (…8095…/023f…)
     // and database page IDs (…8000…/d14f…) regardless of SDK method names.
@@ -133,27 +142,23 @@ export async function getMembershipOptions(
       ...FALLBACK.role,
     ];
 
-    cached = {
+    return put({
       college,
       yearLevel,
       sex,
       primaryRole,
       secondaryRole,
-    };
-    cachedAt = now;
-    return cached;
+    });
   } catch {
     // Notion unreachable at build or tests — use fallback so the form can still render
     // Server validation will re-attempt live fetch on submit.
-    cached = {
+    return put({
       college: [...FALLBACK.college],
       yearLevel: [...FALLBACK.yearLevel],
       sex: [...FALLBACK.sex],
       primaryRole: [...FALLBACK.role],
       secondaryRole: [...FALLBACK.role],
-    };
-    cachedAt = now;
-    return cached;
+    });
   }
 }
 

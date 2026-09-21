@@ -106,7 +106,19 @@ export async function submitMembershipApplication(formData: unknown) {
   // 3. Campaign resolve — must have an active In progress campaign.
   // Checked BEFORE Turnstile so closed-campaign visitors never burn a
   // single-use challenge token on a submission that cannot succeed.
-  const activeCampaign = await getActiveCampaign();
+  // A throw means our records are unreachable (outage/misconfig) — report
+  // that distinctly instead of claiming applications are closed.
+  let activeCampaign: Awaited<ReturnType<typeof getActiveCampaign>>;
+  try {
+    activeCampaign = await getActiveCampaign();
+  } catch (error) {
+    console.error("[membership] campaign resolve failed:", error);
+    return {
+      success: false,
+      error:
+        "We couldn't reach our records just now — your answers are safe, please retry in a moment.",
+    };
+  }
   if (!activeCampaign) {
     return {
       success: false,

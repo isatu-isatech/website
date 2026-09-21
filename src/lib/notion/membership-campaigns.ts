@@ -23,9 +23,12 @@ export type MembershipCampaign = {
 
 /**
  * Query the Membership Campaigns DB for the currently active campaign.
- * Returns the single `In progress` campaign, or null if none / none active.
- * If multiple are `In progress` (admin misconfiguration), picks the most
- * recently created (by `created_time` desc) and logs a warning.
+ * Returns the single `In progress` campaign, or null when no campaign is
+ * active. Throws on infrastructure failures (unreachable Notion, unshared
+ * or misconfigured database) so callers can tell an outage apart from a
+ * genuinely closed campaign. If multiple are `In progress` (admin
+ * misconfiguration), picks the most recently created (by `created_time`
+ * desc) and logs a warning.
  */
 export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
   try {
@@ -98,10 +101,14 @@ export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
             innerMsg.includes("Could not find database") ||
             innerMsg.includes("Could not find data_source")
           ) {
-            console.warn(
-              `[membership-campaigns] Database ${databaseId} not found or not shared with integration — treating as no active campaign. Share the Membership Campaigns DB with "ISATech Internal Integration".`,
+            // Config error (wrong ID or DB not shared with the integration),
+            // not a closed campaign — surface it so callers show an error
+            // state. Share the Membership Campaigns DB with
+            // "ISATech Internal Integration".
+            throw new Error(
+              `[membership-campaigns] Database ${databaseId} not found or not shared with integration.`,
+              { cause: inner },
             );
-            return null;
           }
           throw inner;
         }
@@ -237,6 +244,6 @@ export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
     };
   } catch (error) {
     console.error("[membership-campaigns] getActiveCampaign failed:", error);
-    return null;
+    throw error;
   }
 }
