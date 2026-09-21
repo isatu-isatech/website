@@ -11,6 +11,15 @@ function enumWithFallback(options: readonly string[]) {
   return z.enum(options as unknown as [string, ...string[]]);
 }
 
+// ISAT-U student email — strict: dotted alphanumeric local part
+// (at least one dot, no leading/trailing/consecutive dots) plus the
+// `@students.isatu.edu.ph` domain. Case-insensitive; the server action
+// normalizes to lowercase before writing to Notion.
+export const STUDENT_EMAIL_REGEX =
+  /^[a-z0-9]+(\.[a-z0-9]+)+@students\.isatu\.edu\.ph$/i;
+export const STUDENT_EMAIL_MESSAGE =
+  "Use your ISAT-U student email (firstname.lastname@students.isatu.edu.ph)";
+
 export const membershipFormSchema = z
   .object({
     // Personal Information
@@ -29,8 +38,10 @@ export const membershipFormSchema = z
         /^\d{4}-\d{4}-[A-Z]$/,
         "Student ID must follow the format XXXX-XXXX-X",
       ),
-    email: z.email("Invalid email address"),
-    // Notion `Mobile Number` is number (FLOAT). Accept digits, +, spaces, dashes, parentheses; normalize server-side.
+    email: z
+      .email("Invalid email address")
+      .refine((v) => STUDENT_EMAIL_REGEX.test(v.trim()), STUDENT_EMAIL_MESSAGE),
+    // Notion `Mobile Number` is a text/phone column. Accept digits, +, spaces, dashes, parentheses; stored verbatim.
     mobileNumber: z
       .string()
       .min(7, "Mobile Number must be at least 7 characters")
@@ -80,8 +91,8 @@ export const membershipFormSchema = z
     // Availability & Commitment
     // Notion `Availability` is text; UI collects a commitment-band select
     availability: enumWithFallback(fallback.availability),
-    eventAttendanceWillingness: z.boolean({
-      message: "Please indicate your event-attendance willingness",
+    eventAttendanceWillingness: z.literal(true, {
+      error: "Please confirm you're willing to attend events",
     }),
     otherOrgs: z
       .string()

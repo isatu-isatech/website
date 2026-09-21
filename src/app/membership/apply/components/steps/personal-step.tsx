@@ -69,7 +69,7 @@ export function PersonalStep() {
               <FormControl>
                 <Input
                   type="email"
-                  placeholder="juan@isatu.edu.ph"
+                  placeholder="juan.delacruz@students.isatu.edu.ph"
                   {...field}
                 />
               </FormControl>
@@ -131,7 +131,7 @@ export function PersonalStep() {
           name="facebookUrl"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Facebook Profile URL *</FormLabel>
+              <FormLabel>Facebook Profile URL</FormLabel>
               <FormControl>
                 <Input placeholder="https://facebook.com/..." {...field} />
               </FormControl>

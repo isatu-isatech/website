@@ -101,7 +101,7 @@ export function MembershipWizard({
       relatedSkills: "",
       relatedExperiences: "",
       availability: "",
-      eventAttendanceWillingness: false,
+      eventAttendanceWillingness: false as unknown as true,
       otherOrgs: "",
       privacyConsent: false as unknown as true,
       declarationConsent: false as unknown as true,
