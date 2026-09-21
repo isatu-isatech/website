@@ -43,35 +43,36 @@ npm run lint         # eslint . --max-warnings 0 — zero warnings
 # 4. Dev server
 npm run dev          # http://localhost:3000
 # or production build
-npm run build        # next build --webpack && next-sitemap  (no build errors; both NOTION_MEMBERSHIP_* IDs required)
+npm run build        # next build --webpack && next-sitemap  (no build errors; campaigns DB ID required, submissions DB ID optional fallback)
 ```
 
 ## Manual validation scenarios
 
-All navigations start at `http://localhost:3000/membership`. The wizard lives at `#apply` inside the existing membership shell (hero/team/reason/offer/requirements sections stay unchanged). Scenarios assume an `In progress` campaign exists; scenario 10 covers the closed state.
+All navigations start at `http://localhost:3000/membership`. The wizard lives on the dedicated route `http://localhost:3000/membership/apply` (separate page, simplified header, no footer). Scenarios assume an `In progress` campaign exists; scenario 7 covers the closed state.
 
 ### 1. Happy path — full wizard → campaign-linked Notion → confirmation
 
 1. Verify an active campaign exists: query `Membership Campaigns` for `Status = In progress` (should return `A.Y. 2025-2026`). If none, create one first.
-2. Click **Apply Now** in the hero and **Apply as Member** at bottom — both scroll to / focus the wizard at `#apply`.
-3. Step 1 Personal: Full Name (2–100 text), Nickname (optional text), Student ID title 3–30, Email, Mobile Number (number — digits, 7–20), Birthdate past date, Sex (live select Male/Female), Facebook URL (optional `https://…`). Click **Next** — per-step `trigger()` passes.
+2. Click **Apply Now** in the hero and **Apply as Member** at bottom — both navigate to the wizard at `/membership/apply`.
+3. Step 1 Personal: Full Name (2–100 text), Nickname (optional text), Student ID title 3–30, Email (must be `firstname.lastname@students.isatu.edu.ph`), Mobile Number (text — digits/`+`/spaces/dashes/parens, 7–20 chars), Birthdate past date, Sex (live select Male/Female), Facebook URL (optional `https://…`, no `*` on the label). Click **Next** — per-step `trigger()` passes.
 4. Step 2 Academic: College (live 5 options), Program text, Year Level live (1st–5th Year) → Next.
 5. Step 3 Role Preferences: Primary `Hustler`, Secondary `Hacker` (must differ; try same → inline error), Related Skills/Experiences optional text.
-6. Step 4 Availability: Availability text `10` (0–60 as text), Event-Attendance Willingness checkbox (checked = Yes), Other Orgs optional → Next.
-7. Step 5 Consent: check both boxes, complete Turnstile, → **Review** (step 6) shows every answer plus `Campaign = A.Y. 2025-2026` for correction; **Edit** jumps back with values intact.
+6. Step 4 Availability: Availability commitment band (e.g. `2-5 hours`), Event-Attendance Willingness checkbox MUST be checked (unchecked blocks submit), Other Orgs optional → Next.
+7. Step 5 Consent: check both boxes → **Review** (step 6) shows every answer for correction; **Edit** jumps back with values intact. Complete Turnstile on the Review step.
 8. Review → **Submit** → on-site **Confirmation** (org-supplied copy, no timeline promise, shows campaign year).
 
-**Expected**: No new tab; server action succeeds `{ success: true }`; a new page appears in `Form Submissions` with every answered field under the contract's labels, `Mobile Number` as number, `Availability` as text, `Campaign` relation linked to the active `A.Y. 2025-2026`, empty optionals blank/absent; `membership_rate_limit` cookie set (`HttpOnly`, JSON array). Repeat with same email/Student ID is allowed — second page linked to same campaign; viewed from the campaign page's inline `Form Submissions` view.
+**Expected**: No new tab; server action succeeds `{ success: true }`; a new page appears in `Form Submissions` with every answered field under the contract's labels, `Mobile Number` as verbatim text (leading zero intact), email lowercased, `Availability` commitment band as text, `Campaign` relation linked to the active `A.Y. 2025-2026`, empty optionals blank/absent; `membership_rate_limit` cookie set (`HttpOnly`, JSON array). Repeat with same email/Student ID is allowed — second page linked to same campaign; viewed from the campaign page's inline `Form Submissions` view.
 
 ### 2. Invalid input — inline guidance, no data loss
 
 - Leave Full Name empty → **Next** blocked, `FormMessage` "at least 2 characters".
-- Email `not-an-email` → inline "Invalid email".
+- Email `not-an-email` → inline "Invalid email"; `juan@gmail.com` or `juan@isatu.edu.ph` → inline student-email message; `juandelacruz@students.isatu.edu.ph` (no dot) → inline student-email message.
 - Birthdate tomorrow → "not in the future".
 - Primary == Secondary → "must be different" on Secondary.
 - Unchecked consent → Submit blocked ("You must accept…").
-- Availability `999` → "0–60" range.
-- Facebook `not-a-url` → invalid URL message.
+- Unchecked event-attendance willingness → blocked ("willing to attend events").
+- Availability left unselected → required-field message.
+- Facebook `not-a-url` → invalid URL message (field is optional — label has no `*`).
 - Pick a College value not in live Notion options (tamper via devtools) → server rejects "outside live option set".
 
 **Expected**: Human-readable inline messages; no technical throw; values retained; fixing clears error.
@@ -98,7 +99,7 @@ On Review, double-click **Submit** rapidly → only one network request / one `F
 ### 7. Campaign gating — closed / no active campaign
 
 1. PATCH active campaign `Status` to `Closed` (or delete it) via Notion dashboard or admin UI `POST /admin/membership` if built.
-2. Reload `/membership` — wizard shows closed/not-yet-open state (e.g., "Applications are currently closed — please check back when the next campaign opens.") and submit is disabled.
+2. Reload `/membership/apply` — the page shows the closed/not-yet-open state (e.g., "Applications are currently closed — please check back when the next campaign opens.") instead of the form.
 3. Attempt to POST directly to the server action while closed → `{ success: false, error: closed message }`, zero page, data retained for later.
 4. PATCH back to `In progress` → form reopens; pending form data can be retried and now succeeds under the reopened campaign.
 

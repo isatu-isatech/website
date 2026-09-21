@@ -21,8 +21,8 @@
 
 **Purpose**: Scaffold structure for the membership wizard without touching product logic
 
-- [x] T001 Create wizard directory structure `src/app/(static)/membership/components/steps/` per `plan.md` Project Structure
-- [x] T002 Verify current membership shell and Google Form anchor points in `src/app/(static)/membership/page.tsx` and `src/app/(static)/membership/member-section.tsx` (locate `membershipFormLink = "https://forms.gle/ViNChagDv6Xcfp3bA"` and `#apply` targets)
+- [x] T001 Create wizard directory structure `src/app/membership/apply/components/steps/` per `plan.md` Project Structure
+- [x] T002 Verify current membership shell and Google Form anchor points in `src/app/membership/apply/page.tsx` and `src/app/membership/apply/member-section.tsx` (locate `membershipFormLink = "https://forms.gle/ViNChagDv6Xcfp3bA"` and `#apply` targets)
 - [x] T003 [P] Inventory reusable primitives in `src/components/ui/` (`button.tsx`, `input.tsx`, `label.tsx`, `form.tsx`, `turnstile-widget.tsx`, `textarea.tsx`) and helpers `src/lib/notion/helpers.ts`, `src/lib/services/cookie-rate-limit.ts`, `src/lib/constants/site.ts`
 
 ---
@@ -33,13 +33,13 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [x] T004 Promote env vars to required in `src/lib/env.ts` — add `NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID` (`3c7f42d3-fa72-8095-b5a7-000bc5bec8d2`) and `NOTION_MEMBERSHIP_SUBMISSIONS_DATABASE_ID` (`3c7f42d3-fa72-8049-9d58-000badfe03e9`) as `z.string().min(1)` (keep `NOTION_MEMBERSHIP_DATABASE_ID` as deprecated alias or remove)
+- [x] T004 Promote env vars in `src/lib/env.ts` — `NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID` (`3c7f42d3-fa72-8095-b5a7-000bc5bec8d2`) is `z.string().min(1)` required (missing var fails fast at startup; confirm Vercel dev/preview/prod have it); `NOTION_MEMBERSHIP_SUBMISSIONS_DATABASE_ID` stays optional fallback for blank campaigns and local builds (keep `NOTION_MEMBERSHIP_DATABASE_ID` as deprecated alias or remove)
 - [x] T005 Update `.env.example` with the two campaign/submissions DB IDs (and note dashboard page `3c7f42d3-fa72-80d2-86ad-ddcc19b555e0`)
 - [x] T006 Create live option helper `src/lib/notion/membership-options.ts` that fetches `Form Submissions` schema via Notion API and exposes `getMembershipOptions()` (College 5, Year Level 5 incl. 5th Year, Sex 2, Primary/Secondary Role 4 each) with request-memoization/caching and fallback — Notion is source of truth per R-010 (supersedes static `src/lib/constants/membership.ts`)
 - [x] T007 Create isolated rate-limit helpers `src/lib/services/membership-rate-limit.ts` (`membership_rate_limit` cookie, `RATE_LIMIT_WINDOW_MS=60*60*1000`, `RATE_LIMIT_MAX_SUBMISSIONS=5`, cap 64, `parseSubmissionTimes`/`isRateLimited`/`appendSubmissionTimestamp` mirroring `src/lib/services/cookie-rate-limit.ts`) per `research.md` R-001
 - [x] T007b Create campaign helper `src/lib/notion/membership-campaigns.ts` (`getActiveCampaign()` queries `NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID` for `Status = "In progress"`; returns campaign page URL/ID or null; handles 0 or multiple active edge case) per `research.md` R-009
 - [x] T007c Create `Campaign` relation on `Form Submissions` DB `collection://3c7f42d3-fa72-8049-9d58-000badfe03e9` linking to `Membership Campaigns` `collection://3c7f42d3-fa72-8095-b5a7-000bc5bec8d2` via `notion_notion-update-data-source` `ADD COLUMN "Campaign" RELATION('collection://3c7f42d3-fa72-8095-b5a7-000bc5bec8d2')` and verify inline view on campaign template filters by relation per `contracts/notion-database.md` §3
-- [x] T008 Create Zod schema `membershipFormSchema` and inferred type `MembershipFormValues` in `src/app/(static)/membership/schema.ts` (all ~20 fields aligned to live Notion types: `Student ID` title 3–30, `Full Name` text 2–100, `Mobile Number` number, `Birthdate` ISO past-date, `Sex`/`College`/`Year Level`/`Primary`/`Secondary` via live options from T006, `Availability` text 0–60, `Event-Attendance Willingness` checkbox boolean, `Campaign` relation hidden, `primary !== secondary` refine, `privacyConsent`/`declarationConsent` `z.literal(true)`, `turnstileToken` min(1)) per `research.md` R-004 (updated for live types) and `contracts/membership-application.md` §2
+- [x] T008 Create Zod schema `membershipFormSchema` and inferred type `MembershipFormValues` in `src/app/membership/apply/schema.ts` (all ~20 fields aligned to live Notion types: `Student ID` title 3–30, `Full Name` text 2–100, `Email` strict student-only `firstname.lastname@students.isatu.edu.ph` via `STUDENT_EMAIL_REGEX` + lowercase normalize on write, `Mobile Number` string 7–20 written as text (Notion column must be text/phone — number columns drop leading zeros), `Birthdate` ISO past-date, `Sex`/`College`/`Year Level`/`Primary`/`Secondary` via live options from T006, `Availability` commitment-band enum (org decision, not Notion-sourced), `Event-Attendance Willingness` `z.literal(true)` mandatory, `Campaign` relation hidden, `primary !== secondary` refine, `privacyConsent`/`declarationConsent` `z.literal(true)`, `turnstileToken` min(1)) per `research.md` R-004 (updated for live types) and `contracts/membership-application.md` §2
 
 **Checkpoint**: Foundation ready — `npm run type-check` and `npm run lint` pass with new campaign/options/rate-limit modules importable; Notion relation exists
 
@@ -53,18 +53,18 @@
 
 ### Implementation for User Story 1
 
-- [x] T009 Implement server action `submitMembershipApplication` in `src/app/(static)/membership/actions.ts` (pipeline: cookie `membership_rate_limit` read/prune → `membershipFormSchema.safeParse` (live options via T006) → Turnstile `siteverify` → **campaign resolve** `getActiveCampaign()` → if none/closed → `{ success: false, error: "Applications are currently closed — please check back when the next campaign opens." }` → else `createPage(NOTION_MEMBERSHIP_SUBMISSIONS_DATABASE_ID, properties)` with `Campaign` relation to active campaign URL/ID via `src/lib/notion/helpers.ts` (`MEMBERSHIP_PROPERTIES` constant, omit empty optionals, `Mobile Number` as number, `Availability` as text, checkbox willingness) → on success `appendSubmissionTimestamp` and `cookieStore.set` with `httpOnly/lax` attrs; all failures return `{ success, error }` human-readable) per `contracts/membership-application.md` §1/§3
-- [x] T010 [P] [US1] Create progress indicator in `src/app/(static)/membership/components/progress.tsx` ( `Step X of 6`, subtle bar using brand tokens `--primary`/`--secondary`, `motion` with `useReducedMotion` gate, `text-secondary-dark dark:text-secondary` for gold, respects both themes) per `research.md` R-002/R-007
-- [x] T011 [P] [US1] Create `src/app/(static)/membership/components/steps/personal-step.tsx` (Full Name text, Nickname text optional, Student ID title, Email, Mobile Number number input with `+`/space normalization, Birthdate date not-future, Sex select live options, Facebook URL http(s) optional) using `src/components/ui/form.tsx` primitives and options from T006
-- [x] T012 [P] [US1] Create `src/app/(static)/membership/components/steps/academic-step.tsx` (College select live, Program text, Year Level select live) using `src/components/ui/form.tsx` and T006
-- [x] T013 [P] [US1] Create `src/app/(static)/membership/components/steps/role-preferences-step.tsx` (Primary/Secondary Role Preference live 4 options, `primary !== secondary` live feedback, Related Skills text ≤1000, Related Experiences text ≤1000) per FR-006 and live options
-- [x] T014 [P] [US1] Create `src/app/(static)/membership/components/steps/availability-step.tsx` (Availability text 0–60, Event-Attendance Willingness checkbox boolean, Other Orgs text ≤1000)
-- [x] T015 [P] [US1] Create `src/app/(static)/membership/components/steps/consent-step.tsx` (Privacy Notice Consent checkbox, Declaration checkbox both `z.literal(true)`-gated, `TurnstileWidget` from `src/components/ui/turnstile-widget.tsx` wired to `turnstileToken` field)
-- [x] T016 [US1] Create `src/app/(static)/membership/components/steps/review-step.tsx` (render all answers by section with **Edit** jumps, show linked campaign Academic Year, no data loss on back)
-- [x] T017 [US1] Create `src/app/(static)/membership/components/confirmation.tsx` (on-site success screen showing campaign Academic Year, org-supplied copy per FR-015, no timeline promise)
-- [x] T018 [US1] Create wizard orchestrator `src/app/(static)/membership/components/membership-wizard.tsx` (`FormProvider` + `useForm<MembershipFormValues>` + `zodResolver(membershipFormSchema)` with live options, per-step `trigger(fields)` on **Next**, `Progress` integration, campaign closed-state branch (fetch active campaign on mount; if null show closed/not-yet-open message and disable submit), Review as final step, submit calls `submitMembershipApplication`, disables button while pending, maps `{ success, error }` to banner + `FormMessage`, `sonner` toast on success, preserves values for retry)
-- [x] T019 [US1] Mount wizard in `src/app/(static)/membership/page.tsx` at anchor `#apply` inside existing shell (keep hero/team/reason/offer/requirements sections, add wizard section after `MembershipPageRequirementsSection` with `id="apply"`, fetch active campaign server-side to decide initial open/closed rendering)
-- [x] T020 [US1] Remove/repoint `membershipFormLink` Google Form URL in `src/app/(static)/membership/member-section.tsx` (CTA now `href="#apply"` without `target="_blank"`, no external form reference remains)
+- [x] T009 Implement server action `submitMembershipApplication` in `src/app/membership/apply/actions.ts` (pipeline: cookie `membership_rate_limit` read/prune → `membershipFormSchema.safeParse` (live options via T006) → **campaign resolve** `getActiveCampaign()` → if none/closed → `{ success: false, error: "Applications are currently closed — please check back when the next campaign opens." }` → Turnstile `siteverify` (after campaign so closed states never burn a single-use token) → `createPageInDataSource(submissionsDataSourceId, properties)` with `Campaign` relation to active campaign ID via `src/lib/notion/helpers.ts` (`MEMBERSHIP_PROPERTIES` constant, omit empty optionals, `Mobile Number` as text, email lowercased, `Availability` commitment band as text, checkbox willingness) → on success `appendSubmissionTimestamp` and `cookieStore.set` with `httpOnly/lax` attrs; all failures return `{ success, error }` human-readable) per `contracts/membership-application.md` §1/§3
+- [x] T010 [P] [US1] Create progress indicator in `src/app/membership/apply/components/progress.tsx` ( `Step X of 6`, subtle bar using brand tokens `--primary`/`--secondary`, `motion` with `useReducedMotion` gate, `text-secondary-dark dark:text-secondary` for gold, respects both themes) per `research.md` R-002/R-007
+- [x] T011 [P] [US1] Create `src/app/membership/apply/components/steps/personal-step.tsx` (Full Name text, Nickname text optional, Student ID title, Email restricted to `firstname.lastname@students.isatu.edu.ph`, Mobile Number text input with `+`/space/dash/paren chars written verbatim as text, Birthdate date not-future, Sex select live options, Facebook URL http(s) optional — label has no `*`) using `src/components/ui/form.tsx` primitives and options from T006
+- [x] T012 [P] [US1] Create `src/app/membership/apply/components/steps/academic-step.tsx` (College select live, Program text, Year Level select live) using `src/components/ui/form.tsx` and T006
+- [x] T013 [P] [US1] Create `src/app/membership/apply/components/steps/role-preferences-step.tsx` (Primary/Secondary Role Preference live 4 options, `primary !== secondary` live feedback, Related Skills text ≤1000, Related Experiences text ≤1000) per FR-006 and live options
+- [x] T014 [P] [US1] Create `src/app/membership/apply/components/steps/availability-step.tsx` (Availability commitment-band select — Less than 2 hours / 2-5 / 6-10 / More than 10 hours, org decision not Notion-sourced; Event-Attendance Willingness checkbox gated by `z.literal(true)` mandatory, Other Orgs text ≤1000)
+- [x] T015 [P] [US1] Create `src/app/membership/apply/components/steps/consent-step.tsx` (Privacy Notice Consent checkbox, Declaration checkbox both `z.literal(true)`-gated; `TurnstileWidget` lives in review-step, not here — wired to `turnstileToken` field with expire/error remount)
+- [x] T016 [US1] Create `src/app/membership/apply/components/steps/review-step.tsx` (render all answers by section with **Edit** jumps, show linked campaign Academic Year, no data loss on back)
+- [x] T017 [US1] Create `src/app/membership/apply/components/confirmation.tsx` (on-site success screen showing campaign Academic Year, org-supplied copy per FR-015, no timeline promise)
+- [x] T018 [US1] Create wizard orchestrator `src/app/membership/apply/components/membership-wizard.tsx` (`FormProvider` + `useForm<MembershipFormValues>` + `zodResolver(membershipFormSchema)` with live options, per-step `trigger(fields)` on **Next**, `Progress` integration, campaign closed-state branch (fetch active campaign on mount; if null show closed/not-yet-open message and disable submit), Review as final step, submit calls `submitMembershipApplication`, disables button while pending, maps `{ success, error }` to banner + `FormMessage`, `sonner` toast on success, preserves values for retry)
+- [x] T019 [US1] Mount wizard on the dedicated route `src/app/membership/apply/page.tsx` (separate page with simplified header, no footer; campaign status hydrates client-side via `getActiveCampaignStatus` with loading indicator so Notion latency never blocks page load; closed state renders instead of the form when no campaign is active)
+- [x] T020 [US1] Remove/repoint `membershipFormLink` Google Form URL in `src/app/(static)/membership/member-section.tsx` (CTA now `href="/membership/apply"` without `target="_blank"`, no external form reference remains; hero Apply Now and footer Member Application point at `/membership/apply` too)
 
 **Checkpoint**: US1 fully functional standalone — build succeeds, wizard completes end-to-end to the active campaign's relation, no Google Form link remains
 
@@ -78,10 +78,10 @@
 
 ### Implementation for User Story 2
 
-- [x] T021 [US2] Harden validation UX in `src/app/(static)/membership/components/membership-wizard.tsx` (per-step `trigger()` shows field-specific `FormMessage` for missing/malformed, `secondary` conflict when `primary===secondary`, unchecked consents block submit, Birthdate future-date rejection, live option mismatch) per FR-011/FR-006/FR-008
-- [x] T022 [US2] Implement transient Notion failure and closed-campaign retry paths in `src/app/(static)/membership/components/membership-wizard.tsx` (map write-failure and no-active-campaign `{ success: false, error }` to human-readable banners + **Retry** preserving all `getValues()` in-session; no restart, no cross-session draft claim) per FR-012/FR-019 and `contracts/membership-application.md` §6
-- [x] T023 [US2] Ensure in-session back/refresh retention in `src/app/(static)/membership/components/membership-wizard.tsx` (wizard stays mounted on same page, Hook Form `defaultValues` persist across step navigation and **Back**, document that tab close discards data per Edge Cases/H2; if QA demands refresh survival, add lightweight `sessionStorage` draft tab-scoped, cleared on submit/close — no resume UI) per FR-013 and `research.md` R-002
-- [x] T024 [US2] Add double-submit guard in `src/app/(static)/membership/components/membership-wizard.tsx` (disable submit button + `aria-busy` while `isSubmitting`, single record per action per FR-014)
+- [x] T021 [US2] Harden validation UX in `src/app/membership/apply/components/membership-wizard.tsx` (per-step `trigger()` shows field-specific `FormMessage` for missing/malformed, `secondary` conflict when `primary===secondary`, unchecked consents block submit, Birthdate future-date rejection, live option mismatch) per FR-011/FR-006/FR-008
+- [x] T022 [US2] Implement transient Notion failure and closed-campaign retry paths in `src/app/membership/apply/components/membership-wizard.tsx` (map write-failure and no-active-campaign `{ success: false, error }` to human-readable banners + **Retry** preserving all `getValues()` in-session; no restart, no cross-session draft claim) per FR-012/FR-019 and `contracts/membership-application.md` §6
+- [x] T023 [US2] Ensure in-session back retention in `src/app/membership/apply/components/membership-wizard.tsx` (wizard stays mounted on same page, Hook Form values persist across step navigation and **Back**; refresh deliberately NOT persisted — org decision — so the header copy honestly says refreshing discards answers, and the leave guard warns before unload) per FR-013 and `research.md` R-002
+- [x] T024 [US2] Add double-submit guard in `src/app/membership/apply/components/membership-wizard.tsx` (disable submit button + `aria-busy` while `isSubmitting`, single record per action per FR-014)
 
 **Checkpoint**: US1 + US2 both work — a broken submission can be corrected and retried with zero data loss within the session
 
@@ -95,10 +95,10 @@
 
 ### Implementation for User Story 3
 
-- [x] T025 [US3] Wire `TurnstileWidget` token lifecycle in `src/app/(static)/membership/components/steps/consent-step.tsx` and `src/app/(static)/membership/components/membership-wizard.tsx` (`onVerify` sets `turnstileToken`, `onExpire`/`onError` clears it and surfaces "security check didn't go through — please re-verify", token required in schema and verified server-side before campaign resolve/write) per `contracts/membership-application.md` §1 step 3 and FR-017
-- [x] T026 [US3] Verify `membership_rate_limit` isolation in `src/lib/services/membership-rate-limit.ts` and `src/app/(static)/membership/actions.ts` (distinct cookie name from `contact_rate_limit`, same 5/60-min policy, `isRateLimited` refuse with `"You've submitted quite a few applications this hour — please try again in about an hour."`, no Notion write, no append, data retained per FR-019) per `data-model.md` cookie table
-- [x] T027 [US3] Preserve form data on abuse refusals in `src/app/(static)/membership/components/membership-wizard.tsx` (rate-limited and Turnstile-failed and closed-campaign responses keep all Hook Form values for later retry) per FR-019
-- [x] T028 [US3] Add `membership_rate_limit` `HttpOnly` cookie write verification (on success set with `sameSite:lax`, `path:/`, `maxAge≈2×window`, `secure:production`, cap 64; on failure do not append) in `src/app/(static)/membership/actions.ts`
+- [x] T025 [US3] Wire `TurnstileWidget` token lifecycle in `src/app/membership/apply/components/steps/review-step.tsx` and `src/app/membership/apply/components/membership-wizard.tsx` (`onVerify` sets `turnstileToken`, `onExpire`/`onError` clears it and remounts via `tokenEpoch`, token required in schema and verified server-side after campaign resolve but before write) per `contracts/membership-application.md` §1 and FR-017
+- [x] T026 [US3] Verify `membership_rate_limit` isolation in `src/lib/services/membership-rate-limit.ts` and `src/app/membership/apply/actions.ts` (distinct cookie name from `contact_rate_limit`, same 5/60-min policy, `isRateLimited` refuse with `"You've submitted quite a few applications this hour — please try again in about an hour."`, no Notion write, no append, data retained per FR-019) per `data-model.md` cookie table
+- [x] T027 [US3] Preserve form data on abuse refusals in `src/app/membership/apply/components/membership-wizard.tsx` (rate-limited and Turnstile-failed and closed-campaign responses keep all Hook Form values for later retry) per FR-019
+- [x] T028 [US3] Add `membership_rate_limit` `HttpOnly` cookie write verification (on success set with `sameSite:lax`, `path:/`, `maxAge≈2×window`, `secure:production`, cap 64; on failure do not append) in `src/app/membership/apply/actions.ts`
 
 **Checkpoint**: US3 gates verifiable in DevTools → Application → Cookies (`membership_rate_limit` vs `contact_rate_limit` isolated) and Notion shows exactly 5 pages after 5 successes + zero for the 6th
 
@@ -112,9 +112,9 @@
 
 ### Implementation for User Story 4
 
-- [x] T029 [US4] Implement omit-if-empty for optional `text`/`url` in `src/app/(static)/membership/actions.ts` (Nickname, Facebook URL, Related Skills/Experiences, Other Orgs → omit property payload when trimmed empty per FR-004 and `contracts/membership-application.md` §3)
-- [x] T030 [US4] Pin Notion property keys in `MEMBERSHIP_PROPERTIES` constant in `src/app/(static)/membership/actions.ts` and ensure `Campaign` relation is always set to the active campaign's page ID/URL on write per `contracts/membership-application.md` §3
-- [x] T031 [US4] Cross-check `MEMBERSHIP_PROPERTIES` mapping and live select options against `contracts/notion-database.md` (verify `Student ID` title vs `Full Name` text swap, `Mobile Number` number, `Availability` text, `Event-Attendance Willingness` checkbox, and live option lists) and document any DB-side rename as a single-constant change
+- [x] T029 [US4] Implement omit-if-empty for optional `text`/`url` in `src/app/membership/apply/actions.ts` (Nickname, Facebook URL, Related Skills/Experiences, Other Orgs → omit property payload when trimmed empty per FR-004 and `contracts/membership-application.md` §3)
+- [x] T030 [US4] Pin Notion property keys in `MEMBERSHIP_PROPERTIES` constant in `src/app/membership/apply/actions.ts` and ensure `Campaign` relation is always set to the active campaign's page ID/URL on write per `contracts/membership-application.md` §3
+- [x] T031 [US4] Cross-check `MEMBERSHIP_PROPERTIES` mapping and live select options against `contracts/notion-database.md` (verify `Student ID` title vs `Full Name` text swap, `Mobile Number` text (column must be text/phone — number drops leading zeros), `Availability` commitment-band text, `Event-Attendance Willingness` checkbox, and live option lists) and document any DB-side rename as a single-constant change
 
 **Checkpoint**: US4 mapping is stable — renaming a Notion property is one find/replace in `MEMBERSHIP_PROPERTIES`, and campaign linkage is auditable in Notion's inline campaign view
 
@@ -128,7 +128,7 @@
 
 ### Implementation for User Story 5
 
-- [x] T032 [US5] Implement campaign status query on page load and on submit in `src/app/(static)/membership/page.tsx` and `src/app/(static)/membership/actions.ts` (call `getActiveCampaign()` from T007b; if null show `MembershipCampaignClosed` closed state with human-readable message and disabled form per FR-009a/FR-026) per `data-model.md` campaign lifecycle
+- [x] T032 [US5] Implement campaign status query on page load and on submit in `src/app/membership/apply/components/membership-wizard-section.tsx` (client hydrates via `getActiveCampaignStatus()`) and `src/app/membership/apply/actions.ts` (call `getActiveCampaign()` from T007b; if null show closed state with human-readable message instead of the form per FR-009a/FR-026) per `data-model.md` campaign lifecycle
 - [x] T033 [US5] Build optional web admin UI `src/app/admin/membership/page.tsx` (protected — simple `ADMIN_SECRET` env check or Notion auth; lists `Membership Campaigns` with Academic Year and Status, create campaign form, and Status transition buttons that PATCH `Status` via `notion.pages.update` / `notion.databases.query`); if web admin is deferred, document that Notion dashboard itself is the admin interface and seed a test `In progress` campaign via `notion_notion-create-pages` for QA per `research.md` R-009
 - [x] T034 [US5] Add `ADMIN_SECRET` (if web admin built) to `src/lib/env.ts` (`z.string().optional()`) and `.env.example`, and gate `src/app/admin/membership/*` with server-side check (return 404 or redirect if secret missing/incorrect) per constitution P5
 
@@ -140,11 +140,11 @@
 
 **Purpose**: Brand fidelity, accessibility, link hygiene, and build gates across all stories
 
-- [x] T035 Run impeccable-skill design pass on the wizard, closed states, and confirmation in `src/app/(static)/membership/components/` and `src/app/(static)/membership/page.tsx` (brand tokens via `cn` + Tailwind v4, no hardcoded grays, gold headings `text-secondary-dark dark:text-secondary`, `bg-accent/50 border-border/60` card pattern, `motion` gated by `useReducedMotion`, confirm no `forms.gle` widget appearance) per FR-022/FR-024 and `research.md` R-007
-- [x] T036 Audit keyboard + screen-reader + theme parity in `src/app/(static)/membership/components/membership-wizard.tsx` (Tab through every step/field/select/checkbox/Turnstile/Next/Back/Submit, visible focus, `aria-invalid`/`aria-describedby` via `src/components/ui/form.tsx`, heading order, both light/dark themes, reduced-motion honored) per FR-023 and SC-006
-- [x] T037 Remove all remaining Google Form refs site-wide (grep `forms.gle`/`ViNChagDv6Xcfp3bA` and repoint every former CTA to `#apply` on `/membership`) per FR-001/SC-007
+- [x] T035 Run impeccable-skill design pass on the wizard, closed states, and confirmation in `src/app/membership/apply/components/` and `src/app/membership/apply/page.tsx` (brand tokens via `cn` + Tailwind v4, no hardcoded grays, gold headings `text-secondary-dark dark:text-secondary`, `bg-accent/50 border-border/60` card pattern, `motion` gated by `useReducedMotion`, confirm no `forms.gle` widget appearance) per FR-022/FR-024 and `research.md` R-007
+- [x] T036 Audit keyboard + screen-reader + theme parity in `src/app/membership/apply/components/membership-wizard.tsx` (Tab through every step/field/select/checkbox/Turnstile/Next/Back/Submit, visible focus, `aria-invalid`/`aria-describedby` via `src/components/ui/form.tsx`, heading order, both light/dark themes, reduced-motion honored) per FR-023 and SC-006
+- [x] T037 Remove all remaining Google Form refs site-wide (grep `forms.gle`/`ViNChagDv6Xcfp3bA` and repoint every former CTA to `/membership/apply`) per FR-001/SC-007
 - [x] T038 Run gates `npm run type-check` and `npm run lint` with both `NOTION_MEMBERSHIP_*` vars set, fix all issues (no `--max-warnings` bypass)
-- [x] T039 Run `npm run build` (requires both campaign/submissions DB IDs) and verify sitemap + no KV dependency introduced (site stays KV-free per `AGENTS.md` and `research.md` R-001)
+- [x] T039 Run `npm run build` (requires campaigns DB ID; submissions DB ID optional fallback) and verify sitemap + no KV dependency introduced (site stays KV-free per `AGENTS.md` and `research.md` R-001)
 - [x] T040 Execute `quickstart.md` scenarios 1–9 (now campaign-aware) in both themes (wizard happy path during active campaign, invalid input, transient failure retry, closed campaign block, rate-limit 5→6, Turnstile expiry, double-submit, a11y, dead-link audit, Notion campaign-linked record fidelity) and record results
 
 ---
@@ -187,12 +187,12 @@
 
 ```bash
 # Launch all US1 step components together (different files):
-Task: "Create src/app/(static)/membership/components/steps/personal-step.tsx"
-Task: "Create src/app/(static)/membership/components/steps/academic-step.tsx"
-Task: "Create src/app/(static)/membership/components/steps/role-preferences-step.tsx"
-Task: "Create src/app/(static)/membership/components/steps/availability-step.tsx"
-Task: "Create src/app/(static)/membership/components/steps/consent-step.tsx"
-Task: "Create progress indicator in src/app/(static)/membership/components/progress.tsx"
+Task: "Create src/app/membership/apply/components/steps/personal-step.tsx"
+Task: "Create src/app/membership/apply/components/steps/academic-step.tsx"
+Task: "Create src/app/membership/apply/components/steps/role-preferences-step.tsx"
+Task: "Create src/app/membership/apply/components/steps/availability-step.tsx"
+Task: "Create src/app/membership/apply/components/steps/consent-step.tsx"
+Task: "Create progress indicator in src/app/membership/apply/components/progress.tsx"
 ```
 
 ---
