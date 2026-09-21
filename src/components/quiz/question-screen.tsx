@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import type { Question, Choice } from "@/lib/quiz";
@@ -28,6 +29,8 @@ export function QuestionScreen({
   onBack: () => void;
   canGoBack: boolean;
 }) {
+  const reduceMotion = useMountedReducedMotion();
+
   return (
     <div className="relative w-full px-4 py-4 md:py-6">
       {/* Progress bar */}
@@ -49,10 +52,10 @@ export function QuestionScreen({
           className="bg-muted h-1.5 overflow-hidden rounded-full md:h-2"
         >
           <motion.div
-            className="from-primary to-secondary h-full rounded-full bg-gradient-to-r"
+            className="from-primary to-secondary h-full rounded-full bg-linear-to-r"
             initial={false}
             animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.5 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.5 }}
           />
         </div>
         {/* Semantic progress for assistive tech (visual bar is aria-hidden). */}
@@ -66,18 +69,21 @@ export function QuestionScreen({
 
       {/* Question and Choices */}
       <motion.div
-        layout
-        initial={{ opacity: 0, x: 0, y: 10 }}
+        layout={reduceMotion ? false : true}
+        initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 0, y: 10 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
-        exit={{ opacity: 0, x: 0, y: -10 }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
+        exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 0, y: -10 }}
+        transition={
+          reduceMotion ? { duration: 0 } : { duration: 0.4, ease: "easeInOut" }
+        }
         className="relative"
       >
-        {/* Question */}
+        {/* Question — lg capped at xl so long questions fit kiosk widths */}
         <motion.h2
-          initial={{ opacity: 0, y: 10 }}
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4 text-center text-lg font-bold md:mb-6 md:text-xl lg:text-2xl"
+          transition={reduceMotion ? { duration: 0 } : undefined}
+          className="mb-4 text-center text-lg font-bold md:mb-6 md:text-xl lg:text-xl"
         >
           {question.question}
         </motion.h2>
@@ -89,9 +95,11 @@ export function QuestionScreen({
               key={choice.choice}
               type="button"
               aria-pressed={selectedChoice === index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
+              transition={
+                reduceMotion ? { duration: 0 } : { delay: index * 0.05 }
+              }
               onClick={() => onSelect(index)}
               className={`w-full rounded-lg border-2 p-3 text-left transition-all duration-300 md:rounded-xl md:p-4 ${
                 selectedChoice === index
@@ -101,7 +109,7 @@ export function QuestionScreen({
             >
               <div className="flex items-center gap-2 md:gap-3">
                 <div
-                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold md:h-8 md:w-8 md:text-sm ${
+                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold md:h-8 md:w-8 md:text-sm ${
                     selectedChoice === index
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"

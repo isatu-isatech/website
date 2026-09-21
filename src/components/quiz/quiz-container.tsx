@@ -23,10 +23,18 @@ import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { COLORS } from "@/lib/constants/design-tokens";
 import { useQuizLeaveGuard } from "@/lib/hooks";
+import { IdleCountdown } from "./idle-countdown";
 import { IntroScreen } from "./intro-screen";
 import { QuestionScreen } from "./question-screen";
 import { ResultScreen } from "./result-screen";
 import { LeaveQuizDialog } from "./leave-quiz-dialog";
+
+/** Idle reset budgets — 3 min on quiz/tiebreaker, 1 min on result. */
+const QUIZ_IDLE_MS = 3 * 60 * 1000;
+const RESULT_IDLE_MS = 60 * 1000;
+/** Countdown pill appears during the final minute of the budget. */
+const WARN_MS = 60 * 1000;
+const TICK_MS = 1000;
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -425,6 +433,104 @@ export function QuizContainer() {
     resetQuiz,
   );
 
+  // Idle reset for kiosk/LED installations: after a per-phase inactivity
+  // budget (3 min on quiz/tiebreaker, 1 min on result) return to a clean
+  // intro state so the next visitor starts fresh. Intro itself is already
+  // clean, so only quiz/tiebreaker/result are watched. The countdown pill
+  // appears during the final minute (always visible on result). Hidden tabs
+  // pause the timer instead of wiping a visitor who tabbed away, and an open
+  // leave-confirm dialog suppresses the reset.
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  useEffect(() => {
+    if (state.phase === "intro" || open) {
+      setSecondsLeft(null);
+      return;
+    }
+
+    const timeoutMs = state.phase === "result" ? RESULT_IDLE_MS : QUIZ_IDLE_MS;
+    let timeoutId: number | undefined;
+    let intervalId: number | undefined;
+    let deadline = Date.now() + timeoutMs;
+
+    const clearTimers = () => {
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+      if (intervalId !== undefined) window.clearInterval(intervalId);
+      timeoutId = undefined;
+      intervalId = undefined;
+    };
+
+    const resetToIdle = () => {
+      clearTimers();
+      setSecondsLeft(null);
+      clearProgress();
+      resetQuiz();
+      toast("Session reset due to inactivity");
+    };
+
+    const tick = () => {
+      const remainingMs = Math.max(0, deadline - Date.now());
+      const remainingSec = Math.ceil(remainingMs / 1000);
+      // Result shows the full minute; quiz/tiebreaker only the final minute.
+      setSecondsLeft(
+        state.phase === "result"
+          ? remainingSec
+          : remainingMs <= WARN_MS
+            ? remainingSec
+            : null,
+      );
+    };
+
+    const schedule = () => {
+      clearTimers();
+      deadline = Date.now() + timeoutMs;
+      tick();
+      timeoutId = window.setTimeout(resetToIdle, timeoutMs);
+      intervalId = window.setInterval(tick, TICK_MS);
+    };
+
+    const handleActivity = () => schedule();
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        // Pause while hidden — never wipe a tabbed-away visitor.
+        clearTimers();
+      } else {
+        schedule();
+      }
+    };
+
+    // Initial schedule
+    schedule();
+
+    const bubbleEvents: (keyof WindowEventMap)[] = [
+      "mousemove",
+      "mousedown",
+      "keydown",
+      "touchstart",
+      "touchmove",
+      "click",
+    ];
+    for (const evt of bubbleEvents) {
+      window.addEventListener(evt, handleActivity, { passive: true });
+    }
+    // `scroll` doesn't bubble, so a capture listener is required to catch
+    // scrolls inside the quiz's inner overflow container.
+    window.addEventListener("scroll", handleActivity, {
+      passive: true,
+      capture: true,
+    });
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearTimers();
+      for (const evt of bubbleEvents) {
+        window.removeEventListener(evt, handleActivity);
+      }
+      window.removeEventListener("scroll", handleActivity, { capture: true });
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [state.phase, resetQuiz, open]);
+
   // Once the visitor confirms leaving, stop persisting progress for this
   // component instance — a blocked navigation must not resurrect the record
   // the modal promised to erase.
@@ -434,7 +540,8 @@ export function QuizContainer() {
   }, [continueLeave]);
 
   return (
-    <div className="relative mx-auto my-auto flex w-full max-w-4xl flex-col justify-center">
+    <div className="relative mx-auto flex w-full max-w-4xl flex-col justify-start pt-2 md:pt-4 portrait:mt-[4svh] portrait:mb-auto md:portrait:mt-[5svh] landscape:my-auto landscape:pt-0">
+      {secondsLeft !== null && <IdleCountdown secondsLeft={secondsLeft} />}
       <AnimatePresence mode="wait">
         {state.phase === "intro" && (
           <IntroScreen key="intro" onStart={startQuiz} />

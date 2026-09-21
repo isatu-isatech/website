@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";
@@ -8,14 +9,15 @@ import { archetypeIcons, questions, ARCHETYPE_KEYS } from "@/lib/quiz";
 import { COLORS } from "@/lib/constants/design-tokens";
 
 export function IntroScreen({ onStart }: { onStart: () => void }) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMountedReducedMotion();
 
   return (
     <motion.div
-      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="flex flex-col items-center justify-center px-4 py-4 text-center md:py-6"
+      exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -20 }}
+      transition={reduceMotion ? { duration: 0 } : undefined}
+      className="flex flex-col items-center justify-center p-4 text-center md:py-6"
     >
       {/* Floating 4H images */}
       <div className="relative mb-4 md:mb-6">

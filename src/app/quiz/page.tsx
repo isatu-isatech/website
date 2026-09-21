@@ -45,8 +45,8 @@ export default function QuizPage() {
         className="pointer-events-none absolute inset-0 z-0 flex justify-center overflow-hidden"
         aria-hidden="true"
       >
-        <div className="bg-primary absolute top-0 left-0 hidden aspect-364/527 w-[min(364px,100%)] mask-left opacity-10 md:block" />
-        <div className="bg-secondary absolute right-0 bottom-0 aspect-320/528 w-[min(320px,100%)] mask-right opacity-10" />
+        <div className="bg-primary absolute top-0 left-0 hidden aspect-364/527 w-[min(300px,100%)] mask-left opacity-10 md:block" />
+        <div className="bg-secondary absolute right-0 bottom-0 aspect-320/528 w-[min(280px,100%)] mask-right opacity-10" />
       </div>
       <BlobsAnimatedBackground
         blobs={[
@@ -55,10 +55,10 @@ export default function QuizPage() {
             top: "-6rem",
             left: "-6rem",
             colorClass: "bg-primary/30",
-            sizeClass: "h-[28rem] w-[28rem]",
-            blurClass: "blur-[80px]",
-            animateX: [0, 20, 0],
-            animateY: [0, 30, 0],
+            sizeClass: "h-[22rem] w-[22rem]",
+            blurClass: "blur-[70px]",
+            animateX: [0, 16, 0],
+            animateY: [0, 24, 0],
             duration: 8,
           },
           {
@@ -66,18 +66,21 @@ export default function QuizPage() {
             bottom: "-6rem",
             right: "-6rem",
             colorClass: "bg-secondary/30",
-            sizeClass: "h-[28rem] w-[28rem]",
-            blurClass: "blur-[80px]",
+            sizeClass: "h-[22rem] w-[22rem]",
+            blurClass: "blur-[70px]",
             animateX: [0, -20, 0],
             animateY: [0, -30, 0],
             duration: 10,
           },
         ]}
-        className="absolute inset-0 !z-0 h-full w-full opacity-100"
+        className="absolute inset-0 z-0! h-full w-full opacity-100"
         gridPatternOpacity="opacity-0"
         gridPatternDarkOpacity="opacity-0"
       />
-      <div className="relative z-10 flex h-full w-full overflow-y-auto px-4 py-4 md:py-8">
+      {/* Orientation-aware rhythm: symmetric scroll padding doubles as
+          overflow guard; the card's auto margins center on landscape and
+          eye-level nudge on portrait */}
+      <div className="relative z-10 flex h-full w-full overflow-y-auto px-4 py-6 md:py-8">
         <QuizContainer />
       </div>
     </main>
