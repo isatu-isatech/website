@@ -2,12 +2,8 @@
 
 import { ISATechLogoMark } from "@/components/assets/logos";
 import { OptimizedImage } from "@/components/common";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 import { useRef } from "react";
 
 /**
@@ -18,7 +14,10 @@ import { useRef } from "react";
  */
 export default function AboutDescriptionBand() {
   const bandRef = useRef<HTMLDivElement>(null);
-  const reduceMotion = useReducedMotion();
+  // Mount-gated so SSR + first client render match (both parallax):
+  // branching the DOM tree on reduced motion would otherwise
+  // hydrate-mismatch.
+  const reduceMotion = useMountedReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: bandRef,

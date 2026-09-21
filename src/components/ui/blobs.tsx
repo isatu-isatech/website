@@ -1,5 +1,6 @@
 "use client";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "framer-motion";
+import { useMountedReducedMotion } from "@/lib/hooks";
 import type { BlobsConfig } from "./blobs-config";
 
 export type { BlobsConfig } from "./blobs-config";
@@ -44,7 +45,9 @@ export function BlobsAnimatedBackground({
   ];
 
   const blobsToRender = blobs && blobs.length > 0 ? blobs : defaultBlobs;
-  const reduceMotion = useReducedMotion();
+  // Mount-gated so SSR + first client render match (both animated),
+  // keeping the same gate as every other reduced-motion branch.
+  const reduceMotion = useMountedReducedMotion();
 
   return (
     // We combine the default classes with the new className prop

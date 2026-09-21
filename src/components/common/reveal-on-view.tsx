@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
 import type { ReactNode } from "react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 
 interface RevealOnViewProps {
   children: ReactNode;
@@ -23,7 +24,7 @@ export function RevealOnView({
   className,
   delay = 0,
 }: RevealOnViewProps) {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMountedReducedMotion();
 
   return (
     <motion.div

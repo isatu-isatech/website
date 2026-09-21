@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 
 /**
  * About hero lockup — one semantic <h1>: "About" with a gilded block line
@@ -11,7 +12,9 @@ import { motion, useReducedMotion } from "motion/react";
  * it is disabled entirely under prefers-reduced-motion.
  */
 export default function AboutHeroLockup() {
-  const reduceMotion = useReducedMotion();
+  // Mount-gated so SSR + first client render match (both animated),
+  // avoiding a hydration mismatch when the OS prefers reduced motion.
+  const reduceMotion = useMountedReducedMotion();
 
   return (
     <motion.div

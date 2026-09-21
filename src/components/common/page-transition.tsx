@@ -1,14 +1,10 @@
 "use client";
 
-import {
-  animate,
-  motion,
-  useMotionValue,
-  useReducedMotion,
-} from "motion/react";
+import { animate, motion, useMotionValue } from "motion/react";
 import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef } from "react";
 import type { ReactNode } from "react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 
 const WIPE_EASE = [0.65, 0, 0.35, 1] as const;
 const ENTRY_DURATION = 0.45;
@@ -69,7 +65,11 @@ function resetScrollToTop(): void {
 export function PageTransition({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const reduceMotion = useReducedMotion();
+  // Mount-gated so SSR + first client render match (both with the curtain):
+  // returning a curtain-less tree on reduced motion would otherwise
+  // hydrate-mismatch, and the click-interception effects already no-op
+  // until the same flag flips.
+  const reduceMotion = useMountedReducedMotion();
 
   const x = useMotionValue<string>("-100%");
   const busyRef = useRef(false);

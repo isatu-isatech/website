@@ -2,8 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useAutoAdvance } from "@/lib/hooks";
-import { useReducedMotion } from "motion/react";
+import { useAutoAdvance, useMountedReducedMotion } from "@/lib/hooks";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState, type SVGProps } from "react";
@@ -249,7 +248,10 @@ const images = [
  * pauses the auto-advance until the pointer leaves the list.
  */
 export default function MembershipPageMemberSection() {
-  const reduceMotion = useReducedMotion();
+  // Mount-gated so SSR + first client render match (both animated),
+  // avoiding a hydration mismatch on the crossfade's `transition-none`
+  // class when the OS prefers reduced motion.
+  const reduceMotion = useMountedReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
   const pausedRef = useRef(false);
 
