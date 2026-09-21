@@ -20,6 +20,29 @@ export const STUDENT_EMAIL_REGEX =
 export const STUDENT_EMAIL_MESSAGE =
   "Use your ISAT-U student email (firstname.lastname@students.isatu.edu.ph)";
 
+/**
+ * Optional Facebook Profile URL — empty is fine, otherwise must be an
+ * http(s) link on a Facebook host (`facebook.com` + common subdomains,
+ * or `fb.com` short links).
+ */
+export function isFacebookProfileUrl(value: string): boolean {
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return false;
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") return false;
+  const host = url.hostname.toLowerCase();
+  return (
+    host === "facebook.com" ||
+    host.endsWith(".facebook.com") ||
+    host === "fb.com" ||
+    host === "www.fb.com" ||
+    host === "m.fb.com"
+  );
+}
+
 export const membershipFormSchema = z
   .object({
     // Personal Information
@@ -65,8 +88,8 @@ export const membershipFormSchema = z
       .string()
       .or(z.literal(""))
       .refine(
-        (v) => !v || v === "" || /^https?:\/\/.+/i.test(v),
-        "Facebook URL must be http(s)",
+        (v) => !v || v === "" || isFacebookProfileUrl(v.trim()),
+        "Facebook URL must be a facebook.com profile link",
       ),
     // Academic
     college: enumWithFallback(fallback.college),

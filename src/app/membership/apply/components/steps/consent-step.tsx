@@ -33,7 +33,7 @@ export function ConsentStep() {
                 />
               </FormControl>
               <FormLabel htmlFor="privacyConsent" className="font-normal">
-                I consent to the collection and processing of your personal data
+                I consent to the collection and processing of my personal data
                 by ISATech Society in accordance with the Data Privacy Act of
                 2012 (Republic Act No. 10173). The information collected on this
                 form will be used for membership registration. We are committed

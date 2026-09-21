@@ -54,7 +54,7 @@ export function PersonalStep() {
             <FormItem>
               <FormLabel>Student ID *</FormLabel>
               <FormControl>
-                <Input placeholder="2XXX-XXXX-X" {...field} />
+                <Input placeholder="2021-1234-A" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
