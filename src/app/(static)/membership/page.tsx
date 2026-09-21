@@ -62,21 +62,25 @@ function MembershipPageHeroSection() {
   const blobsConfig = [
     createBlobConfig({
       id: "default-blob-1",
-      top: "-10rem",
-      left: "-10rem",
-      animateX: [0, -30, 0],
-      animateY: [0, -40, 0],
+      top: "-8rem",
+      left: "-8rem",
+      animateX: [0, -20, 0],
+      animateY: [0, -30, 0],
       duration: 6,
       colorClass: "bg-primary/60",
+      sizeClass: "h-72 w-72",
+      blurClass: "blur-[80px]",
     }),
     createBlobConfig({
       id: "default-blob-2",
-      bottom: "-10rem",
-      right: "-10rem",
-      animateX: [0, -30, 0],
-      animateY: [0, -40, 0],
+      bottom: "-8rem",
+      right: "-8rem",
+      animateX: [0, -20, 0],
+      animateY: [0, -30, 0],
       duration: 6,
       colorClass: "bg-primary/60",
+      sizeClass: "h-72 w-72",
+      blurClass: "blur-[80px]",
     }),
   ];
 
@@ -120,7 +124,7 @@ function MembershipPageHeroSection() {
             {/* Decoration */}
             <div
               aria-hidden
-              className="mask-isatech absolute top-0 right-0 -z-1 aspect-667/492 h-full w-auto translate-x-1/2 bg-[#FFAC03]"
+              className="mask-isatech absolute top-0 right-0 -z-1 aspect-667/492 h-[85%] w-auto translate-x-1/2 bg-[#FFAC03]"
             />
 
             <Image
@@ -144,21 +148,25 @@ function MembershipPageTeamSection() {
   const blobsConfig = [
     createBlobConfig({
       id: "blob-1",
-      top: "-10rem",
-      left: "-10rem",
-      animateX: [0, -30, 0],
-      animateY: [0, -40, 0],
+      top: "-8rem",
+      left: "-8rem",
+      animateX: [0, -20, 0],
+      animateY: [0, -30, 0],
       duration: 6,
       colorClass: "bg-secondary/60",
+      sizeClass: "h-72 w-72",
+      blurClass: "blur-[80px]",
     }),
     createBlobConfig({
       id: "blob-2",
-      bottom: "-10rem",
-      right: "-10rem",
-      animateX: [0, -30, 0],
-      animateY: [0, -40, 0],
+      bottom: "-8rem",
+      right: "-8rem",
+      animateX: [0, -20, 0],
+      animateY: [0, -30, 0],
       duration: 6,
       colorClass: "bg-secondary/60",
+      sizeClass: "h-72 w-72",
+      blurClass: "blur-[80px]",
     }),
   ];
 
@@ -231,7 +239,10 @@ function MembershipPageRequirementsSection() {
   ];
 
   return (
-    <section className="flex w-full items-center justify-center px-4 py-16 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20">
+    <section
+      className="flex w-full items-center justify-center px-4 py-16 sm:px-6 md:px-8 lg:px-12 xl:px-16 2xl:px-20"
+      id="apply"
+    >
       <div className="flex w-full max-w-7xl flex-col items-center gap-8">
         <h2 className="text-secondary-dark dark:text-secondary text-center">
           Requirements for Membership Application

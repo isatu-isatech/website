@@ -244,8 +244,9 @@ const images = [
  *
  * Screen-height benefits band with hover-driven storytelling: while the
  * visitor is idle the section automatically focuses the next benefit (card +
- * matching image advance together); hovering a card focuses that benefit and
- * pauses the auto-advance until the pointer leaves the list.
+ * matching image advance together); hovering or keyboard-focusing a card
+ * focuses that benefit and pauses the auto-advance until the pointer leaves
+ * the list or focus moves away.
  */
 export default function MembershipPageMemberSection() {
   // Mount-gated so SSR + first client render match (both animated),
@@ -280,9 +281,9 @@ export default function MembershipPageMemberSection() {
       id="member"
     >
       {/* Decorations */}
-      <div className="pointer-events-none absolute -z-1 flex h-full w-full items-center justify-center opacity-80">
-        <GradientBlob1Decoration className="absolute right-0 bottom-0 h-full w-full translate-x-1/2 translate-y-1/2" />
-        <GradientBlob2Decoration className="absolute top-0 right-0 h-full w-full -translate-x-1/2 -translate-y-1/2" />
+      <div className="pointer-events-none absolute -z-1 flex h-full w-full items-center justify-center opacity-60">
+        <GradientBlob1Decoration className="absolute right-0 bottom-0 h-[80%] w-[80%] translate-x-1/3 translate-y-1/3" />
+        <GradientBlob2Decoration className="absolute top-0 right-0 h-[80%] w-[80%] -translate-x-1/3 -translate-y-1/3" />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center gap-6">
         <div className="flex w-full flex-col items-center gap-1.5 text-center">
@@ -296,13 +297,17 @@ export default function MembershipPageMemberSection() {
           </h5>
         </div>
         <div className="grid w-full items-stretch gap-4 lg:grid-cols-2">
-          {/* Benefit list — hover a card to focus it; idle auto-advances */}
+          {/* Benefit list — hover or keyboard-focus a card to focus it;
+              idle auto-advances */}
           <div className="flex w-full flex-col gap-1">
             {benefits.map((benefit, key) => (
               <div
                 key={benefit.title}
+                tabIndex={0}
                 onMouseEnter={() => focusBenefit(key)}
                 onMouseLeave={resumeAutoAdvance}
+                onFocus={() => focusBenefit(key)}
+                onBlur={resumeAutoAdvance}
                 className={cn(
                   "border-border/60 bg-accent/50 flex w-full cursor-default flex-col gap-1 rounded-2xl border px-4 py-2 backdrop-blur-md transition-colors duration-300",
                   activeIndex === key && "border-secondary/60 bg-accent",

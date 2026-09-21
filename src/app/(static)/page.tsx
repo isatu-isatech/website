@@ -82,9 +82,9 @@ export default function Homepage() {
         <HomepageTeamSection />
       </SectionErrorBoundary>
 
-      {/* Scroll velocity - decorative, compact error handling */}
+      {/* Scroll velocity - decorative, hidden on mobile to avoid lag */}
       <SectionErrorBoundary compact>
-        <div className="flex w-full items-center justify-center overflow-hidden">
+        <div className="hidden w-full items-center justify-center overflow-hidden md:flex">
           <ScrollVelocityComponent
             texts={["DREAM • INNOVATE • SUCCEED •"]}
             velocity={50}

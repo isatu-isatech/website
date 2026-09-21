@@ -41,12 +41,14 @@ export default function AboutUsAdvisersSection({
   const adviserSectionBG = [
     createBlobConfig({
       id: "advisers-blob",
-      top: "-10rem",
-      left: "-10rem",
-      animateX: [0, -30, 0],
-      animateY: [0, -40, 0],
+      top: "-8rem",
+      left: "-8rem",
+      animateX: [0, -20, 0],
+      animateY: [0, -30, 0],
       duration: 6,
       colorClass: "bg-secondary/60",
+      sizeClass: "h-72 w-72",
+      blurClass: "blur-[80px]",
     }),
   ];
 
@@ -147,7 +149,7 @@ export default function AboutUsAdvisersSection({
                       sizes={adviser.imageSize}
                       className="h-full w-auto rounded-3xl object-cover"
                     />
-                    <div className="from-primary to-primary/1 absolute bottom-0 h-3/12 w-full justify-start gap-2 rounded-b-3xl bg-gradient-to-t px-8 py-8 text-white">
+                    <div className="from-primary to-primary/1 absolute bottom-0 h-3/12 w-full justify-start gap-2 rounded-b-3xl bg-linear-to-t px-8 py-8 text-white">
                       <p className="text-base font-bold">{adviser.name}</p>
                       <p className="text-sm">{adviser.title}</p>
                     </div>

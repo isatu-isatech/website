@@ -100,11 +100,11 @@ function ContactUsHeroSection() {
       <div className="pointer-events-none absolute inset-0 flex justify-center">
         <div
           aria-hidden
-          className="absolute top-0 left-0 hidden aspect-364/527 h-auto w-[min(364px,100%)] bg-current mask-left opacity-5 md:block"
+          className="absolute top-0 left-0 hidden aspect-364/527 h-auto w-[min(300px,100%)] bg-current mask-left opacity-5 md:block"
         />
         <div
           aria-hidden
-          className="absolute right-0 bottom-0 aspect-320/528 h-auto w-[min(320px,100%)] bg-current mask-right opacity-5"
+          className="absolute right-0 bottom-0 aspect-320/528 h-auto w-[min(260px,100%)] bg-current mask-right opacity-5"
         />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-8 py-8 lg:py-16">
