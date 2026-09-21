@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useRef } from "react";
 import { useFormContext } from "react-hook-form";
 import type { MembershipFormValues } from "../../schema";
 import { MEMBERSHIP_FALLBACK } from "@/lib/constants/membership";
@@ -29,21 +30,48 @@ function RolePicker({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const roles = fallback.primaryRole;
+  const firstRole: string = roles[0] ?? "";
+  const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  // Roving tabindex: the selected option (or the first) is the tab stop.
+  const tabIndexFor = (role: string) =>
+    (value ? value === role : role === firstRole) ? 0 : -1;
+
+  const move = (fromIndex: number, delta: 1 | -1) => {
+    const nextIndex = (fromIndex + delta + roles.length) % roles.length;
+    const next = roles[nextIndex] ?? value;
+    onChange(next);
+    buttonRefs.current[nextIndex]?.focus();
+  };
+
   return (
     <div
       role="radiogroup"
       aria-label="Select a 4H role"
       className="grid grid-cols-2 gap-3"
     >
-      {fallback.primaryRole.map((role) => {
+      {roles.map((role, index) => {
         const selected = value === role;
         return (
           <button
             key={role}
+            ref={(el) => {
+              buttonRefs.current[index] = el;
+            }}
             type="button"
             role="radio"
             aria-checked={selected}
+            tabIndex={tabIndexFor(role)}
             onClick={() => onChange(role)}
+            onKeyDown={(e) => {
+              if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+                e.preventDefault();
+                move(index, 1);
+              } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+                e.preventDefault();
+                move(index, -1);
+              }
+            }}
             className={cn(
               "border-border/60 bg-accent/40 flex cursor-pointer flex-col items-center gap-2 rounded-xl border-2 p-3 transition-colors",
               selected && "border-primary bg-primary/5 ring-primary/15 ring-2",

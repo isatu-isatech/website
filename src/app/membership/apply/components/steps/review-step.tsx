@@ -18,8 +18,9 @@ export function ReviewStep({
   onRetryVerification: () => void;
 }) {
   const form = useFormContext<MembershipFormValues>();
-  const { getValues } = useFormContext<MembershipFormValues>();
-  const v = getValues();
+  // Subscribed (not a one-shot snapshot) so Edit → back always renders the
+  // current values even if this step ever stops remounting.
+  const v = form.watch();
 
   const sections: {
     title: string;
