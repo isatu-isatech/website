@@ -8,11 +8,18 @@
  * else is coerced to the canonical invite banner by the route.
  */
 
-import { archetypes, archetypeIcons, type ArchetypeKey } from "./data";
+import {
+  archetypes,
+  archetypeIcons,
+  type ArchetypeKey,
+  type CanonicalRole,
+} from "./data";
 import { SITE_CONFIG } from "@/lib/constants/site";
 
 /** The 17 canonical shareable outcomes, derived from quiz-data. */
-export const CANONICAL_ROLES: readonly string[] = Object.keys(archetypes);
+export const CANONICAL_ROLES: readonly CanonicalRole[] = Object.keys(
+  archetypes,
+) as CanonicalRole[];
 
 /** The four archetype keys, derived from the icon map (single source). */
 export const ARCHETYPE_KEYS: readonly ArchetypeKey[] = Object.keys(
@@ -25,8 +32,11 @@ export const GENERALIST_ROLE = "Generalist";
 /** True when `role` is one of the 17 canonical outcomes. */
 export function isCanonicalRole(
   role: string | null | undefined,
-): role is string {
-  return typeof role === "string" && CANONICAL_ROLES.includes(role);
+): role is CanonicalRole {
+  return (
+    typeof role === "string" &&
+    (CANONICAL_ROLES as readonly string[]).includes(role)
+  );
 }
 
 /** Type guard for the `archetype` query param. */

@@ -19,7 +19,6 @@ import {
   type Choice,
   type Scores,
 } from "@/lib/quiz";
-import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { COLORS } from "@/lib/constants/design-tokens";
 import { useQuizLeaveGuard } from "@/lib/hooks";
@@ -87,13 +86,28 @@ export function QuizContainer() {
   // state): no re-render churn and the exiting screen's frozen handlers stay
   // blocked while the new question remains immediately interactive.
   const answerLockRef = useRef(false);
+  const lockTimeoutRef = useRef<number | undefined>(undefined);
+
+  // Clear the answer-lock timer on unmount so the callback cannot fire past
+  // the component lifetime.
+  useEffect(() => {
+    return () => {
+      if (lockTimeoutRef.current !== undefined) {
+        window.clearTimeout(lockTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const startQuiz = useCallback(() => {
     const questionOrder = shuffleArray(questions.map((_, i) => i));
-    const choiceOrders: number[][] = [];
+    // Keyed by original question index so restore (`questionOrder.map((i) =>
+    // choiceOrders[i])`) and the `isValidChoiceOrders` validator (which checks
+    // `orders[index]` against `set[index]`) agree. Positional pushes broke
+    // round-trip for any non-identity shuffle.
+    const choiceOrders: number[][] = new Array<number[]>(questions.length);
     const shuffledQ = questionOrder.map((i) => {
       const order = shuffleArray(questions[i]!.choices.map((_, j) => j));
-      choiceOrders.push(order);
+      choiceOrders[i] = order;
       return {
         ...questions[i]!,
         choices: order.map((j) => questions[i]!.choices[j]!),
@@ -101,10 +115,10 @@ export function QuizContainer() {
     });
 
     const tieBreakerOrder = shuffleArray(tieBreakers.map((_, i) => i));
-    const tieChoiceOrders: number[][] = [];
+    const tieChoiceOrders: number[][] = new Array<number[]>(tieBreakers.length);
     const shuffledTB = tieBreakerOrder.map((i) => {
       const order = shuffleArray(tieBreakers[i]!.choices.map((_, j) => j));
-      tieChoiceOrders.push(order);
+      tieChoiceOrders[i] = order;
       return {
         ...tieBreakers[i]!,
         choices: order.map((j) => tieBreakers[i]!.choices[j]!),
@@ -133,19 +147,38 @@ export function QuizContainer() {
       return state.shuffledTieBreakers[state.usedTieBreakers];
     }
     return null;
-  }, [state]);
+  }, [
+    state.phase,
+    state.shuffledQuestions,
+    state.shuffledTieBreakers,
+    state.currentQuestionIndex,
+    state.usedTieBreakers,
+  ]);
 
   // Derived highlight for the current question (supports Undo/back without
-  // an effect-driven setState).
+  // an effect-driven setState). Main answers occupy `answers[0..N)` in order;
+  // tiebreaker answers append after them, so the tiebreaker slot is
+  // `answers[shuffledQuestions.length + usedTieBreakers]`.
   const selectedChoice = useMemo(() => {
     if (!currentQuestion) return null;
-    const previousAnswer = state.answers[state.currentQuestionIndex];
+    const answerIndex =
+      state.phase === "tiebreaker"
+        ? state.shuffledQuestions.length + state.usedTieBreakers
+        : state.currentQuestionIndex;
+    const previousAnswer = state.answers[answerIndex];
     if (!previousAnswer) return null;
     const index = currentQuestion.choices.findIndex(
       (c) => c.choice === previousAnswer.choice,
     );
     return index !== -1 ? index : null;
-  }, [currentQuestion, state.answers, state.currentQuestionIndex]);
+  }, [
+    currentQuestion,
+    state.answers,
+    state.phase,
+    state.shuffledQuestions.length,
+    state.currentQuestionIndex,
+    state.usedTieBreakers,
+  ]);
 
   // Session persistence (FR-008): restore an in-progress quiz on mount so a
   // refresh or back/forward resumes at the same question with answers intact.
@@ -217,25 +250,29 @@ export function QuizContainer() {
 
       const choice = currentQuestion.choices[choiceIndex];
       if (!choice) return; // index always in-bounds; guard for noUncheckedIndexedAccess
-      const newScores = { ...state.scores };
-
-      for (const [key, value] of Object.entries(choice.weight)) {
-        newScores[key as ArchetypeKey] += value;
-      }
 
       // Lock against double-clicks during the exit transition; the lock
       // releases after the transition, so there is no artificial delay
       // (FR-003) and no state-driven re-renders.
       answerLockRef.current = true;
+      lockTimeoutRef.current = window.setTimeout(() => {
+        answerLockRef.current = false;
+      }, 450);
 
       setState((prev) => {
+        // Accumulate inside the updater from `prev.scores` so rapid
+        // successive answers cannot drop a delta via a stale closure.
+        const nextScores = { ...prev.scores };
+        for (const [key, value] of Object.entries(choice.weight)) {
+          nextScores[key as ArchetypeKey] += value;
+        }
+        // Answers append sequentially: main answers first, then tiebreaker
+        // answers. Slicing by `currentQuestionIndex` during tiebreaker used
+        // to overwrite the last main answer and lose history.
         const newState = {
           ...prev,
-          scores: newScores,
-          answers: [
-            ...prev.answers.slice(0, prev.currentQuestionIndex),
-            choice,
-          ],
+          scores: nextScores,
+          answers: [...prev.answers, choice],
         };
 
         if (prev.phase === "quiz") {
@@ -245,7 +282,7 @@ export function QuizContainer() {
               currentQuestionIndex: prev.currentQuestionIndex + 1,
             };
           } else {
-            const sortedScores = sortScores(newScores);
+            const sortedScores = sortScores(nextScores);
             if (
               needsTieBreaker(
                 sortedScores,
@@ -258,7 +295,7 @@ export function QuizContainer() {
             return { ...newState, phase: "result" };
           }
         } else if (prev.phase === "tiebreaker") {
-          const sortedScores = sortScores(newScores);
+          const sortedScores = sortScores(nextScores);
           if (
             needsTieBreaker(
               sortedScores,
@@ -273,12 +310,8 @@ export function QuizContainer() {
 
         return newState;
       });
-      // Release the double-click lock once the exit transition has passed.
-      window.setTimeout(() => {
-        answerLockRef.current = false;
-      }, 450);
     },
-    [currentQuestion, state.scores],
+    [currentQuestion],
   );
 
   const handleBack = useCallback(() => {
@@ -299,10 +332,13 @@ export function QuizContainer() {
       } else if (prev.phase === "quiz") {
         if (newIndex > 0) {
           newIndex--;
+        } else {
+          return prev;
         }
       }
 
-      const answerToUndo = prev.answers[newIndex];
+      // Answers append sequentially, so undo always pops the last entry.
+      const answerToUndo = prev.answers[prev.answers.length - 1];
       const revertedScores = { ...prev.scores };
 
       if (answerToUndo) {
@@ -314,6 +350,7 @@ export function QuizContainer() {
       return {
         ...prev,
         scores: revertedScores,
+        answers: prev.answers.slice(0, -1),
         phase: newPhase,
         currentQuestionIndex: newIndex,
         usedTieBreakers: newUsedTieBreakers,
@@ -329,40 +366,49 @@ export function QuizContainer() {
   useEffect(() => {
     if (state.phase === "result" && result && !result.needsTieBreaker) {
       if (reduceMotion) return; // confetti storm off under reduced motion
-      const duration = 3000;
-      const end = Date.now() + duration;
+      let cancelled = false;
+      // Lazy-load celebration code so every quiz visitor doesn't pay for it.
+      void import("canvas-confetti").then(({ default: confetti }) => {
+        if (cancelled) return;
+        const duration = 3000;
+        const end = Date.now() + duration;
 
-      const frame = () => {
-        confetti({
-          particleCount: 3,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0 },
-          colors: [
-            COLORS.primary.DEFAULT,
-            COLORS.secondary.DEFAULT,
-            COLORS.quiz.archetypes.Hipster.from,
-            COLORS.quiz.archetypes.Hound.from,
-          ],
-        });
-        confetti({
-          particleCount: 3,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1 },
-          colors: [
-            COLORS.primary.DEFAULT,
-            COLORS.secondary.DEFAULT,
-            COLORS.quiz.archetypes.Hipster.from,
-            COLORS.quiz.archetypes.Hound.from,
-          ],
-        });
+        const frame = () => {
+          if (cancelled) return;
+          confetti({
+            particleCount: 3,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: [
+              COLORS.primary.DEFAULT,
+              COLORS.secondary.DEFAULT,
+              COLORS.quiz.archetypes.Hipster.from,
+              COLORS.quiz.archetypes.Hound.from,
+            ],
+          });
+          confetti({
+            particleCount: 3,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: [
+              COLORS.primary.DEFAULT,
+              COLORS.secondary.DEFAULT,
+              COLORS.quiz.archetypes.Hipster.from,
+              COLORS.quiz.archetypes.Hound.from,
+            ],
+          });
 
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
+          if (Date.now() < end) {
+            requestAnimationFrame(frame);
+          }
+        };
+        frame();
+      });
+      return () => {
+        cancelled = true;
       };
-      frame();
     }
   }, [state.phase, result, reduceMotion]);
 
@@ -380,7 +426,13 @@ export function QuizContainer() {
       );
     }
     return 0;
-  }, [state]);
+  }, [
+    state.phase,
+    state.currentQuestionIndex,
+    state.shuffledQuestions.length,
+    state.shuffledTieBreakers.length,
+    state.usedTieBreakers,
+  ]);
 
   const resetQuiz = useCallback(() => {
     // A fresh attempt re-enables progress persistence (it was suppressed if
@@ -402,24 +454,36 @@ export function QuizContainer() {
   }, []);
 
   const shareResult = useCallback(() => {
-    if (isFinalResult(result)) {
-      const text = `I just took the 4H Personality Quiz and I'm a ${result.role}! 🎉\n\nDiscover your founder archetype at`;
-      // Byte-identical with the result page metadata and the OG banner URL (FR-014).
-      const url = buildShareUrl(
-        {
-          role: result.role,
-          archetype: result.primaryArchetype,
-          isGeneralist: result.isGeneralist,
-        },
-        window.location.origin,
-      ).toString();
+    if (!isFinalResult(result)) return;
+    const text = `I just took the 4H Personality Quiz and I'm a ${result.role}! 🎉\n\nDiscover your founder archetype at`;
+    // Byte-identical with the result page metadata and the OG banner URL (FR-014).
+    const url = buildShareUrl(
+      {
+        role: result.role,
+        archetype: result.primaryArchetype,
+        isGeneralist: result.isGeneralist,
+      },
+      window.location.origin,
+    ).toString();
 
-      if (navigator.share) {
-        navigator.share({ title: "4H Personality Quiz", text, url });
-      } else {
-        navigator.clipboard.writeText(`${text} ${url}`);
-        toast("Result copied to clipboard!");
-      }
+    if (navigator.share) {
+      void navigator
+        .share({ title: "4H Personality Quiz", text, url })
+        .catch(() => {
+          // Share abort/dismissal — no toast, nothing lost.
+        });
+    } else if (
+      typeof navigator.clipboard?.writeText === "function" &&
+      window.isSecureContext
+    ) {
+      void navigator.clipboard
+        .writeText(`${text} ${url}`)
+        .then(() => toast("Result copied to clipboard!"))
+        .catch(() =>
+          toast.error("Copy failed — long-press the link to copy it manually."),
+        );
+    } else {
+      toast.error("Sharing isn't supported in this browser.");
     }
   }, [result]);
 

@@ -1,19 +1,21 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "motion/react";
 import { useMountedReducedMotion } from "@/lib/hooks";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Share2, RotateCcw } from "lucide-react";
+import { Share2, RotateCcw, ArrowRight } from "lucide-react";
 import {
   archetypeIcons,
   type ArchetypeKey,
   type FinalResult,
 } from "@/lib/quiz";
 import { COLORS } from "@/lib/constants/design-tokens";
+import { cn } from "@/lib/utils";
 
-export function ResultScreen({
+export const ResultScreen = memo(function ResultScreen({
   result,
   onReset,
   onShare,
@@ -52,7 +54,10 @@ export function ResultScreen({
         transition={
           reduceMotion ? { duration: 0 } : { type: "spring", delay: 0.2 }
         }
-        className={`mb-2.5 inline-flex h-16 w-16 flex-col items-center justify-center rounded-full bg-linear-to-br md:mb-3 md:h-20 md:w-20 ${secondaryColor ?? ""} p-1.5 shadow-2xl md:p-2`}
+        className={cn(
+          "mb-2.5 inline-flex h-16 w-16 flex-col items-center justify-center rounded-full bg-linear-to-br p-1.5 shadow-2xl md:mb-3 md:h-20 md:w-20 md:p-2",
+          secondaryColor,
+        )}
         style={
           generalistGradient
             ? { backgroundImage: generalistGradient }
@@ -60,7 +65,15 @@ export function ResultScreen({
         }
       >
         <div className="relative h-full w-full">
-          <Image src={primaryImage} alt="" fill className="object-contain" />
+          <Image
+            src={primaryImage}
+            alt={
+              result.isGeneralist ? "4H archetypes" : result.primaryArchetype
+            }
+            fill
+            sizes="80px"
+            className="object-contain"
+          />
         </div>
       </motion.div>
 
@@ -72,7 +85,10 @@ export function ResultScreen({
       >
         <p className="text-muted-foreground mb-0.5 text-xs">You are a...</p>
         <h2
-          className={`mb-1.5 bg-linear-to-r text-lg font-bold md:mb-2 md:text-xl lg:text-2xl ${secondaryColor ?? ""} [@supports_not_(background-clip:text)]:text-secondary-dark [@supports_not_(background-clip:text)]:dark:text-secondary bg-clip-text text-transparent`}
+          className={cn(
+            "[@supports_not_(background-clip:text)]:text-secondary-dark [@supports_not_(background-clip:text)]:dark:text-secondary mb-1.5 bg-linear-to-r bg-clip-text text-lg font-bold text-transparent md:mb-2 md:text-xl lg:text-2xl",
+            secondaryColor,
+          )}
           style={
             generalistGradient
               ? { backgroundImage: generalistGradient }
@@ -116,6 +132,7 @@ export function ResultScreen({
                       src={archetypeIcons[archetype as ArchetypeKey]}
                       alt={archetype}
                       fill
+                      sizes="20px"
                       className="object-contain"
                     />
                   </div>
@@ -135,10 +152,11 @@ export function ResultScreen({
                             ? { duration: 0 }
                             : { duration: 0.8, delay: 0.9 }
                         }
-                        className={`h-full rounded-full bg-linear-to-r ${
+                        className={cn(
+                          "h-full rounded-full bg-linear-to-r",
                           COLORS.quiz.archetypes[archetype as ArchetypeKey]
-                            .gradient
-                        }`}
+                            .gradient,
+                        )}
                       />
                     </div>
                   </div>
@@ -190,7 +208,10 @@ export function ResultScreen({
           asChild
           className="min-h-[48px] w-full sm:w-auto"
         >
-          <Link href="/membership">Join ISATech as a {result.role} →</Link>
+          <Link href="/membership" className="inline-flex items-center gap-1">
+            Join ISATech as a {result.role}
+            <ArrowRight aria-hidden className="size-4" />
+          </Link>
         </Button>
         <p className="text-muted-foreground text-xs">
           See what membership offers first — no commitment.
@@ -198,4 +219,4 @@ export function ResultScreen({
       </motion.div>
     </motion.div>
   );
-}
+});

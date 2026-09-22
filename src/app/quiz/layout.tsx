@@ -24,15 +24,15 @@ export default function QuizLayout({
       {/* Simplified Header */}
       <header className="border-border/50 bg-background/80 z-90 flex shrink-0 items-center justify-center border-b px-6 py-3 backdrop-blur-md">
         <div className="flex w-full max-w-6xl items-center justify-between">
-          <Link
-            href="/"
-            className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
-          >
-            <Button variant="ghost" size="sm" className="gap-2">
+          <Button variant="ghost" size="sm" className="gap-2" asChild>
+            <Link
+              href="/"
+              className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
+            >
               <ArrowLeft className="size-4" />
               <span className="hidden sm:inline">Back to Home</span>
-            </Button>
-          </Link>
+            </Link>
+          </Button>
 
           <div
             aria-hidden="true"

@@ -1,12 +1,15 @@
 "use client";
 
+import { memo, useEffect, useRef } from "react";
+import type { KeyboardEvent } from "react";
 import { motion } from "motion/react";
 import { useMountedReducedMotion } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { Question, Choice } from "@/lib/quiz";
 
-export function QuestionScreen({
+export const QuestionScreen = memo(function QuestionScreen({
   question,
   shuffledChoices,
   selectedChoice,
@@ -30,6 +33,29 @@ export function QuestionScreen({
   canGoBack: boolean;
 }) {
   const reduceMotion = useMountedReducedMotion();
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // Move focus to the new question on advance so keyboard/SR users don't
+  // land on the unmounted button (which falls back to body).
+  useEffect(() => {
+    headingRef.current?.focus({ preventScroll: true });
+  }, [question]);
+
+  const handleKeyDown = (e: KeyboardEvent, index: number) => {
+    if (
+      e.key !== "ArrowRight" &&
+      e.key !== "ArrowDown" &&
+      e.key !== "ArrowLeft" &&
+      e.key !== "ArrowUp"
+    ) {
+      return;
+    }
+    e.preventDefault();
+    const delta = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : -1;
+    const next =
+      (index + delta + shuffledChoices.length) % shuffledChoices.length;
+    document.getElementById(`quiz-choice-${next}`)?.focus();
+  };
 
   return (
     <div className="relative w-full px-4 py-4 md:py-6">
@@ -71,7 +97,6 @@ export function QuestionScreen({
 
       {/* Question and Choices */}
       <motion.div
-        layout={reduceMotion ? false : true}
         initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 0, y: 10 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
         exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 0, y: -10 }}
@@ -82,41 +107,60 @@ export function QuestionScreen({
       >
         {/* Question — lg capped at xl so long questions fit kiosk widths */}
         <motion.h2
+          ref={headingRef}
+          tabIndex={-1}
           initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={reduceMotion ? { duration: 0 } : undefined}
-          className="mb-4 text-center text-lg font-bold md:mb-6 md:text-xl lg:text-xl"
+          className="mb-4 text-center text-lg font-bold outline-none md:mb-6 md:text-xl lg:text-xl"
         >
           {question.question}
         </motion.h2>
 
-        {/* Choices */}
-        <div className="space-y-2 md:space-y-3">
+        {/* Choices — single radiogroup with roving focus; the list animates
+            once instead of per-choice stagger to cut motion churn. */}
+        <div
+          role="radiogroup"
+          aria-label={question.question}
+          className="space-y-2 md:space-y-3"
+        >
           {shuffledChoices.map((choice, index) => (
             <motion.button
               key={choice.choice}
+              id={`quiz-choice-${index}`}
               type="button"
-              aria-pressed={selectedChoice === index}
+              role="radio"
+              aria-checked={selectedChoice === index}
+              tabIndex={
+                selectedChoice === null
+                  ? index === 0
+                    ? 0
+                    : -1
+                  : selectedChoice === index
+                    ? 0
+                    : -1
+              }
               initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={
-                reduceMotion ? { duration: 0 } : { delay: index * 0.05 }
-              }
+              transition={reduceMotion ? { duration: 0 } : undefined}
               onClick={() => onSelect(index)}
-              className={`w-full rounded-lg border-2 p-3 text-left transition-all duration-300 md:rounded-xl md:p-4 ${
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              className={cn(
+                "w-full rounded-lg border-2 p-3 text-left transition-all duration-300 md:rounded-xl md:p-4",
                 selectedChoice === index
                   ? "border-primary bg-primary/10 scale-[1.02]"
-                  : "border-border bg-card hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]"
-              } `}
+                  : "border-border bg-card hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]",
+              )}
             >
               <div className="flex items-center gap-2 md:gap-3">
                 <div
                   aria-hidden="true"
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold md:h-8 md:w-8 md:text-sm ${
+                  className={cn(
+                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold md:h-8 md:w-8 md:text-sm",
                     selectedChoice === index
                       ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  } `}
+                      : "bg-muted text-muted-foreground",
+                  )}
                 >
                   {String.fromCharCode(65 + index)}
                 </div>
@@ -145,4 +189,4 @@ export function QuestionScreen({
       )}
     </div>
   );
-}
+});

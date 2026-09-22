@@ -17,7 +17,7 @@ import {
 } from "./data";
 import { ARCHETYPE_KEYS } from "./canonical";
 
-export const QUIZ_PROGRESS_KEY = "4h-quiz-progress-v1";
+export const QUIZ_PROGRESS_KEY = "4h-quiz-progress-v2";
 
 export interface SavedQuizProgress {
   version: string;
@@ -37,11 +37,13 @@ export interface SavedQuizProgress {
 }
 
 /**
- * Version token derived from the quiz-data shape. Stored records with a
- * different token are treated as stale and discarded.
+ * Version token derived from the quiz-data shape plus the persistence schema
+ * version (v2: `choiceOrders` keyed by original index, answers appended
+ * sequentially). Stored records with a different token are treated as stale
+ * and discarded.
  */
 export function makeProgressVersion(): string {
-  return `${questions.length}:${tieBreakers.length}`;
+  return `v2:${questions.length}:${tieBreakers.length}`;
 }
 
 function isWeight(value: unknown): value is Record<ArchetypeKey, number> {

@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { motion } from "motion/react";
 import { useMountedReducedMotion } from "@/lib/hooks";
 import Link from "next/link";
@@ -9,7 +10,11 @@ import Image from "next/image";
 import { archetypeIcons, questions, ARCHETYPE_KEYS } from "@/lib/quiz";
 import { COLORS } from "@/lib/constants/design-tokens";
 
-export function IntroScreen({ onStart }: { onStart: () => void }) {
+export const IntroScreen = memo(function IntroScreen({
+  onStart,
+}: {
+  onStart: () => void;
+}) {
   const reduceMotion = useMountedReducedMotion();
 
   return (
@@ -38,6 +43,7 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
                 src={archetypeIcons[archetype]}
                 alt={archetype}
                 fill
+                sizes="64px"
                 className="object-contain"
               />
             </div>
@@ -68,7 +74,7 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
         type="button"
         onClick={onStart}
         size="lg"
-        className="group from-primary hover:from-primary/90 relative overflow-hidden bg-linear-to-r to-blue-600 px-6 py-4 text-base text-white shadow-xl transition-all duration-300 hover:to-blue-500 hover:shadow-2xl active:scale-[0.98] md:px-8 md:py-5 md:text-lg"
+        className="group from-primary hover:from-primary/90 to-secondary hover:to-secondary/90 relative overflow-hidden bg-linear-to-r px-6 py-4 text-base text-white shadow-xl transition-all duration-300 hover:shadow-2xl active:scale-[0.98] md:px-8 md:py-5 md:text-lg"
       >
         <Sparkles className="mr-2 size-4 md:size-5" />
         Start the Quiz
@@ -93,4 +99,4 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
       </p>
     </motion.div>
   );
-}
+});

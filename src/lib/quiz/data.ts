@@ -481,7 +481,7 @@ export const archetypeIcons: Record<ArchetypeKey, string> = Object.fromEntries(
   TEAM_4H.map((member) => [member.role, member.imagePath]),
 ) as Record<ArchetypeKey, string>;
 
-export const archetypes: Record<string, string> = {
+export const archetypes = {
   "True Hustler":
     "You're the natural deal-maker and motivator. Always spotting opportunities, hyping the vision, and keeping the crew's energy high. When others hesitate, you charge forward.",
   "Ingenious Hustler":
@@ -520,6 +520,14 @@ export const archetypes: Record<string, string> = {
 
   Generalist:
     "You're the ultimate jack-of-all-traits. Instead of sticking to one lane, you adapt, balance, and connect the dots across roles. You're the glue that makes every mix stronger.",
-};
+} as const;
 
+/**
+ * Near-miss gap (in raw score points) below which a second≈third tie still
+ * forces a tiebreaker: the role label would otherwise be a coin flip between
+ * `adjective(top2) top1` variants. Max single-answer archetype delta is 2–3
+ * pts, so 5 pts ≈ two answers — a deliberately tight band.
+ */
 export const SCORE_THRESHOLD = 5;
+
+export type CanonicalRole = keyof typeof archetypes;
