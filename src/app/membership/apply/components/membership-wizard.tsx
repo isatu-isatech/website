@@ -363,7 +363,7 @@ export function MembershipWizard({
         {/* Page header + primary actions in one top bar: identity on the
             left, Back → Next on the right. The single nav instance for
             every breakpoint. */}
-        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between landscape:flex-row landscape:items-center landscape:justify-between">
           <div className="flex min-w-0 flex-col items-start gap-2 text-left">
             <h1 className="text-secondary-dark dark:text-secondary text-2xl font-bold md:text-3xl">
               Membership Application
@@ -392,7 +392,7 @@ export function MembershipWizard({
         </div>
         <div
           ref={wizardTopRef}
-          className="flex min-h-0 w-full flex-1 flex-col justify-start gap-5 lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:content-start lg:items-stretch lg:gap-8"
+          className="flex min-h-0 w-full flex-1 flex-col justify-start gap-5 lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:content-stretch lg:items-stretch lg:gap-8"
         >
           {/* Position scent — static row; nothing scrolls past it in the
               fixed shell. Text is aria-hidden: the live region above
@@ -435,8 +435,10 @@ export function MembershipWizard({
           </aside>
 
           {/* Right column: scrollable form pane + anchored nav. The divider
-              replaces the card as the rail/form separation on lg. */}
-          <div className="lg:border-border/60 flex min-h-0 min-w-0 flex-1 flex-col justify-start gap-5 lg:gap-0 lg:border-l lg:pl-8">
+              replaces the card as the rail/form separation on lg. The column
+              fills the stretched grid row (lg:h-full) so the footer pins to
+              the viewport bottom on every step; only the form pane scrolls. */}
+          <div className="lg:border-border/60 flex min-h-0 min-w-0 flex-1 flex-col justify-start gap-5 lg:h-full lg:gap-0 lg:border-l lg:pl-8">
             <form
               ref={formScrollRef}
               onScroll={updatePaneChrome}
@@ -495,10 +497,11 @@ export function MembershipWizard({
               </div>
             </form>
 
-            {/* Footer nav + hint — the default-position instance. Hidden
-                on lg portrait and mobile landscape, where the header
-                carries the nav instead. */}
-            <div className="border-border/60 flex shrink-0 flex-col gap-2 border-t pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:portrait:hidden max-lg:landscape:hidden">
+            {/* Footer nav + hint — the default-position instance, pinned to
+                the column bottom via mt-auto so its level is identical on
+                every step. Hidden on lg portrait and mobile landscape, where
+                the header carries the nav instead. */}
+            <div className="border-border/60 mt-auto flex shrink-0 flex-col gap-2 border-t pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:portrait:hidden max-lg:landscape:hidden">
               <div className="flex items-center justify-end gap-2">
                 <WizardNav
                   step={step}
