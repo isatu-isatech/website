@@ -26,11 +26,21 @@ export function RevealOnView({
 }: RevealOnViewProps) {
   const reduceMotion = useMountedReducedMotion();
 
+  // Reduced motion renders the children statically (viewport-driven motion is
+  // entirely skipped). Early-return a plain tree so the SSR/first-render
+  // `initial={{ opacity: 0 }}` below can never stick: without this, the
+  // post-mount flag flip would drop the `whileInView` target while the
+  // `opacity: 0` initial is already applied, leaving content invisible.
+  // Same pattern as contact-hero and page-transition.
+  if (reduceMotion) {
+    return <div className={className}>{children}</div>;
+  }
+
   return (
     <motion.div
       className={className}
-      initial={reduceMotion ? false : { opacity: 0, y: 24 }}
-      whileInView={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
       transition={{ duration: 0.5, delay, ease: [0.22, 1, 0.36, 1] }}
     >
