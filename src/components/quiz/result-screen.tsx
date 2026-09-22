@@ -60,12 +60,7 @@ export function ResultScreen({
         }
       >
         <div className="relative h-full w-full">
-          <Image
-            src={primaryImage}
-            alt={result.role}
-            fill
-            className="object-contain"
-          />
+          <Image src={primaryImage} alt="" fill className="object-contain" />
         </div>
       </motion.div>
 
@@ -77,7 +72,7 @@ export function ResultScreen({
       >
         <p className="text-muted-foreground mb-0.5 text-xs">You are a...</p>
         <h2
-          className={`mb-1.5 bg-linear-to-r text-lg font-bold md:mb-2 md:text-xl lg:text-2xl ${secondaryColor ?? ""} bg-clip-text text-transparent`}
+          className={`mb-1.5 bg-linear-to-r text-lg font-bold md:mb-2 md:text-xl lg:text-2xl ${secondaryColor ?? ""} [@supports_not_(background-clip:text)]:text-secondary-dark [@supports_not_(background-clip:text)]:dark:text-secondary bg-clip-text text-transparent`}
           style={
             generalistGradient
               ? { backgroundImage: generalistGradient }
@@ -183,19 +178,24 @@ export function ResultScreen({
       </motion.div>
 
       {/* Funnel hand-off — the quiz peak leads into membership (FR-014) */}
-      <motion.p
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={reduceMotion ? { duration: 0 } : { delay: 1.1 }}
-        className="mt-8 text-center"
+        className="mt-8 flex flex-col items-center gap-2 text-center"
       >
-        <Link
-          href="/membership"
-          className="text-muted-foreground hover:text-primary text-sm underline-offset-4 transition-colors hover:underline"
+        <Button
+          variant="secondary"
+          size="lg"
+          asChild
+          className="min-h-[48px] w-full sm:w-auto"
         >
-          Your {result.primaryArchetype} energy belongs at ISATech — join us →
-        </Link>
-      </motion.p>
+          <Link href="/membership">Join ISATech as a {result.role} →</Link>
+        </Button>
+        <p className="text-muted-foreground text-xs">
+          See what membership offers first — no commitment.
+        </p>
+      </motion.div>
     </motion.div>
   );
 }

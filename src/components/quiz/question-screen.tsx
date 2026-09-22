@@ -38,7 +38,9 @@ export function QuestionScreen({
         <div className="mb-1 flex items-center justify-between">
           <span className="text-muted-foreground text-xs font-medium md:text-sm">
             {isTieBreaker ? (
-              <span className="text-secondary">⚡ Tiebreaker Round</span>
+              <span className="text-secondary">
+                <span aria-hidden="true">⚡</span> Tiebreaker Round
+              </span>
             ) : (
               `Question ${questionNumber} of ${totalQuestions}`
             )}
@@ -109,7 +111,8 @@ export function QuestionScreen({
             >
               <div className="flex items-center gap-2 md:gap-3">
                 <div
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold md:h-8 md:w-8 md:text-sm ${
+                  aria-hidden="true"
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold md:h-8 md:w-8 md:text-sm ${
                     selectedChoice === index
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"

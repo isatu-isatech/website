@@ -27,7 +27,7 @@ export function IdleCountdown({ secondsLeft }: { secondsLeft: number }) {
     <div className="mb-2 flex w-full justify-center">
       <p
         role="status"
-        className="border-secondary/50 bg-secondary/10 text-secondary-dark dark:text-secondary inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium tabular-nums"
+        className="border-secondary/50 bg-secondary/10 text-secondary-dark dark:text-secondary inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium tabular-nums"
       >
         <span aria-hidden="true">Resetting in {visual} — tap to continue</span>
         <span className="sr-only">{announcement}</span>

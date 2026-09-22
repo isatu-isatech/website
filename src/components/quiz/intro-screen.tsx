@@ -2,6 +2,7 @@
 
 import { motion } from "motion/react";
 import { useMountedReducedMotion } from "@/lib/hooks";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";
@@ -81,6 +82,12 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
       <p className="text-muted-foreground mt-3 text-xs md:text-sm">
         {questions.length} questions · at your own pace{" "}
         {/* TODO(org-copy): org may provide wording for the intro time/count string */}
+      </p>
+      <p className="text-muted-foreground mt-1 text-xs">
+        New here?{" "}
+        <Link href="/about" className="text-primary underline">
+          What the 4H roles mean
+        </Link>
       </p>
     </motion.div>
   );
