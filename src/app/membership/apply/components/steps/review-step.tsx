@@ -124,8 +124,10 @@ export function ReviewStep({
           <dl className="grid gap-1 text-sm">
             {sec.items.map((it) => (
               <div key={it.label} className="flex justify-between gap-4">
-                <dt className="text-muted-foreground">{it.label}</dt>
-                <dd className="text-right font-medium break-words">
+                {/* min-w-0 lets long unbroken values (emails, URLs) wrap
+                    inside the flex row instead of forcing x-scroll. */}
+                <dt className="text-muted-foreground shrink-0">{it.label}</dt>
+                <dd className="min-w-0 text-right font-medium break-words">
                   {it.value}
                 </dd>
               </div>

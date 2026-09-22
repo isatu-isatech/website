@@ -133,6 +133,7 @@ export function RolePreferencesStep() {
               <FormControl>
                 <Textarea
                   placeholder="e.g., Graphic design, public speaking"
+                  className="bg-card"
                   {...field}
                   rows={3}
                 />
@@ -150,6 +151,7 @@ export function RolePreferencesStep() {
               <FormControl>
                 <Textarea
                   placeholder="e.g., Previous orgs, projects"
+                  className="bg-card"
                   {...field}
                   rows={3}
                 />

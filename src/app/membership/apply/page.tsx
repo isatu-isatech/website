@@ -22,7 +22,7 @@ export default function MembershipApplyPage() {
   // the wizard section hydrates campaign status on the client with an
   // indicator, so Notion latency/outages never block page load.
   return (
-    <main className="from-background via-background to-muted/30 relative min-h-svh bg-linear-to-b lg:flex lg:min-h-0 lg:flex-1 lg:flex-col lg:overflow-hidden">
+    <main className="from-background via-background to-muted/30 relative flex min-h-0 flex-1 flex-col overflow-hidden bg-linear-to-b">
       {/* Background decorations — same language as the quiz page: masked
           brand emblems plus two restrained blobs. */}
       <div
@@ -62,9 +62,9 @@ export default function MembershipApplyPage() {
         gridPatternDarkOpacity="opacity-0"
       />
 
-      {/* Below lg the page scrolls naturally; on lg the section below owns
-          the fixed height and the form pane scrolls within it. */}
-      <div className="relative z-10 flex w-full lg:min-h-0 lg:flex-1 lg:flex-col">
+      {/* The section below owns the fixed height; the form pane scrolls
+          within it at every width. */}
+      <div className="relative z-10 flex min-h-0 w-full flex-1 flex-col">
         <MembershipWizardSection />
       </div>
     </main>

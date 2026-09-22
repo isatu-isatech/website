@@ -30,7 +30,11 @@ export function IdentityStep() {
             <FormItem className="md:col-span-2">
               <FormLabel>Full Name *</FormLabel>
               <FormControl>
-                <Input placeholder="Juan Dela Cruz" {...field} />
+                <Input
+                  placeholder="Juan Dela Cruz"
+                  className="bg-card"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -43,7 +47,7 @@ export function IdentityStep() {
             <FormItem>
               <FormLabel>Nickname</FormLabel>
               <FormControl>
-                <Input placeholder="Juan" {...field} />
+                <Input placeholder="Juan" className="bg-card" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -56,7 +60,7 @@ export function IdentityStep() {
             <FormItem>
               <FormLabel>Birthdate *</FormLabel>
               <FormControl>
-                <Input type="date" {...field} />
+                <Input type="date" className="bg-card" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -70,7 +74,7 @@ export function IdentityStep() {
               <FormLabel>Sex *</FormLabel>
               <FormControl>
                 <select
-                  className="border-input bg-background flex min-h-12 w-full rounded-md border px-3 py-1 text-base"
+                  className="border-input bg-card dark:bg-input/30 flex min-h-12 w-full rounded-md border px-3 py-1 text-base"
                   {...field}
                 >
                   <option value="">Select</option>

@@ -28,7 +28,7 @@ export function AcademicStep() {
               <FormLabel>College *</FormLabel>
               <FormControl>
                 <select
-                  className="border-input bg-background flex h-9 w-full rounded-md border px-3 py-1 text-sm"
+                  className="border-input bg-card dark:bg-input/30 flex h-9 w-full rounded-md border px-3 py-1 text-sm"
                   {...field}
                 >
                   <option value="">Select college</option>
@@ -50,7 +50,7 @@ export function AcademicStep() {
             <FormItem>
               <FormLabel>Program *</FormLabel>
               <FormControl>
-                <Input placeholder="BSIT" {...field} />
+                <Input placeholder="BSIT" className="bg-card" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -64,7 +64,7 @@ export function AcademicStep() {
               <FormLabel>Year Level *</FormLabel>
               <FormControl>
                 <select
-                  className="border-input bg-background flex h-9 w-full rounded-md border px-3 py-1 text-sm"
+                  className="border-input bg-card dark:bg-input/30 flex h-9 w-full rounded-md border px-3 py-1 text-sm"
                   {...field}
                 >
                   <option value="">Select year</option>

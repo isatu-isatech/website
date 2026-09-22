@@ -68,7 +68,7 @@ export function MembershipWizardSection() {
         className="mx-auto flex w-full max-w-7xl flex-col items-center gap-5 px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:px-12 xl:px-16"
       >
         <ApplyHeading subtitle="We couldn't reach our records just now." />
-        <div className="bg-accent/30 border-border/60 mx-auto flex w-full max-w-lg flex-col items-center gap-4 rounded-2xl border p-8 text-center">
+        <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-4 p-8 text-center">
           <AlertTriangle className="text-destructive size-6" aria-hidden />
           <p className="text-muted-foreground text-sm">
             We couldn&apos;t check whether applications are open right now.
@@ -84,7 +84,7 @@ export function MembershipWizardSection() {
   return (
     <section
       id="apply"
-      className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-6 sm:px-6 md:gap-6 md:px-8 md:py-10 lg:min-h-0 lg:flex-1 lg:overflow-hidden lg:px-12 lg:py-8 xl:px-16"
+      className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col gap-5 overflow-hidden px-4 py-6 sm:px-6 md:gap-6 md:px-8 md:py-10 lg:gap-8 lg:px-12 lg:py-8 xl:px-16"
     >
       {/* Hide the page title once submitted — the confirmation is not a
           place to start an application. The closed state keeps its H1. */}

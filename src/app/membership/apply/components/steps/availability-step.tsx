@@ -29,7 +29,7 @@ export function AvailabilityStep() {
               </FormLabel>
               <FormControl>
                 <select
-                  className="border-input bg-background flex h-9 w-full rounded-md border px-3 py-1 text-sm"
+                  className="border-input bg-card dark:bg-input/30 flex h-9 w-full rounded-md border px-3 py-1 text-sm"
                   {...field}
                 >
                   <option value="">Select commitment</option>
@@ -81,6 +81,7 @@ export function AvailabilityStep() {
               <FormControl>
                 <Textarea
                   placeholder="e.g., Student council, coding club"
+                  className="bg-card"
                   {...field}
                   rows={2}
                 />

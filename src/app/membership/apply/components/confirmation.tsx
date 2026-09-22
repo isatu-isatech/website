@@ -18,7 +18,7 @@ export function MembershipConfirmation({
     // Margin-auto centers on lg without the overflow-clipping that
     // items-center/justify-center cause on short viewports; top-nudged
     // toward eye level on portrait.
-    <div className="flex flex-col items-center gap-6 py-8 text-center lg:m-auto portrait:pt-[3svh]">
+    <div className="m-auto flex flex-col items-center gap-6 py-8 text-center portrait:pt-[3svh]">
       <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-full">
         <CheckCircle className="text-primary h-8 w-8" />
       </div>

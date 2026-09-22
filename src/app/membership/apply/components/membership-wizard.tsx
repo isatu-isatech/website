@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { FocusEvent } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { useReducedMotion } from "motion/react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -61,6 +62,17 @@ export function MembershipWizard({
   const formScrollRef = useRef<HTMLFormElement>(null);
   const resetPaneScroll = () => {
     formScrollRef.current?.scrollTo({ top: 0, behavior: "auto" });
+  };
+  // Virtual keyboards (notably iOS Safari) don't resize fixed shells, so a
+  // focused field can end up hidden behind the keyboard. Nudge it into view
+  // inside the pane on focus — instant, pane-local, never page-level.
+  const handlePaneFocus = (e: FocusEvent) => {
+    const pane = formScrollRef.current;
+    const target = e.target as HTMLElement | null;
+    if (!pane || !target || typeof target.scrollIntoView !== "function") return;
+    requestAnimationFrame(() => {
+      target.scrollIntoView({ block: "nearest", behavior: "auto" });
+    });
   };
   // lg pane chrome: edge fades driven by the pane's own scroll position.
   // Updated on scroll, step change, and resize. The persistent scroll
@@ -145,11 +157,18 @@ export function MembershipWizard({
     });
   };
 
-  // Recompute pane chrome when the viewport changes the pane's capacity.
+  // Recompute pane chrome when the viewport changes the pane's capacity —
+  // including the visual viewport, which is what actually shrinks when a
+  // mobile keyboard opens.
   useEffect(() => {
     updatePaneChrome();
     window.addEventListener("resize", updatePaneChrome);
-    return () => window.removeEventListener("resize", updatePaneChrome);
+    const vv = window.visualViewport;
+    vv?.addEventListener("resize", updatePaneChrome);
+    return () => {
+      window.removeEventListener("resize", updatePaneChrome);
+      vv?.removeEventListener("resize", updatePaneChrome);
+    };
   }, [step, updatePaneChrome]);
 
   // Warm the role-picker art on mount (step 1) so the step-4 pickers render
@@ -219,7 +238,7 @@ export function MembershipWizard({
 
   if (!activeCampaign) {
     return (
-      <div className="bg-accent/30 border-border/60 mx-auto flex max-w-lg flex-col items-center gap-4 rounded-2xl border p-8 text-center">
+      <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-4 p-8 text-center">
         <h3 className="text-lg font-semibold">
           Applications are currently closed
         </h3>
@@ -236,7 +255,7 @@ export function MembershipWizard({
     return (
       // Plain flex shell — the confirmation centers itself with margin
       // auto (safe centering: top stays reachable if it ever overflows).
-      <div className="lg:flex lg:min-h-0 lg:flex-1 lg:overflow-y-auto">
+      <div className="flex min-h-0 flex-1 overflow-y-auto">
         <MembershipConfirmation
           academicYear={activeCampaign.academicYear}
           email={submittedEmail}
@@ -256,15 +275,38 @@ export function MembershipWizard({
         </p>
         <div
           ref={wizardTopRef}
-          className="flex w-full flex-col gap-5 lg:grid lg:min-h-0 lg:flex-1 lg:grid-cols-[240px_minmax(0,1fr)] lg:items-stretch lg:gap-8"
+          className="flex min-h-0 w-full flex-1 flex-col gap-5 lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:items-stretch lg:gap-8"
         >
-          {/* Narrow screens: horizontal dots above the card. lg+: a fixed
-              vertical rail; only the form pane scrolls. */}
-          <MembershipStepper
-            currentStep={step}
-            onStepClick={handleStepClick}
-            className="lg:hidden"
-          />
+          {/* Position scent — static row; nothing scrolls past it in the
+              fixed shell. Text is aria-hidden: the live region above
+              announces step changes exactly once. */}
+          <div
+            className="border-b border-transparent pt-1 pb-3 lg:hidden"
+            role="progressbar"
+            aria-valuemin={1}
+            aria-valuemax={totalSteps}
+            aria-valuenow={step}
+            aria-label={`Step ${step} of ${totalSteps}: ${STEPS[step - 1]?.label}`}
+          >
+            <p
+              aria-hidden
+              className="text-caption text-muted-foreground mb-1.5"
+            >
+              Step {step} of {totalSteps} —{" "}
+              <span className="text-foreground font-semibold">
+                {STEPS[step - 1]?.label}
+              </span>
+            </p>
+            <div
+              aria-hidden
+              className="bg-border h-1.5 w-full overflow-hidden rounded-full"
+            >
+              <div
+                className="bg-primary h-full rounded-full motion-safe:transition-[width] motion-safe:duration-200"
+                style={{ width: `${(step / totalSteps) * 100}%` }}
+              />
+            </div>
+          </div>
           <aside
             className="hidden lg:block lg:min-h-0 lg:self-stretch"
             aria-label="Application progress"
@@ -272,34 +314,32 @@ export function MembershipWizard({
             <MembershipStepper
               currentStep={step}
               onStepClick={handleStepClick}
-              orientation="vertical"
             />
           </aside>
 
           {/* Right column: scrollable form pane + anchored nav. The divider
               replaces the card as the rail/form separation on lg. */}
-          <div className="lg:border-border/60 flex min-w-0 flex-col gap-5 lg:min-h-0 lg:flex-1 lg:gap-0 lg:border-l lg:pl-8">
+          <div className="lg:border-border/60 flex min-h-0 min-w-0 flex-1 flex-col gap-5 lg:gap-0 lg:border-l lg:pl-8">
             <form
               ref={formScrollRef}
               onScroll={updatePaneChrome}
+              onFocusCapture={handlePaneFocus}
               onSubmit={(e) => {
                 e.preventDefault();
               }}
-              // lg breathing room inside the pane so focus rings and the
-              // active step glow never clip at the scroll edges. The
-              // position-aware edge fades live on the inner wrapper, NOT
-              // the scroll container — mask-image on the container would
-              // mask the pane's own scrollbar out of view.
-              className="bg-card border-border/60 form-pane-scroll flex w-full flex-col gap-5 rounded-2xl border p-6 md:p-8 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:border-0 lg:bg-transparent lg:p-3"
+              // Flat at every width — no card chrome; the section padding
+              // carries the rhythm. p-2 breathing room keeps focus rings
+              // unclipped in the scroll pane.
+              className="form-pane-scroll flex min-h-0 w-full flex-1 flex-col gap-5 overflow-y-auto p-2"
             >
               <div
                 className={`flex w-full flex-col gap-5 ${
                   paneEdge.top && paneEdge.bottom
-                    ? "lg:[mask-image:linear-gradient(to_bottom,transparent,black_28px,black_calc(100%-28px),transparent)]"
+                    ? "[mask-image:linear-gradient(to_bottom,transparent,black_28px,black_calc(100%-28px),transparent)]"
                     : paneEdge.top
-                      ? "lg:[mask-image:linear-gradient(to_bottom,transparent,black_28px)]"
+                      ? "[mask-image:linear-gradient(to_bottom,transparent,black_28px)]"
                       : paneEdge.bottom
-                        ? "lg:[mask-image:linear-gradient(to_bottom,black_calc(100%-28px),transparent)]"
+                        ? "[mask-image:linear-gradient(to_bottom,black_calc(100%-28px),transparent)]"
                         : ""
                 }`}
               >
@@ -329,12 +369,15 @@ export function MembershipWizard({
               </div>
             </form>
 
-            {/* Anchored navigation — always visible below the pane. */}
-            <div className="lg:border-border/60 flex flex-col gap-2 lg:shrink-0 lg:border-t lg:pt-4">
+            {/* Anchored footer — static row pinned by layout at every
+                width: below lg it sits under the pane in the fixed
+                viewport; on lg it keeps its top border under the scroll
+                pane. */}
+            <div className="border-border/60 flex shrink-0 flex-col gap-2 border-t pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
               {/* Navigation sits below the content, right-aligned, in a
                   fixed Back → Next order. Step changes never scroll the
                   page — the transition is immediate and contained. */}
-              <div className="flex items-center justify-end gap-2 pt-1 lg:pt-0">
+              <div className="flex items-center justify-end gap-2">
                 <Button
                   type="button"
                   variant="outline"
@@ -362,7 +405,7 @@ export function MembershipWizard({
                   </Button>
                 )}
               </div>
-              <p className="text-muted-foreground pt-1 text-center text-xs lg:pt-0 lg:text-right">
+              <p className="text-muted-foreground text-center text-xs lg:text-right">
                 Need help? Reach us at{" "}
                 <a
                   href={`mailto:${SOCIAL_LINKS.email}`}

@@ -19,11 +19,13 @@ export default function MembershipApplyLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // Landscape app shell: fixed viewport, nothing scrolls except the form
-    // pane. Below lg the page scrolls naturally.
-    <div className="flex min-h-svh flex-col lg:h-svh lg:overflow-hidden">
-      {/* Sticky Simplified Header */}
-      <header className="border-border/50 bg-background/80 sticky top-0 z-90 flex shrink-0 items-center justify-center border-b px-6 py-3 backdrop-blur-md">
+    // Contained app shell at every width: fixed viewport, nothing scrolls
+    // except the form pane. svh (not dvh) so mobile toolbars don't make
+    // the shell jump.
+    <div className="flex h-svh flex-col overflow-hidden">
+      {/* Sticky Simplified Header — fixed h-16 so the mobile progress
+          bar's sticky offset is exact. */}
+      <header className="border-border/50 bg-background/80 sticky top-0 z-90 flex h-16 shrink-0 items-center justify-center border-b px-6 backdrop-blur-md">
         <div className="flex w-full max-w-6xl items-center justify-between">
           <Link
             href="/membership"
@@ -44,8 +46,8 @@ export default function MembershipApplyLayout({
         </div>
       </header>
 
-      {/* Main Content - No Footer; fixed height chain on lg */}
-      <div className="flex-1 lg:flex lg:min-h-0 lg:flex-col">{children}</div>
+      {/* Main Content - No Footer; fixed height chain */}
+      <div className="flex min-h-0 flex-1 flex-col">{children}</div>
       <Toaster />
       <OverlayScrollbarsProvider />
       <ScrollActivityIndicator />

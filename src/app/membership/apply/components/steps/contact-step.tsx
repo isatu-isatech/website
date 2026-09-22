@@ -79,7 +79,7 @@ export function ContactStep() {
                     autoComplete="email"
                     placeholder="juan.delacruz"
                     aria-label="School email username"
-                    className="min-w-0 flex-1 rounded-r-none border-r-0"
+                    className="bg-card min-w-0 flex-1 rounded-r-none border-r-0"
                     value={splitEmail(field.value ?? "")}
                     onChange={(e) =>
                       field.onChange(composeEmail(e.target.value))
@@ -110,6 +110,7 @@ export function ContactStep() {
                   inputMode="tel"
                   autoComplete="tel"
                   placeholder="09123456789"
+                  className="bg-card"
                   {...field}
                 />
               </FormControl>
@@ -124,7 +125,11 @@ export function ContactStep() {
             <FormItem>
               <FormLabel>Student ID *</FormLabel>
               <FormControl>
-                <Input placeholder="2021-1234-A" {...field} />
+                <Input
+                  placeholder="2021-1234-A"
+                  className="bg-card"
+                  {...field}
+                />
               </FormControl>
               <p className="text-muted-foreground text-xs">
                 Format: year-number-section (e.g. 2021-1234-A)
@@ -147,7 +152,7 @@ export function ContactStep() {
                     inputMode="url"
                     placeholder="juan.delacruz"
                     aria-label="Facebook profile username"
-                    className="min-w-0 flex-1 rounded-l-none"
+                    className="bg-card min-w-0 flex-1 rounded-l-none"
                     value={splitFacebook(field.value ?? "")}
                     onChange={(e) =>
                       field.onChange(composeFacebook(e.target.value))
