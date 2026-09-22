@@ -5,6 +5,7 @@ import { ISATechLogoMark } from "@/components/assets/logos";
 import { Toaster } from "@/components/ui/sonner";
 import { OverlayScrollbarsProvider } from "@/components/common/overlay-scrollbars-provider";
 import { ScrollActivityIndicator } from "@/components/common/scroll-activity-indicator";
+import { RotateGuard } from "@/components/common";
 
 /**
  * Membership Apply Layout - simplified header without navigation, no footer.
@@ -48,6 +49,7 @@ export default function MembershipApplyLayout({
 
       {/* Main Content - No Footer; fixed height chain */}
       <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+      <RotateGuard />
       <Toaster />
       <OverlayScrollbarsProvider />
       <ScrollActivityIndicator />

@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+/* Phone landscape only: narrow + landscape + short. Tablets, desktops,
+   and split-screen windows never match. */
+@custom-variant mobile-landscape (@media (max-width: 1023px) and (orientation: landscape) and (max-height: 500px));
 
 :root {
   --background: oklch(0.9842 0.0034 247.8575);
