@@ -18,7 +18,9 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
       animate={{ opacity: 1, y: 0 }}
       exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -20 }}
       transition={reduceMotion ? { duration: 0 } : undefined}
-      className="flex flex-col items-center justify-center p-4 text-center md:py-6"
+      // Portrait arrival claims viewport height and centers within itself;
+      // lg portrait collapses back to top-anchored like every other phase.
+      className="flex flex-col items-center justify-center p-4 text-center md:py-6 portrait:min-h-[60svh] lg:portrait:min-h-0"
     >
       {/* Floating 4H images */}
       <div className="relative mb-4 md:mb-6">

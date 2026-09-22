@@ -106,7 +106,7 @@ export function QuestionScreen({
               className={`w-full rounded-lg border-2 p-3 text-left transition-all duration-300 md:rounded-xl md:p-4 ${
                 selectedChoice === index
                   ? "border-primary bg-primary/10 scale-[1.02]"
-                  : "border-border hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]"
+                  : "border-border bg-card hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]"
               } `}
             >
               <div className="flex items-center gap-2 md:gap-3">
