@@ -52,7 +52,7 @@ export function MembershipWizardSection() {
     return (
       <section
         id="apply"
-        className="mx-auto flex w-full max-w-7xl flex-col items-center gap-5 px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:px-12 xl:px-16"
+        className="mx-auto flex w-full max-w-7xl flex-col items-center gap-5 px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:px-12 xl:px-16 portrait:pt-[4svh] md:portrait:pt-[5svh]"
       >
         <ApplyHeading subtitle="Checking whether applications are open…" />
         <Loader2 className="text-primary size-6 animate-spin" aria-hidden />
@@ -64,7 +64,7 @@ export function MembershipWizardSection() {
     return (
       <section
         id="apply"
-        className="mx-auto flex w-full max-w-7xl flex-col items-center gap-5 px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:px-12 xl:px-16"
+        className="mx-auto flex w-full max-w-7xl flex-col items-center gap-5 px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:px-12 xl:px-16 portrait:pt-[4svh] md:portrait:pt-[5svh]"
       >
         <ApplyHeading subtitle="We couldn't reach our records just now." />
         <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-4 p-8 text-center">
@@ -81,9 +81,13 @@ export function MembershipWizardSection() {
   }
 
   return (
+    // Whole-page portrait nudge (header included), mirroring the quiz eye
+    // level. Padding, not margin: this section is a flex-1 item in the
+    // fixed shell, so margin would push the anchored nav out the bottom.
+    // Landscape untouched.
     <section
       id="apply"
-      className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col gap-5 overflow-hidden px-4 py-6 sm:px-6 md:gap-6 md:px-8 md:py-10 lg:gap-8 lg:px-12 lg:py-8 xl:px-16"
+      className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col gap-5 overflow-hidden px-4 py-6 sm:px-6 md:gap-6 md:px-8 md:py-10 lg:gap-8 lg:px-12 lg:py-8 xl:px-16 portrait:pt-[4svh] md:portrait:pt-[5svh]"
     >
       {/* Title + nav render inside the wizard (single nav instance);
           success and closed states bring their own headings. */}
