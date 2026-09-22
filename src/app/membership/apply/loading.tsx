@@ -16,7 +16,10 @@ export default function MembershipApplyLoading() {
             Checking whether applications are open…
           </p>
         </div>
-        <Loader2 className="text-primary size-6 animate-spin" aria-hidden />
+        <Loader2
+          className="text-primary size-6 animate-spin motion-reduce:animate-none"
+          aria-hidden
+        />
         <span className="sr-only">Loading application form…</span>
       </section>
     </main>
