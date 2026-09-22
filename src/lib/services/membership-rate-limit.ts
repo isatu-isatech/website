@@ -6,6 +6,11 @@
  * count against each other. Policy is identical (5 successful submissions per
  * rolling 60-min window) per spec Assumptions and research R-001.
  *
+ * NOTE (deferred): generalizing both limiters into a shared
+ * `createCookieRateLimit` factory and sharing the Turnstile verifier was
+ * deliberately scoped out — it touches the contact surface. Revisit as a
+ * cross-surface follow-up.
+ *
  * Browser-held state is a weaker mechanism than a server-side store and is
  * explicitly accepted by the org for this surface per constitution P5 v1.1.0.
  * Turnstile remains the primary gate on every submission.

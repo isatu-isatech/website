@@ -11,6 +11,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFormContext } from "react-hook-form";
 import type { MembershipFormValues } from "../../schema";
 import { MEMBERSHIP_FALLBACK } from "@/lib/constants/membership";
+import {
+  MEMBERSHIP_CHECKBOX_CLASS,
+  MEMBERSHIP_SELECT_CLASS,
+} from "../membership-select";
 
 export function AvailabilityStep() {
   const form = useFormContext<MembershipFormValues>();
@@ -28,10 +32,7 @@ export function AvailabilityStep() {
                 training? *
               </FormLabel>
               <FormControl>
-                <select
-                  className="border-input bg-card dark:bg-input/30 flex h-9 w-full rounded-md border px-3 py-1 text-sm"
-                  {...field}
-                >
+                <select className={MEMBERSHIP_SELECT_CLASS} {...field}>
                   <option value="">Select commitment</option>
                   {MEMBERSHIP_FALLBACK.availability.map((opt) => (
                     <option key={opt} value={opt}>
@@ -61,7 +62,7 @@ export function AvailabilityStep() {
                     type="checkbox"
                     checked={field.value}
                     onChange={(e) => field.onChange(e.target.checked)}
-                    className="h-4 w-4 rounded border"
+                    className={MEMBERSHIP_CHECKBOX_CLASS}
                   />
                   <span className="text-sm">Yes, I am willing</span>
                 </label>

@@ -26,6 +26,7 @@ const FALLBACK = {
     "College of Education",
     "College of Arts and Sciences",
     "College of Computing and Informatics",
+    "College of Global Business and Enterprise",
   ] as const,
   yearLevel: [
     "1st Year",
@@ -160,16 +161,4 @@ export async function getMembershipOptions(
       secondaryRole: [...FALLBACK.role],
     });
   }
-}
-
-// Synchronous fallback for client components that cannot await (e.g., initial render)
-// Use `getMembershipOptions()` on the server whenever possible.
-export function getMembershipOptionsFallback(): MembershipOptions {
-  return {
-    college: [...FALLBACK.college],
-    yearLevel: [...FALLBACK.yearLevel],
-    sex: [...FALLBACK.sex],
-    primaryRole: [...FALLBACK.role],
-    secondaryRole: [...FALLBACK.role],
-  };
 }

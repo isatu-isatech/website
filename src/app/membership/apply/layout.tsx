@@ -28,15 +28,15 @@ export default function MembershipApplyLayout({
           bar's sticky offset is exact. */}
       <header className="border-border/50 bg-background/80 sticky top-0 z-90 flex h-16 shrink-0 items-center justify-center border-b px-6 backdrop-blur-md">
         <div className="flex w-full max-w-6xl items-center justify-between">
-          <Link
-            href="/membership"
-            className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
-          >
-            <Button variant="ghost" size="sm" className="gap-2">
+          <Button variant="ghost" size="sm" className="gap-2" asChild>
+            <Link
+              href="/membership"
+              className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
+            >
               <ArrowLeft className="size-4" />
               <span className="hidden sm:inline">Back to Membership</span>
-            </Button>
-          </Link>
+            </Link>
+          </Button>
 
           <div
             aria-hidden="true"

@@ -16,8 +16,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 
-const fallback = MEMBERSHIP_FALLBACK;
-
 /** role → archetype icon path (same art as the quiz, from the site constants). */
 const ROLE_ICONS = Object.fromEntries(
   TEAM_4H.map(({ role, imagePath }) => [role, imagePath]),
@@ -30,7 +28,7 @@ function RolePicker({
   value: string;
   onChange: (value: string) => void;
 }) {
-  const roles = fallback.primaryRole;
+  const roles = MEMBERSHIP_FALLBACK.primaryRole;
   const firstRole: string = roles[0] ?? "";
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   // Roving tabindex: the selected option (or the first) is the tab stop.
@@ -77,13 +75,25 @@ function RolePicker({
               selected && "border-primary bg-primary/5 ring-primary/15 ring-2",
             )}
           >
-            <Image
-              src={ROLE_ICONS[role] ?? ""}
-              alt={role}
-              width={44}
-              height={44}
-              className="h-11 w-11 object-contain"
-            />
+            {(() => {
+              const src = ROLE_ICONS[role];
+              return src ? (
+                <Image
+                  src={src}
+                  alt={role}
+                  width={44}
+                  height={44}
+                  className="h-11 w-11 object-contain"
+                />
+              ) : (
+                <span
+                  aria-hidden
+                  className="bg-primary/10 text-primary flex h-11 w-11 items-center justify-center rounded-full text-sm font-bold"
+                >
+                  {role.charAt(0)}
+                </span>
+              );
+            })()}
             <span
               className={cn("text-sm font-medium", selected && "text-primary")}
             >

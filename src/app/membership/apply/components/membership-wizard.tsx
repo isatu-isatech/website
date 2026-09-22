@@ -18,15 +18,16 @@ import { ReviewStep } from "./steps/review-step";
 import { MembershipConfirmation } from "./confirmation";
 import { LeaveApplyDialog } from "./leave-apply-dialog";
 import { useFormLeaveGuard } from "@/lib/hooks/use-form-leave-guard";
-import { SOCIAL_LINKS, TEAM_4H } from "@/lib/constants/site";
+import { SOCIAL_LINKS } from "@/lib/constants/site";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import type { MembershipCampaign } from "@/lib/notion/membership-campaigns";
 
-type ActiveCampaign = {
-  id: string;
-  academicYear: string;
-  status: string;
-} | null;
+type ActiveCampaign = Pick<
+  MembershipCampaign,
+  "id" | "academicYear" | "status"
+> | null;
 
 /**
  * Back → Next/Submit cluster, shared by the portrait top bar and the
@@ -86,6 +87,21 @@ const STEP_FIELDS: Record<number, (keyof MembershipFormValues)[]> = {
   7: [], // Turnstile token is validated on submit (step 7 Review) via full form.trigger()
 };
 
+// Compile-time guard: every schema key except the submit-only Turnstile token
+// must appear in exactly one step's field list.
+type _StepFieldsCoverage =
+  Exclude<keyof MembershipFormValues, "turnstileToken"> extends
+    | (typeof STEP_FIELDS)[1][number]
+    | (typeof STEP_FIELDS)[2][number]
+    | (typeof STEP_FIELDS)[3][number]
+    | (typeof STEP_FIELDS)[4][number]
+    | (typeof STEP_FIELDS)[5][number]
+    | (typeof STEP_FIELDS)[6][number]
+    ? true
+    : never;
+const _stepFieldsCovered: _StepFieldsCoverage = true;
+void _stepFieldsCovered;
+
 export function MembershipWizard({
   activeCampaign,
   onSubmittedChange,
@@ -104,6 +120,13 @@ export function MembershipWizard({
   const totalSteps = 7;
   const reduceMotion = useReducedMotion();
   const wizardTopRef = useRef<HTMLDivElement>(null);
+  // Focus target for step changes — keyboard/SR users must land on the new
+  // step, not on the unmounted Next/Submit button. `tabIndex={-1}` allows
+  // programmatic focus without adding to tab order.
+  const stepFocusRef = useRef<HTMLDivElement>(null);
+  const focusStep = () => {
+    stepFocusRef.current?.focus({ preventScroll: true });
+  };
   // The lg form pane scrolls internally — reset it on every step change so
   // each step opens at its top. Instant (never smooth): the transition
   // itself must not move under the visitor.
@@ -172,23 +195,47 @@ export function MembershipWizard({
     mode: "onChange",
   });
 
+  const focusFirstError = () => {
+    const first = Object.keys(form.formState.errors)[0];
+    if (first) {
+      try {
+        form.setFocus(first as never);
+        return;
+      } catch {
+        // fall through to step focus
+      }
+    }
+    focusStep();
+  };
+
   const handleNext = async () => {
     const fields = STEP_FIELDS[step] ?? [];
     if (fields.length > 0) {
       const ok = await form.trigger(fields as never);
-      if (!ok) return;
+      if (!ok) {
+        focusFirstError();
+        return;
+      }
     }
     setError(null);
     setStep((s) => Math.min(s + 1, totalSteps));
     resetPaneScroll();
-    requestAnimationFrame(updatePaneChrome);
+    scrollToTop();
+    requestAnimationFrame(() => {
+      updatePaneChrome();
+      focusStep();
+    });
   };
 
   const handleBack = () => {
     setError(null);
     setStep((s) => Math.max(s - 1, 1));
     resetPaneScroll();
-    requestAnimationFrame(updatePaneChrome);
+    scrollToTop();
+    requestAnimationFrame(() => {
+      updatePaneChrome();
+      focusStep();
+    });
   };
 
   // Fast navigation via the stepper: only completed steps are clickable, so
@@ -198,10 +245,10 @@ export function MembershipWizard({
     setError(null);
     setStep(targetStep);
     resetPaneScroll();
-    requestAnimationFrame(updatePaneChrome);
-    wizardTopRef.current?.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-      block: "start",
+    scrollToTop();
+    requestAnimationFrame(() => {
+      updatePaneChrome();
+      focusStep();
     });
   };
 
@@ -219,26 +266,17 @@ export function MembershipWizard({
     };
   }, [step, updatePaneChrome]);
 
-  // Warm the role-picker art on mount (step 1) so the step-4 pickers render
-  // instantly instead of fetching on view.
-  useEffect(() => {
-    for (const { imagePath } of TEAM_4H) {
-      const img = new window.Image();
-      img.src = imagePath;
-    }
-  }, []);
-
   const handleSubmit = async () => {
     const ok = await form.trigger();
     if (!ok) {
       setError("Please fix the highlighted fields before submitting.");
       scrollToTop();
+      focusFirstError();
       return;
     }
     setSubmitting(true);
     setError(null);
     const values = form.getValues();
-    // Ensure boolean is true for checkbox (Zod expects true literal)
     const result = await submitMembershipApplication(values);
     setSubmitting(false);
     if (result.success) {
@@ -277,7 +315,8 @@ export function MembershipWizard({
   // Arm the leave guard once the visitor has entered any data — the form is
   // only mounted during the active-campaign state, so this never fires on the
   // closed or submitted screens.
-  const formDirty = form.formState.isDirty && !success && !!activeCampaign;
+  const { isDirty: formDirtyFlag } = form.formState;
+  const formDirty = formDirtyFlag && !success && !!activeCampaign;
   const {
     open: leaveOpen,
     continueLeave,
@@ -411,16 +450,25 @@ export function MembershipWizard({
               className="form-pane-scroll flex min-h-0 w-full flex-1 flex-col gap-5 overflow-y-auto p-2"
             >
               <div
-                className={`flex w-full flex-col gap-5 ${
-                  paneEdge.top && paneEdge.bottom
-                    ? "[mask-image:linear-gradient(to_bottom,transparent,black_28px,black_calc(100%-28px),transparent)]"
-                    : paneEdge.top
-                      ? "[mask-image:linear-gradient(to_bottom,transparent,black_28px)]"
-                      : paneEdge.bottom
-                        ? "[mask-image:linear-gradient(to_bottom,black_calc(100%-28px),transparent)]"
-                        : ""
-                }`}
+                className={cn(
+                  "flex w-full flex-col gap-5",
+                  paneEdge.top &&
+                    paneEdge.bottom &&
+                    "[mask-image:linear-gradient(to_bottom,transparent,black_28px,black_calc(100%-28px),transparent)]",
+                  paneEdge.top &&
+                    !paneEdge.bottom &&
+                    "[mask-image:linear-gradient(to_bottom,transparent,black_28px)]",
+                  !paneEdge.top &&
+                    paneEdge.bottom &&
+                    "[mask-image:linear-gradient(to_bottom,black_calc(100%-28px),transparent)]",
+                )}
               >
+                <div
+                  ref={stepFocusRef}
+                  tabIndex={-1}
+                  aria-label={`Step ${step}: ${STEPS[step - 1]?.label}`}
+                  className="outline-none"
+                />
                 {error && (
                   <div
                     className="bg-destructive/10 text-destructive border-destructive/20 shrink-0 rounded-md border px-4 py-3 text-sm"

@@ -1,18 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { MembershipWizard } from "./membership-wizard";
-import { getActiveCampaignStatus } from "../actions";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
+import type { MembershipCampaign } from "@/lib/notion/membership-campaigns";
 
-type Campaign = {
-  id: string;
-  academicYear: string;
-  status: string;
-} | null;
-
-type FetchStatus = "loading" | "ready" | "error";
+type Campaign = Pick<
+  MembershipCampaign,
+  "id" | "academicYear" | "status"
+> | null;
 
 function ApplyHeading({ subtitle }: { subtitle: string }) {
   return (
@@ -25,42 +22,16 @@ function ApplyHeading({ subtitle }: { subtitle: string }) {
   );
 }
 
-export function MembershipWizardSection() {
-  const [status, setStatus] = useState<FetchStatus>("loading");
-  const [campaign, setCampaign] = useState<Campaign>(null);
+export function MembershipWizardSection({
+  campaign,
+  loadError,
+}: {
+  campaign: Campaign;
+  loadError: boolean;
+}) {
+  const router = useRouter();
 
-  const load = useCallback(async () => {
-    setStatus("loading");
-    try {
-      const res = await getActiveCampaignStatus();
-      if (res.success) {
-        setCampaign(res.campaign);
-        setStatus("ready");
-      } else {
-        setStatus("error");
-      }
-    } catch {
-      setStatus("error");
-    }
-  }, []);
-
-  useEffect(() => {
-    load();
-  }, [load]);
-
-  if (status === "loading") {
-    return (
-      <section
-        id="apply"
-        className="mx-auto flex w-full max-w-7xl flex-col items-center gap-5 px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:px-12 xl:px-16 portrait:pt-[4svh] md:portrait:pt-[5svh]"
-      >
-        <ApplyHeading subtitle="Checking whether applications are open…" />
-        <Loader2 className="text-primary size-6 animate-spin" aria-hidden />
-      </section>
-    );
-  }
-
-  if (status === "error") {
+  if (loadError) {
     return (
       <section
         id="apply"
@@ -72,7 +43,11 @@ export function MembershipWizardSection() {
           <p className="text-muted-foreground text-sm">
             We couldn&apos;t check whether applications are open right now.
           </p>
-          <Button type="button" variant="outline" onClick={load}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.refresh()}
+          >
             Try again
           </Button>
         </div>

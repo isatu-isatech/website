@@ -11,6 +11,14 @@ function enumWithFallback(options: readonly string[]) {
   return z.enum(options as unknown as [string, ...string[]]);
 }
 
+function optionalText(max: number, label: string) {
+  return z
+    .string()
+    .max(max, `${label} must be at most ${max} characters`)
+    .optional()
+    .or(z.literal(""));
+}
+
 // ISAT-U student email — strict: dotted alphanumeric local part
 // (at least one dot, no leading/trailing/consecutive dots) plus the
 // `@students.isatu.edu.ph` domain. Case-insensitive; the server action
@@ -50,11 +58,7 @@ export const membershipFormSchema = z
       .string()
       .min(2, "Full Name must be at least 2 characters")
       .max(100, "Full Name must be at most 100 characters"),
-    nickname: z
-      .string()
-      .max(50, "Nickname must be at most 50 characters")
-      .optional()
-      .or(z.literal("")),
+    nickname: optionalText(50, "Nickname"),
     studentId: z
       .string()
       .regex(
@@ -86,7 +90,6 @@ export const membershipFormSchema = z
     sex: enumWithFallback(fallback.sex),
     facebookUrl: z
       .string()
-      .or(z.literal(""))
       .refine(
         (v) => !v || v === "" || isFacebookProfileUrl(v.trim()),
         "Facebook URL must be a facebook.com profile link",
@@ -101,27 +104,15 @@ export const membershipFormSchema = z
     // Role Preferences
     primaryRole: enumWithFallback(fallback.primaryRole),
     secondaryRole: enumWithFallback(fallback.secondaryRole),
-    relatedSkills: z
-      .string()
-      .max(1000, "Related Skills must be at most 1000 characters")
-      .optional()
-      .or(z.literal("")),
-    relatedExperiences: z
-      .string()
-      .max(1000, "Related Experiences must be at most 1000 characters")
-      .optional()
-      .or(z.literal("")),
+    relatedSkills: optionalText(1000, "Related Skills"),
+    relatedExperiences: optionalText(1000, "Related Experiences"),
     // Availability & Commitment
     // Notion `Availability` is text; UI collects a commitment-band select
     availability: enumWithFallback(fallback.availability),
     eventAttendanceWillingness: z.literal(true, {
       error: "Please confirm you're willing to attend events",
     }),
-    otherOrgs: z
-      .string()
-      .max(1000, "Other Orgs must be at most 1000 characters")
-      .optional()
-      .or(z.literal("")),
+    otherOrgs: optionalText(1000, "Other Orgs"),
     // Consent & Declaration
     privacyConsent: z.literal(true, {
       error: "You must accept the privacy notice",
@@ -132,9 +123,15 @@ export const membershipFormSchema = z
     // Abuse defense — Turnstile token (hidden)
     turnstileToken: z.string().min(1, "Please complete the verification"),
   })
-  .refine((data) => data.primaryRole !== data.secondaryRole, {
-    message: "Primary and secondary roles must be different",
-    path: ["secondaryRole"],
-  });
+  .refine(
+    (data) =>
+      !data.primaryRole ||
+      !data.secondaryRole ||
+      data.primaryRole !== data.secondaryRole,
+    {
+      message: "Primary and secondary roles must be different",
+      path: ["secondaryRole"],
+    },
+  );
 
 export type MembershipFormValues = z.infer<typeof membershipFormSchema>;

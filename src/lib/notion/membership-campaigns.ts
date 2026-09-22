@@ -170,6 +170,7 @@ export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
           try {
             const r = await blocksApi.list({
               block_id: blockId,
+              page_size: 100,
             } as unknown as Record<string, unknown>);
             return ((r as { results?: unknown[] })?.results ?? []) as Record<
               string,
@@ -181,53 +182,63 @@ export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
         };
         const topBlocks = await fetchBlocks(page.id);
         const queue: Record<string, unknown>[] = [...topBlocks];
+        // Cap traversal so a deeply nested campaign page can't N+1 forever.
+        const MAX_BLOCK_VISITS = 50;
+        let visits = 0;
         while (queue.length > 0 && !submissionsDataSourceId) {
-          const b = queue.shift()!;
-          const type = b["type"] as string | undefined;
-          if (type === "child_database") {
-            const childDb = b["child_database"] as
-              { title?: string } | undefined;
-            if (
-              childDb?.title === "Form Submissions" &&
-              typeof b["id"] === "string"
-            ) {
-              try {
-                const db = await (
-                  notion as unknown as {
-                    databases?: {
-                      retrieve: (args: unknown) => Promise<unknown>;
-                    };
-                    dataSources?: {
-                      retrieve: (args: unknown) => Promise<unknown>;
-                    };
+          if (visits++ > MAX_BLOCK_VISITS) break;
+          // Drain one BFS level at a time; siblings fetch in parallel.
+          const level = queue.splice(0, queue.length);
+          const childLists = await Promise.all(
+            level.map(async (b) => {
+              const type = b["type"] as string | undefined;
+              if (type === "child_database") {
+                const childDb = b["child_database"] as
+                  { title?: string } | undefined;
+                if (
+                  childDb?.title === "Form Submissions" &&
+                  typeof b["id"] === "string"
+                ) {
+                  try {
+                    const db = await (
+                      notion as unknown as {
+                        databases?: {
+                          retrieve: (args: unknown) => Promise<unknown>;
+                        };
+                      }
+                    ).databases?.retrieve?.({
+                      database_id: b["id"] as string,
+                    } as unknown as Record<string, unknown>);
+                    const ds = (db as { data_sources?: { id: string }[] })
+                      ?.data_sources?.[0]?.id;
+                    if (ds) {
+                      submissionsDataSourceId = ds;
+                    } else {
+                      submissionsDataSourceId = b["id"] as string;
+                    }
+                  } catch {
+                    // ignore
                   }
-                ).databases?.retrieve?.({
-                  database_id: b["id"] as string,
-                } as unknown as Record<string, unknown>);
-                const ds = (db as { data_sources?: { id: string }[] })
-                  ?.data_sources?.[0]?.id;
-                if (ds) {
-                  submissionsDataSourceId = ds;
-                  break;
                 }
-                submissionsDataSourceId = b["id"] as string;
-                break;
-              } catch {
-                // ignore
+                return [] as Record<string, unknown>[];
               }
-            }
-          }
-          if (
-            type === "callout" ||
-            type === "column_list" ||
-            type === "column" ||
-            type === "toggle" ||
-            type === "quote"
-          ) {
-            if (typeof b["id"] === "string") {
-              const children = await fetchBlocks(b["id"] as string);
-              queue.unshift(...children);
-            }
+              if (
+                type === "callout" ||
+                type === "column_list" ||
+                type === "column" ||
+                type === "toggle" ||
+                type === "quote"
+              ) {
+                if (typeof b["id"] === "string") {
+                  return fetchBlocks(b["id"] as string);
+                }
+              }
+              return [] as Record<string, unknown>[];
+            }),
+          );
+          for (const children of childLists) {
+            if (submissionsDataSourceId) break;
+            queue.push(...children);
           }
         }
       }

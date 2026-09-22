@@ -18,9 +18,9 @@ export function ReviewStep({
   onRetryVerification: () => void;
 }) {
   const form = useFormContext<MembershipFormValues>();
-  // Subscribed (not a one-shot snapshot) so Edit → back always renders the
-  // current values even if this step ever stops remounting.
-  const v = form.watch();
+  // One-shot snapshot: Review remounts at step 7 (`{step === 7 && ...}`), so
+  // subscribing via `watch()` would re-render on every keystroke anywhere.
+  const v = form.getValues();
 
   const sections: {
     title: string;

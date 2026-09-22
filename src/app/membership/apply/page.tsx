@@ -1,6 +1,7 @@
 import { MembershipWizardSection } from "./components/membership-wizard-section";
 import { BlobsAnimatedBackground } from "@/components/ui/blobs";
 import { SITE_CONFIG } from "@/lib/constants/site";
+import { getActiveCampaign } from "@/lib/notion/membership-campaigns";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -17,10 +18,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function MembershipApplyPage() {
-  // Deliberately no server-side Notion fetch: the page renders instantly and
-  // the wizard section hydrates campaign status on the client with an
-  // indicator, so Notion latency/outages never block page load.
+export default async function MembershipApplyPage() {
+  // Server-side campaign gating: one Notion round-trip before first paint,
+  // streamed behind `loading.tsx` so Notion latency never blocks the shell.
+  // Errors are distinguished from genuinely-closed (null) by the section.
+  let campaign: Awaited<ReturnType<typeof getActiveCampaign>> = null;
+  let loadError = false;
+  try {
+    campaign = await getActiveCampaign();
+  } catch (error) {
+    console.error("[membership] apply page campaign fetch failed:", error);
+    loadError = true;
+  }
   return (
     <main className="from-background via-background to-muted/30 relative flex min-h-0 flex-1 flex-col overflow-hidden bg-linear-to-b">
       {/* Background decorations — same language as the quiz page: masked
@@ -65,7 +74,7 @@ export default function MembershipApplyPage() {
       {/* The section below owns the fixed height; the form pane scrolls
           within it at every width. */}
       <div className="relative z-10 flex min-h-0 w-full flex-1 flex-col">
-        <MembershipWizardSection />
+        <MembershipWizardSection campaign={campaign} loadError={loadError} />
       </div>
     </main>
   );

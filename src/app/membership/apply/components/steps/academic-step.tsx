@@ -11,8 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useFormContext } from "react-hook-form";
 import type { MembershipFormValues } from "../../schema";
 import { MEMBERSHIP_FALLBACK } from "@/lib/constants/membership";
-
-const fallback = MEMBERSHIP_FALLBACK;
+import { MEMBERSHIP_SELECT_CLASS } from "../membership-select";
 
 export function AcademicStep() {
   const form = useFormContext<MembershipFormValues>();
@@ -27,12 +26,9 @@ export function AcademicStep() {
             <FormItem className="md:col-span-2">
               <FormLabel>College *</FormLabel>
               <FormControl>
-                <select
-                  className="border-input bg-card dark:bg-input/30 flex h-9 w-full rounded-md border px-3 py-1 text-sm"
-                  {...field}
-                >
+                <select className={MEMBERSHIP_SELECT_CLASS} {...field}>
                   <option value="">Select college</option>
-                  {fallback.college.map((opt) => (
+                  {MEMBERSHIP_FALLBACK.college.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
                     </option>
@@ -63,12 +59,9 @@ export function AcademicStep() {
             <FormItem>
               <FormLabel>Year Level *</FormLabel>
               <FormControl>
-                <select
-                  className="border-input bg-card dark:bg-input/30 flex h-9 w-full rounded-md border px-3 py-1 text-sm"
-                  {...field}
-                >
+                <select className={MEMBERSHIP_SELECT_CLASS} {...field}>
                   <option value="">Select year</option>
-                  {fallback.yearLevel.map((opt) => (
+                  {MEMBERSHIP_FALLBACK.yearLevel.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
                     </option>

@@ -42,21 +42,6 @@ const MEMBERSHIP_PROPERTIES = {
   campaign: "Campaign",
 } as const;
 
-/**
- * Client-loadable campaign status. Lets the apply page render instantly
- * (no server round-trip to Notion on the critical path) and hydrate the
- * campaign afterwards with a loading indicator.
- */
-export async function getActiveCampaignStatus() {
-  try {
-    const campaign = await getActiveCampaign();
-    return { success: true as const, campaign };
-  } catch (error) {
-    console.error("[membership] getActiveCampaignStatus failed:", error);
-    return { success: false as const, campaign: null };
-  }
-}
-
 export async function submitMembershipApplication(formData: unknown) {
   // 1. Rate limit (browser-cookie, isolated)
   const cookieStore = await cookies();
@@ -142,7 +127,8 @@ export async function submitMembershipApplication(formData: unknown) {
     };
   }
 
-  // 4. Turnstile verification
+  // 4. Turnstile verification (apply-local timeout; contact surface untouched
+  // per scope — see plan). Cloudflare stalls must not hang to the Vercel limit.
   try {
     const response = await fetch(
       "https://challenges.cloudflare.com/turnstile/v0/siteverify",
@@ -153,6 +139,7 @@ export async function submitMembershipApplication(formData: unknown) {
           secret: cloudflareTurnstileSecretKey,
           response: turnstileToken,
         }),
+        signal: AbortSignal.timeout(8000),
       },
     );
     const data = (await response.json()) as { success?: boolean };
@@ -198,12 +185,27 @@ export async function submitMembershipApplication(formData: unknown) {
   // Build properties per verified schema types.
   // NOTE: `Mobile Number` must be a text/phone column in Notion (officer
   // action) — the old number column dropped leading zeros and `+63`.
+  // All free text is trimmed at write time so `Foo ` vs `Foo` don't persist.
+  const trimmedNickname = nickname?.trim() ?? "";
+  const trimmedFacebookUrl = facebookUrl?.trim() ?? "";
+  const trimmedRelatedSkills = relatedSkills?.trim() ?? "";
+  const trimmedRelatedExperiences = relatedExperiences?.trim() ?? "";
+  const trimmedOtherOrgs = otherOrgs?.trim() ?? "";
+  const trimmedProgram = program.trim();
+  const trimmedFullName = fullName.trim();
+  const birthdateMatch = /^\d{4}-\d{2}-\d{2}$/.exec(birthdate.trim());
+  if (!birthdateMatch) {
+    return {
+      success: false,
+      error: "Birthdate must be a valid date (YYYY-MM-DD).",
+    };
+  }
   const properties: Record<string, unknown> = {
     [MEMBERSHIP_PROPERTIES.studentId]: {
       title: [{ text: { content: studentId } }],
     },
     [MEMBERSHIP_PROPERTIES.fullName]: {
-      rich_text: [{ text: { content: fullName } }],
+      rich_text: [{ text: { content: trimmedFullName } }],
     },
     [MEMBERSHIP_PROPERTIES.email]: {
       email: email.trim().toLowerCase(),
@@ -212,7 +214,7 @@ export async function submitMembershipApplication(formData: unknown) {
       rich_text: [{ text: { content: mobileNumber.trim() } }],
     },
     [MEMBERSHIP_PROPERTIES.birthdate]: {
-      date: { start: new Date(birthdate).toISOString().split("T")[0] },
+      date: { start: birthdateMatch[0] },
     },
     [MEMBERSHIP_PROPERTIES.sex]: {
       select: { name: sex },
@@ -221,7 +223,7 @@ export async function submitMembershipApplication(formData: unknown) {
       select: { name: college },
     },
     [MEMBERSHIP_PROPERTIES.program]: {
-      rich_text: [{ text: { content: program } }],
+      rich_text: [{ text: { content: trimmedProgram } }],
     },
     [MEMBERSHIP_PROPERTIES.yearLevel]: {
       select: { name: yearLevel },
@@ -244,35 +246,35 @@ export async function submitMembershipApplication(formData: unknown) {
     },
   };
 
-  // Optional text fields — omit if empty
-  if (nickname && nickname.trim() !== "") {
+  // Optional text fields — omit if empty (trimmed values)
+  if (trimmedNickname !== "") {
     (properties as Record<string, unknown>)[MEMBERSHIP_PROPERTIES.nickname] = {
-      rich_text: [{ text: { content: nickname } }],
+      rich_text: [{ text: { content: trimmedNickname } }],
     };
   }
-  if (facebookUrl && facebookUrl.trim() !== "") {
+  if (trimmedFacebookUrl !== "") {
     (properties as Record<string, unknown>)[MEMBERSHIP_PROPERTIES.facebookUrl] =
       {
-        url: facebookUrl,
+        url: trimmedFacebookUrl,
       };
   }
-  if (relatedSkills && relatedSkills.trim() !== "") {
+  if (trimmedRelatedSkills !== "") {
     (properties as Record<string, unknown>)[
       MEMBERSHIP_PROPERTIES.relatedSkills
     ] = {
-      rich_text: [{ text: { content: relatedSkills } }],
+      rich_text: [{ text: { content: trimmedRelatedSkills } }],
     };
   }
-  if (relatedExperiences && relatedExperiences.trim() !== "") {
+  if (trimmedRelatedExperiences !== "") {
     (properties as Record<string, unknown>)[
       MEMBERSHIP_PROPERTIES.relatedExperiences
     ] = {
-      rich_text: [{ text: { content: relatedExperiences } }],
+      rich_text: [{ text: { content: trimmedRelatedExperiences } }],
     };
   }
-  if (otherOrgs && otherOrgs.trim() !== "") {
+  if (trimmedOtherOrgs !== "") {
     (properties as Record<string, unknown>)[MEMBERSHIP_PROPERTIES.otherOrgs] = {
-      rich_text: [{ text: { content: otherOrgs } }],
+      rich_text: [{ text: { content: trimmedOtherOrgs } }],
     };
   }
 

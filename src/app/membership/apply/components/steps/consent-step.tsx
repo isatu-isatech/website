@@ -9,6 +9,8 @@ import {
 } from "@/components/ui/form";
 import { useFormContext } from "react-hook-form";
 import type { MembershipFormValues } from "../../schema";
+import { MEMBERSHIP_CHECKBOX_CLASS } from "../membership-select";
+import { cn } from "@/lib/utils";
 
 export function ConsentStep() {
   const form = useFormContext<MembershipFormValues>();
@@ -28,7 +30,7 @@ export function ConsentStep() {
                   onChange={(e) =>
                     field.onChange(e.target.checked ? true : false)
                   }
-                  className="mt-1 h-4 w-4"
+                  className={cn(MEMBERSHIP_CHECKBOX_CLASS, "mt-1")}
                   id="privacyConsent"
                 />
               </FormControl>
@@ -59,7 +61,7 @@ export function ConsentStep() {
                   onChange={(e) =>
                     field.onChange(e.target.checked ? true : false)
                   }
-                  className="mt-1 h-4 w-4"
+                  className={cn(MEMBERSHIP_CHECKBOX_CLASS, "mt-1")}
                   id="declarationConsent"
                 />
               </FormControl>

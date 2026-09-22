@@ -19,6 +19,7 @@ export const MEMBERSHIP_FALLBACK = {
     "College of Education",
     "College of Arts and Sciences",
     "College of Computing and Informatics",
+    "College of Global Business and Enterprise",
   ] as const,
   yearLevel: [
     "1st Year",
@@ -39,9 +40,3 @@ export const MEMBERSHIP_FALLBACK = {
     "More than 10 hours",
   ] as const,
 } as const;
-
-// Convenience re-exports for step components
-export const COLLEGE_OPTIONS = MEMBERSHIP_FALLBACK.college;
-export const YEAR_LEVEL_OPTIONS = MEMBERSHIP_FALLBACK.yearLevel;
-export const SEX_OPTIONS = MEMBERSHIP_FALLBACK.sex;
-export const ROLE_OPTIONS = MEMBERSHIP_FALLBACK.role;
