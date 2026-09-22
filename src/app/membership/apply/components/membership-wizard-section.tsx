@@ -28,7 +28,6 @@ function ApplyHeading({ subtitle }: { subtitle: string }) {
 export function MembershipWizardSection() {
   const [status, setStatus] = useState<FetchStatus>("loading");
   const [campaign, setCampaign] = useState<Campaign>(null);
-  const [submitted, setSubmitted] = useState(false);
 
   const load = useCallback(async () => {
     setStatus("loading");
@@ -86,22 +85,9 @@ export function MembershipWizardSection() {
       id="apply"
       className="mx-auto flex min-h-0 w-full max-w-7xl flex-1 flex-col gap-5 overflow-hidden px-4 py-6 sm:px-6 md:gap-6 md:px-8 md:py-10 lg:gap-8 lg:px-12 lg:py-8 xl:px-16"
     >
-      {/* Hide the page title once submitted — the confirmation is not a
-          place to start an application. The closed state keeps its H1. */}
-      {!submitted && (
-        <ApplyHeading
-          subtitle={
-            campaign
-              ? "7 short steps · about 3 minutes. Your answers are checked as you go."
-              : "There is no active membership campaign at the moment. Please check back when the next campaign opens."
-          }
-        />
-      )}
-
-      <MembershipWizard
-        activeCampaign={campaign}
-        onSubmittedChange={setSubmitted}
-      />
+      {/* Title + nav render inside the wizard (single nav instance);
+          success and closed states bring their own headings. */}
+      <MembershipWizard activeCampaign={campaign} />
     </section>
   );
 }

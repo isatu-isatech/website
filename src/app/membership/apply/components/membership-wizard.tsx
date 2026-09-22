@@ -28,6 +28,54 @@ type ActiveCampaign = {
   status: string;
 } | null;
 
+/**
+ * Back → Next/Submit cluster, shared by the portrait top bar and the
+ * bottom footer. One instance is always display:none, so tab order stays
+ * single.
+ */
+function WizardNav({
+  step,
+  totalSteps,
+  submitting,
+  onBack,
+  onNext,
+  onSubmit,
+}: {
+  step: number;
+  totalSteps: number;
+  submitting: boolean;
+  onBack: () => void;
+  onNext: () => void;
+  onSubmit: () => void;
+}) {
+  return (
+    <>
+      <Button
+        type="button"
+        variant="outline"
+        onClick={onBack}
+        disabled={step === 1 || submitting}
+      >
+        Back
+      </Button>{" "}
+      {step < totalSteps ? (
+        <Button type="button" onClick={onNext} disabled={submitting}>
+          Next
+        </Button>
+      ) : (
+        <Button
+          type="button"
+          onClick={onSubmit}
+          disabled={submitting}
+          aria-busy={submitting}
+        >
+          {submitting ? "Submitting..." : "Submit Application"}
+        </Button>
+      )}
+    </>
+  );
+}
+
 const STEP_FIELDS: Record<number, (keyof MembershipFormValues)[]> = {
   1: ["fullName", "nickname", "birthdate", "sex"],
   2: ["email", "mobileNumber", "studentId", "facebookUrl"],
@@ -273,9 +321,39 @@ export function MembershipWizard({
         <p aria-live="polite" className="sr-only">
           Step {step} of {totalSteps}: {STEPS[step - 1]?.label}
         </p>
+        {/* Page header + primary actions in one top bar: identity on the
+            left, Back → Next on the right. The single nav instance for
+            every breakpoint. */}
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 flex-col items-start gap-2 text-left">
+            <h1 className="text-secondary-dark dark:text-secondary text-2xl font-bold md:text-3xl">
+              Membership Application
+            </h1>
+            <p className="text-muted-foreground max-w-xl text-sm">
+              {activeCampaign
+                ? "7 short steps · about 3 minutes. Your answers are checked as you go — please submit from this tab when you finish."
+                : "There is no active membership campaign at the moment. Please check back when the next campaign opens."}
+            </p>
+          </div>
+          {activeCampaign && (
+            // Header nav renders ONLY on desktop portrait and mobile
+            // landscape; every other screen uses the bottom footer.
+            // display:none keeps the inactive twin out of tab order.
+            <div className="hidden shrink-0 items-center justify-end gap-2 lg:portrait:flex max-lg:landscape:flex">
+              <WizardNav
+                step={step}
+                totalSteps={totalSteps}
+                submitting={submitting}
+                onBack={handleBack}
+                onNext={handleNext}
+                onSubmit={handleSubmit}
+              />
+            </div>
+          )}
+        </div>
         <div
           ref={wizardTopRef}
-          className="flex min-h-0 w-full flex-1 flex-col gap-5 lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:items-stretch lg:gap-8"
+          className="flex min-h-0 w-full flex-1 flex-col justify-start gap-5 lg:grid lg:grid-cols-[240px_minmax(0,1fr)] lg:content-start lg:items-stretch lg:gap-8"
         >
           {/* Position scent — static row; nothing scrolls past it in the
               fixed shell. Text is aria-hidden: the live region above
@@ -308,7 +386,7 @@ export function MembershipWizard({
             </div>
           </div>
           <aside
-            className="hidden lg:block lg:min-h-0 lg:self-stretch"
+            className="hidden lg:block lg:max-h-full lg:min-h-0 lg:self-start lg:overflow-y-auto"
             aria-label="Application progress"
           >
             <MembershipStepper
@@ -319,7 +397,7 @@ export function MembershipWizard({
 
           {/* Right column: scrollable form pane + anchored nav. The divider
               replaces the card as the rail/form separation on lg. */}
-          <div className="lg:border-border/60 flex min-h-0 min-w-0 flex-1 flex-col gap-5 lg:gap-0 lg:border-l lg:pl-8">
+          <div className="lg:border-border/60 flex min-h-0 min-w-0 flex-1 flex-col justify-start gap-5 lg:gap-0 lg:border-l lg:pl-8">
             <form
               ref={formScrollRef}
               onScroll={updatePaneChrome}
@@ -369,41 +447,19 @@ export function MembershipWizard({
               </div>
             </form>
 
-            {/* Anchored footer — static row pinned by layout at every
-                width: below lg it sits under the pane in the fixed
-                viewport; on lg it keeps its top border under the scroll
-                pane. */}
-            <div className="border-border/60 flex shrink-0 flex-col gap-2 border-t pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-              {/* Navigation sits below the content, right-aligned, in a
-                  fixed Back → Next order. Step changes never scroll the
-                  page — the transition is immediate and contained. */}
+            {/* Footer nav + hint — the default-position instance. Hidden
+                on lg portrait and mobile landscape, where the header
+                carries the nav instead. */}
+            <div className="border-border/60 flex shrink-0 flex-col gap-2 border-t pt-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:portrait:hidden max-lg:landscape:hidden">
               <div className="flex items-center justify-end gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleBack}
-                  disabled={step === 1 || submitting}
-                >
-                  Back
-                </Button>{" "}
-                {step < 7 ? (
-                  <Button
-                    type="button"
-                    onClick={handleNext}
-                    disabled={submitting}
-                  >
-                    Next
-                  </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={submitting}
-                    aria-busy={submitting}
-                  >
-                    {submitting ? "Submitting..." : "Submit Application"}
-                  </Button>
-                )}
+                <WizardNav
+                  step={step}
+                  totalSteps={totalSteps}
+                  submitting={submitting}
+                  onBack={handleBack}
+                  onNext={handleNext}
+                  onSubmit={handleSubmit}
+                />
               </div>
               <p className="text-muted-foreground text-center text-xs lg:text-right">
                 Need help? Reach us at{" "}

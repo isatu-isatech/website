@@ -33,9 +33,9 @@ export function MembershipStepper({
   return (
     <ol
       // Roomy padding so the active indicator's focus ring never clips
-      // against the rail edges. h-full + flex-1 rows stretch the rail to
-      // match the form column's height.
-      className={cn("flex w-full flex-col px-2 py-2 lg:h-full", className)}
+      // against the rail edges. Natural height — the rail anchors to the
+      // top beside the form instead of stretching across tall screens.
+      className={cn("flex w-full flex-col px-2 py-2", className)}
       aria-label="Application steps"
     >
       {STEPS.map((step, index) => {
@@ -45,7 +45,7 @@ export function MembershipStepper({
         const clickable = isComplete && !!onStepClick;
 
         return (
-          <li key={step.label} className="flex gap-3 lg:min-h-0 lg:flex-1">
+          <li key={step.label} className="flex gap-3">
             {/* Dot rail with vertical connector */}
             <div className="flex flex-col items-center">
               {clickable ? (
