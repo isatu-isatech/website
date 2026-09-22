@@ -101,7 +101,7 @@ export function RolePreferencesStep() {
   return (
     <div className="flex flex-col gap-4">
       <h3 className="text-lg font-semibold">Role Preferences</h3>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid items-start gap-4 md:grid-cols-2">
         <FormField
           control={form.control}
           name="primaryRole"

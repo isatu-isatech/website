@@ -16,7 +16,7 @@ type FetchStatus = "loading" | "ready" | "error";
 
 function ApplyHeading({ subtitle }: { subtitle: string }) {
   return (
-    <div className="flex flex-col items-center gap-2 text-center">
+    <div className="flex w-full flex-col items-start gap-2 text-left">
       <h1 className="text-secondary-dark dark:text-secondary text-2xl font-bold md:text-3xl">
         Membership Application
       </h1>
@@ -53,7 +53,7 @@ export function MembershipWizardSection() {
     return (
       <section
         id="apply"
-        className="mx-auto flex w-full max-w-3xl flex-col items-center gap-5 px-4 py-6 sm:px-6 md:py-10"
+        className="mx-auto flex w-full max-w-7xl flex-col items-center gap-5 px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:px-12 xl:px-16"
       >
         <ApplyHeading subtitle="Checking whether applications are open…" />
         <Loader2 className="text-primary size-6 animate-spin" aria-hidden />
@@ -65,7 +65,7 @@ export function MembershipWizardSection() {
     return (
       <section
         id="apply"
-        className="mx-auto flex w-full max-w-3xl flex-col items-center gap-5 px-4 py-6 sm:px-6 md:py-10"
+        className="mx-auto flex w-full max-w-7xl flex-col items-center gap-5 px-4 py-6 sm:px-6 md:px-8 md:py-10 lg:px-12 xl:px-16"
       >
         <ApplyHeading subtitle="We couldn't reach our records just now." />
         <div className="bg-accent/30 border-border/60 mx-auto flex w-full max-w-lg flex-col items-center gap-4 rounded-2xl border p-8 text-center">
@@ -84,7 +84,7 @@ export function MembershipWizardSection() {
   return (
     <section
       id="apply"
-      className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-4 py-6 sm:px-6 md:gap-6 md:py-10"
+      className="mx-auto flex w-full max-w-7xl flex-col gap-5 px-4 py-6 sm:px-6 md:gap-6 md:px-8 md:py-10 lg:min-h-0 lg:flex-1 lg:overflow-hidden lg:px-12 lg:py-8 xl:px-16"
     >
       {/* Hide the page title once submitted — the confirmation is not a
           place to start an application. The closed state keeps its H1. */}
@@ -92,7 +92,7 @@ export function MembershipWizardSection() {
         <ApplyHeading
           subtitle={
             campaign
-              ? "Complete the steps below. Keep this tab open until you submit — refreshing will discard your answers."
+              ? "7 short steps · about 3 minutes. Your answers are checked as you go."
               : "There is no active membership campaign at the moment. Please check back when the next campaign opens."
           }
         />

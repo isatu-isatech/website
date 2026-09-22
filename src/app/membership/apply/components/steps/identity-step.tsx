@@ -14,13 +14,15 @@ import { MEMBERSHIP_FALLBACK } from "@/lib/constants/membership";
 
 const fallback = MEMBERSHIP_FALLBACK;
 
-export function PersonalStep() {
+export function IdentityStep() {
   const form = useFormContext<MembershipFormValues>();
 
   return (
     <div className="flex flex-col gap-4">
-      <h3 className="text-lg font-semibold">Personal Information</h3>
-      <div className="grid gap-4 md:grid-cols-2">
+      <h3 className="text-lg font-semibold">Who are you?</h3>
+      {/* Top-aligned cells: in two-column rows both fields start at the
+          same line even when one grows an error or hint below. */}
+      <div className="grid items-start gap-4 md:grid-cols-2">
         <FormField
           control={form.control}
           name="fullName"
@@ -49,49 +51,6 @@ export function PersonalStep() {
         />
         <FormField
           control={form.control}
-          name="studentId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Student ID *</FormLabel>
-              <FormControl>
-                <Input placeholder="2021-1234-A" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email *</FormLabel>
-              <FormControl>
-                <Input
-                  type="email"
-                  placeholder="juan.delacruz@students.isatu.edu.ph"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="mobileNumber"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Mobile Number *</FormLabel>
-              <FormControl>
-                <Input placeholder="09123456789" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
           name="birthdate"
           render={({ field }) => (
             <FormItem>
@@ -107,11 +66,11 @@ export function PersonalStep() {
           control={form.control}
           name="sex"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="md:col-span-2">
               <FormLabel>Sex *</FormLabel>
               <FormControl>
                 <select
-                  className="border-input bg-background flex h-9 w-full rounded-md border px-3 py-1 text-sm"
+                  className="border-input bg-background flex min-h-12 w-full rounded-md border px-3 py-1 text-base"
                   {...field}
                 >
                   <option value="">Select</option>
@@ -121,19 +80,6 @@ export function PersonalStep() {
                     </option>
                   ))}
                 </select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="facebookUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Facebook Profile URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://facebook.com/..." {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

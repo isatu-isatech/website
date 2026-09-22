@@ -17,7 +17,7 @@ export function AvailabilityStep() {
   return (
     <div className="flex flex-col gap-4">
       <h3 className="text-lg font-semibold">Availability &amp; Commitment</h3>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid items-start gap-4 md:grid-cols-2">
         <FormField
           control={form.control}
           name="availability"
@@ -48,7 +48,9 @@ export function AvailabilityStep() {
           control={form.control}
           name="eventAttendanceWillingness"
           render={({ field }) => (
-            <FormItem className="flex flex-col gap-2">
+            // Dedicated row: the label is long and the control is short —
+            // sharing a row would squeeze the select beside it.
+            <FormItem className="flex flex-col gap-2 md:col-span-2">
               <FormLabel>
                 Are you willing to attend general meetings, workshops, training,
                 competitions and volunteer during events? *

@@ -28,22 +28,28 @@ export function ReviewStep({
     items: { label: string; value: string }[];
   }[] = [
     {
-      title: "Personal Information",
+      title: "Identity",
       step: 1,
       items: [
         { label: "Full Name", value: v.fullName },
         { label: "Nickname", value: v.nickname || "—" },
-        { label: "Student ID", value: v.studentId },
-        { label: "Email", value: v.email },
-        { label: "Mobile Number", value: v.mobileNumber },
         { label: "Birthdate", value: v.birthdate },
         { label: "Sex", value: v.sex },
+      ],
+    },
+    {
+      title: "Contact",
+      step: 2,
+      items: [
+        { label: "Email", value: v.email },
+        { label: "Mobile Number", value: v.mobileNumber },
+        { label: "Student ID", value: v.studentId },
         { label: "Facebook URL", value: v.facebookUrl || "—" },
       ],
     },
     {
       title: "Academic Information",
-      step: 2,
+      step: 3,
       items: [
         { label: "College", value: v.college },
         { label: "Program", value: v.program },
@@ -52,7 +58,7 @@ export function ReviewStep({
     },
     {
       title: "Role Preferences",
-      step: 3,
+      step: 4,
       items: [
         { label: "Primary Role", value: v.primaryRole },
         { label: "Secondary Role", value: v.secondaryRole },
@@ -62,7 +68,7 @@ export function ReviewStep({
     },
     {
       title: "Availability & Commitment",
-      step: 4,
+      step: 5,
       items: [
         { label: "Availability (hrs/week)", value: v.availability },
         {
@@ -74,7 +80,7 @@ export function ReviewStep({
     },
     {
       title: "Consent",
-      step: 5,
+      step: 6,
       items: [
         { label: "Privacy Consent", value: v.privacyConsent ? "Yes" : "No" },
         { label: "Declaration", value: v.declarationConsent ? "Yes" : "No" },
@@ -88,6 +94,16 @@ export function ReviewStep({
       <p className="text-muted-foreground text-sm">
         Please review everything carefully. You can edit any section before
         submitting.
+      </p>
+      {/* One-glance summary so reviewers don't cross-compare every card. */}
+      <p className="text-sm" aria-label="Application summary">
+        <span className="font-semibold">{v.fullName || "—"}</span>
+        {v.program ? ` · ${v.program}` : ""}
+        {v.yearLevel ? ` ${v.yearLevel}` : ""}
+        {v.primaryRole
+          ? ` · ${v.primaryRole}${v.secondaryRole ? `/${v.secondaryRole}` : ""}`
+          : ""}
+        {v.availability ? ` · ${v.availability} hrs/wk` : ""}
       </p>
       {sections.map((sec) => (
         <div
@@ -109,7 +125,9 @@ export function ReviewStep({
             {sec.items.map((it) => (
               <div key={it.label} className="flex justify-between gap-4">
                 <dt className="text-muted-foreground">{it.label}</dt>
-                <dd className="text-right font-medium break-all">{it.value}</dd>
+                <dd className="text-right font-medium break-words">
+                  {it.value}
+                </dd>
               </div>
             ))}
           </dl>
