@@ -146,6 +146,7 @@ export async function submitMembershipApplication(formData: unknown) {
       ["Sex", parsed.data.sex, live.sex],
       ["Primary Role", parsed.data.primaryRole, live.primaryRole],
       ["Secondary Role", parsed.data.secondaryRole, live.secondaryRole],
+      ["Availability", parsed.data.availability, live.availability],
     ];
     for (const [label, value, allowed] of checks) {
       if (!allowed.includes(value)) {
@@ -164,19 +165,21 @@ export async function submitMembershipApplication(formData: unknown) {
   // Build properties per verified schema types.
   // NOTE: `Mobile Number` must be a text/phone column in Notion (officer
   // action) — the old number column dropped leading zeros and `+63`.
-  // All free text is trimmed at write time so `Foo ` vs `Foo` don't persist.
-  const trimmedNickname = nickname?.trim() ?? "";
-  const trimmedFacebookUrl = facebookUrl?.trim() ?? "";
-  const trimmedRelatedSkills = relatedSkills?.trim() ?? "";
-  const trimmedRelatedExperiences = relatedExperiences?.trim() ?? "";
-  const trimmedOtherOrgs = otherOrgs?.trim() ?? "";
-  const trimmedProgram = program.trim();
-  const trimmedFullName = fullName.trim();
-  const birthdateMatch = /^\d{4}-\d{2}-\d{2}$/.exec(birthdate.trim());
+  // Free text arrives trimmed (and email lowercased) from the schema, so the
+  // action consumes parsed values directly with no second normalization pass.
+  // Birthdate stays intentionally split: the schema is lenient at entry
+  // (`Date.parse` + future check) while the write requires strict ISO
+  // (Notion `date` needs YYYY-MM-DD).
+  const nicknameValue = nickname ?? "";
+  const facebookUrlValue = facebookUrl ?? "";
+  const relatedSkillsValue = relatedSkills ?? "";
+  const relatedExperiencesValue = relatedExperiences ?? "";
+  const otherOrgsValue = otherOrgs ?? "";
+  const birthdateMatch = /^\d{4}-\d{2}-\d{2}$/.exec(birthdate);
   if (!birthdateMatch) {
     return {
       success: false,
-      error: "Birthdate must be a valid date (YYYY-MM-DD).",
+      error: "Invalid birthdate — please use the YYYY-MM-DD format.",
     };
   }
   const properties: Record<string, unknown> = {
@@ -184,13 +187,13 @@ export async function submitMembershipApplication(formData: unknown) {
       title: [{ text: { content: studentId } }],
     },
     [MEMBERSHIP_PROPERTIES.fullName]: {
-      rich_text: [{ text: { content: trimmedFullName } }],
+      rich_text: [{ text: { content: fullName } }],
     },
     [MEMBERSHIP_PROPERTIES.email]: {
-      email: email.trim().toLowerCase(),
+      email: email,
     },
     [MEMBERSHIP_PROPERTIES.mobileNumber]: {
-      rich_text: [{ text: { content: mobileNumber.trim() } }],
+      rich_text: [{ text: { content: mobileNumber } }],
     },
     [MEMBERSHIP_PROPERTIES.birthdate]: {
       date: { start: birthdateMatch[0] },
@@ -202,7 +205,7 @@ export async function submitMembershipApplication(formData: unknown) {
       select: { name: college },
     },
     [MEMBERSHIP_PROPERTIES.program]: {
-      rich_text: [{ text: { content: trimmedProgram } }],
+      rich_text: [{ text: { content: program } }],
     },
     [MEMBERSHIP_PROPERTIES.yearLevel]: {
       select: { name: yearLevel },
@@ -225,35 +228,35 @@ export async function submitMembershipApplication(formData: unknown) {
     },
   };
 
-  // Optional text fields — omit if empty (trimmed values)
-  if (trimmedNickname !== "") {
+  // Optional text fields — omit if empty (schema-trimmed values)
+  if (nicknameValue !== "") {
     (properties as Record<string, unknown>)[MEMBERSHIP_PROPERTIES.nickname] = {
-      rich_text: [{ text: { content: trimmedNickname } }],
+      rich_text: [{ text: { content: nicknameValue } }],
     };
   }
-  if (trimmedFacebookUrl !== "") {
+  if (facebookUrlValue !== "") {
     (properties as Record<string, unknown>)[MEMBERSHIP_PROPERTIES.facebookUrl] =
       {
-        url: trimmedFacebookUrl,
+        url: facebookUrlValue,
       };
   }
-  if (trimmedRelatedSkills !== "") {
+  if (relatedSkillsValue !== "") {
     (properties as Record<string, unknown>)[
       MEMBERSHIP_PROPERTIES.relatedSkills
     ] = {
-      rich_text: [{ text: { content: trimmedRelatedSkills } }],
+      rich_text: [{ text: { content: relatedSkillsValue } }],
     };
   }
-  if (trimmedRelatedExperiences !== "") {
+  if (relatedExperiencesValue !== "") {
     (properties as Record<string, unknown>)[
       MEMBERSHIP_PROPERTIES.relatedExperiences
     ] = {
-      rich_text: [{ text: { content: trimmedRelatedExperiences } }],
+      rich_text: [{ text: { content: relatedExperiencesValue } }],
     };
   }
-  if (trimmedOtherOrgs !== "") {
+  if (otherOrgsValue !== "") {
     (properties as Record<string, unknown>)[MEMBERSHIP_PROPERTIES.otherOrgs] = {
-      rich_text: [{ text: { content: trimmedOtherOrgs } }],
+      rich_text: [{ text: { content: otherOrgsValue } }],
     };
   }
 

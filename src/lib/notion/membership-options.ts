@@ -2,41 +2,38 @@
  * Live option sets for the membership form — Notion is the source of truth.
  *
  * Verified via Notion MCP 2026-08-25:
- * - College (5): Engineering and Architecture, Industrial Technology, Education, Arts and Sciences, Computing and Informatics
+ * - College (6): Engineering and Architecture, Industrial Technology, Education, Arts and Sciences, Computing and Informatics, Global Business and Enterprise
  * - Year Level (5): 1st Year … 5th Year
  * - Sex (2): Male, Female
  * - Primary/Secondary Role Preference (4): Hound, Hacker, Hipster, Hustler
+ * - Availability (4): Less than 2 hours, 2-5 hours, 6-10 hours, More than 10 hours
  *
  * The form and server validation MUST use these live lists, not a competing
  * static constant. This helper fetches the Form Submissions DB schema (via
  * `notion.databases.retrieve`) and caches the result for the request lifetime
- * (simple module-level memo, safe for serverless). Fallback to the verified
- * hardcoded lists if Notion is unreachable at build/dev (fail-open for DX,
+ * (simple module-level memo, safe for serverless). Fallback to the canonical
+ * lists in `src/lib/constants/membership-options-source.ts` (shared with the
+ * client fallback) if Notion is unreachable at build/dev (fail-open for DX,
  * but runtime validation will still reject unknown values when Notion is reachable).
  */
 
 import { getNotionClient } from "./client";
 import { env } from "@/lib/env";
+import {
+  MEMBERSHIP_AVAILABILITY_BANDS,
+  MEMBERSHIP_COLLEGES,
+  MEMBERSHIP_ROLES,
+  MEMBERSHIP_SEXES,
+  MEMBERSHIP_YEAR_LEVELS,
+} from "@/lib/constants/membership-options-source";
 
-// Fallback lists — match the verified schema on 2026-08-25
+// Fallback lists — the canonical source, shared with the client fallback.
 const FALLBACK = {
-  college: [
-    "College of Engineering and Architecture",
-    "College of Industrial Technology",
-    "College of Education",
-    "College of Arts and Sciences",
-    "College of Computing and Informatics",
-    "College of Global Business and Enterprise",
-  ] as const,
-  yearLevel: [
-    "1st Year",
-    "2nd Year",
-    "3rd Year",
-    "4th Year",
-    "5th Year",
-  ] as const,
-  sex: ["Male", "Female"] as const,
-  role: ["Hound", "Hacker", "Hipster", "Hustler"] as const,
+  college: MEMBERSHIP_COLLEGES,
+  yearLevel: MEMBERSHIP_YEAR_LEVELS,
+  sex: MEMBERSHIP_SEXES,
+  role: MEMBERSHIP_ROLES,
+  availability: MEMBERSHIP_AVAILABILITY_BANDS,
 } as const;
 
 export type MembershipOptions = {
@@ -45,6 +42,7 @@ export type MembershipOptions = {
   sex: readonly string[];
   primaryRole: readonly string[];
   secondaryRole: readonly string[];
+  availability: readonly string[];
 };
 
 // Cache is keyed by data-source ID so per-campaign (parameterized) fetches
@@ -142,6 +140,9 @@ export async function getMembershipOptions(
     const secondaryRole = toOptionNames(props["Secondary Role Preference"]) ?? [
       ...FALLBACK.role,
     ];
+    const availability = toOptionNames(props["Availability"]) ?? [
+      ...FALLBACK.availability,
+    ];
 
     return put({
       college,
@@ -149,6 +150,7 @@ export async function getMembershipOptions(
       sex,
       primaryRole,
       secondaryRole,
+      availability,
     });
   } catch {
     // Notion unreachable at build or tests — use fallback so the form can still render
@@ -159,6 +161,7 @@ export async function getMembershipOptions(
       sex: [...FALLBACK.sex],
       primaryRole: [...FALLBACK.role],
       secondaryRole: [...FALLBACK.role],
+      availability: [...FALLBACK.availability],
     });
   }
 }

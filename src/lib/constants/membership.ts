@@ -4,39 +4,31 @@
  * Notion is the source of truth at runtime (fetched via `membership-options.ts`
  * on the server), but the client bundle cannot import `src/lib/env.ts` (which
  * validates server-only vars like NOTION_API_KEY and throws ZodError in the
- * browser). This file is the client-safe fallback used by `schema.ts` for
- * initial `z.enum` shapes and by the step components for rendering selects
- * before the server has validated against live Notion options.
+ * browser). The lists below are built from the canonical
+ * `membership-options-source.ts` (shared with the server fallback) and used by
+ * `schema.ts` for initial `z.enum` shapes and by the step components for
+ * rendering selects before the server has validated against live Notion
+ * options.
  *
  * Verified live values on 2026-08-25 — keep in sync with Notion, but server
  * will re-validate against live lists on submit and reject stale values.
  */
 
+import {
+  MEMBERSHIP_AVAILABILITY_BANDS,
+  MEMBERSHIP_COLLEGES,
+  MEMBERSHIP_ROLES,
+  MEMBERSHIP_SEXES,
+  MEMBERSHIP_YEAR_LEVELS,
+} from "./membership-options-source";
+
 export const MEMBERSHIP_FALLBACK = {
-  college: [
-    "College of Engineering and Architecture",
-    "College of Industrial Technology",
-    "College of Education",
-    "College of Arts and Sciences",
-    "College of Computing and Informatics",
-    "College of Global Business and Enterprise",
-  ] as const,
-  yearLevel: [
-    "1st Year",
-    "2nd Year",
-    "3rd Year",
-    "4th Year",
-    "5th Year",
-  ] as const,
-  sex: ["Male", "Female"] as const,
-  role: ["Hound", "Hacker", "Hipster", "Hustler"] as const,
-  primaryRole: ["Hound", "Hacker", "Hipster", "Hustler"] as const,
-  secondaryRole: ["Hound", "Hacker", "Hipster", "Hustler"] as const,
-  // Hardcoded hours-commitment options (org decision — not Notion-sourced)
-  availability: [
-    "Less than 2 hours",
-    "2-5 hours",
-    "6-10 hours",
-    "More than 10 hours",
-  ] as const,
+  college: MEMBERSHIP_COLLEGES,
+  yearLevel: MEMBERSHIP_YEAR_LEVELS,
+  sex: MEMBERSHIP_SEXES,
+  role: MEMBERSHIP_ROLES,
+  primaryRole: MEMBERSHIP_ROLES,
+  secondaryRole: MEMBERSHIP_ROLES,
+  // Notion-owned hours-commitment options (Availability select column)
+  availability: MEMBERSHIP_AVAILABILITY_BANDS,
 } as const;
