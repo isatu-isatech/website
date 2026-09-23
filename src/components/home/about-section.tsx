@@ -31,7 +31,7 @@ export function HomepageAboutSection() {
         />
         <div
           aria-hidden
-          className="absolute top-0 right-0 aspect-[320/528] h-full w-auto bg-current mask-right opacity-10"
+          className="absolute top-0 right-0 aspect-320/528 h-full w-auto bg-current mask-right opacity-10"
         />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-6 md:flex-row-reverse">
