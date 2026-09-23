@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import { getMembershipOptions } from "@/lib/notion/membership-options";
 import { getActiveCampaign } from "@/lib/notion/membership-campaigns";
 import { membershipRateLimit } from "@/lib/services/cookie-rate-limit";
+import { verifyTurnstile } from "@/lib/services/turnstile";
 
 /**
  * Notion property names for the Form Submissions DB.
@@ -119,30 +120,16 @@ export async function submitMembershipApplication(formData: unknown) {
     };
   }
 
-  // 4. Turnstile verification (apply-local timeout; contact surface untouched
-  // per scope — see plan). Cloudflare stalls must not hang to the Vercel limit.
-  try {
-    const response = await fetch(
-      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          secret: cloudflareTurnstileSecretKey,
-          response: turnstileToken,
-        }),
-        signal: AbortSignal.timeout(8000),
-      },
-    );
-    const data = (await response.json()) as { success?: boolean };
-    if (!data.success) {
+  // 4. Turnstile verification (shared verifier; bounded wait so Cloudflare
+  // stalls never hang to the Vercel limit).
+  const turnstile = await verifyTurnstile(turnstileToken);
+  if (!turnstile.ok) {
+    if (turnstile.reason === "failed") {
       return {
         success: false,
         error: "The security check didn't go through — please try once more.",
       };
     }
-  } catch (error) {
-    console.error("Turnstile verification error:", error);
     return {
       success: false,
       error:
