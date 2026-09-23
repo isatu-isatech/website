@@ -119,7 +119,7 @@ export default function HeaderComponent() {
                   variant={"outline"}
                   size={"icon"}
                   className={cn(
-                    "h-10 w-10 md:hidden",
+                    "h-10 w-10 bg-transparent md:hidden",
                     overHero &&
                       "border-white/40 text-white hover:bg-white/10 hover:text-white",
                   )}
