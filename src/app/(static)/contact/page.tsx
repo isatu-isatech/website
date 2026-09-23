@@ -52,6 +52,9 @@ export const metadata: Metadata = {
     ],
     type: "website",
   },
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/contact`,
+  },
 };
 
 /**

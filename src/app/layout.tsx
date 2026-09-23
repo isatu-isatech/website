@@ -5,6 +5,7 @@ import { CookieConsentProvider } from "@/components/providers/cookie-consent";
 import { ConsentGatedAnalytics } from "@/components/providers/consent-gated-analytics";
 import { PageTransition } from "@/components/common/page-transition";
 import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants/site";
+import { cn } from "@/lib/utils";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -146,9 +147,6 @@ export const metadata: Metadata = {
     canonical: SITE_CONFIG.url,
   },
   manifest: "/manifest.json",
-  other: {
-    preload: ["/assets/seo/favicon-light.ico", "/assets/seo/favicon-dark.ico"],
-  },
 };
 
 /**
@@ -175,10 +173,12 @@ export default async function RootLayout({
           crossOrigin="anonymous"
         />
         <link rel="preconnect" href="https://challenges.cloudflare.com" />
+        <link rel="preconnect" href="https://www.youtube-nocookie.com" />
+        <link rel="preconnect" href="https://i.ytimg.com" />
         <link rel="dns-prefetch" href="https://vitals.vercel-analytics.com" />
       </head>
       <body
-        className={`${poppins.variable} ${chivo.variable} antialiased`}
+        className={cn(poppins.variable, chivo.variable, "antialiased")}
         data-overlayscrollbars-initialize
       >
         <CookieConsentProvider>
@@ -195,7 +195,7 @@ export default async function RootLayout({
               name: "ISATech Society",
               alternateName: "ISATech",
               url: SITE_CONFIG.url,
-              logo: `${SITE_CONFIG.url}/assets/seo/logo.png`,
+              logo: `${SITE_CONFIG.url}/assets/logos/isatech.png`,
               description:
                 "Empowering student founders to achieve their dreams through innovation, collaboration, and community.",
               foundingDate: "2021",

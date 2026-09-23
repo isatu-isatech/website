@@ -50,6 +50,24 @@ export const metadata: Metadata = {
     url: `${SITE_CONFIG.url}/membership`,
     siteName: "ISATech Society",
     type: "website",
+    images: [
+      {
+        url: "/assets/seo/ogimage.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Become a Member of ISATech Society",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Become a Member of ISATech Society",
+    description:
+      "Join the ISATech Society to enhance your skills, network with peers, and contribute to innovative projects that shape the future.",
+    images: ["/assets/seo/ogimage.jpg"],
+  },
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/membership`,
   },
 };
 
@@ -135,6 +153,9 @@ function MembershipPageHeroSection() {
               sizes="(min-width: 1360px) 562px, (min-width: 1040px) calc(40.33vw + 22px), calc(99.86vw - 51px)"
               className="h-auto w-full object-contain"
               priority
+              fetchPriority="high"
+              placeholder="blur"
+              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+"
             />
           </div>
         </div>
