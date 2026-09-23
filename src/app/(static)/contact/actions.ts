@@ -7,8 +7,6 @@ import { cookies } from "next/headers";
 import { contactRateLimit } from "@/lib/services/cookie-rate-limit";
 import { verifyTurnstile } from "@/lib/services/turnstile";
 
-const contactFormDatabaseID = env.NOTION_CONTACT_FORM_DATABASE_ID;
-
 /**
  * Contact-form database property names (the Notion schema keys). The
  * property VALUES are built from validated form data below; only the keys
@@ -22,6 +20,9 @@ const CONTACT_PROPERTIES = {
 } as const;
 
 export async function submitMessage(formData: unknown) {
+  // Read env lazily inside the request so a missing contact DB ID fails
+  // only this action (not every route importing this module at build).
+  const contactFormDatabaseID = env.NOTION_CONTACT_FORM_DATABASE_ID;
   // Browser-cookie rate limiting: the visitor's browser holds the record of
   // recent successful submissions (spec 002 / constitution P5). Browsers
   // without a readable record are treated as first-time submitters; only
@@ -113,7 +114,7 @@ export async function submitMessage(formData: unknown) {
 
     return { success: true };
   } catch (error) {
-    console.error("Something went wrong:", error);
+    console.error("[contact] submission Notion write failed:", error);
     return {
       success: false,
       error: "Something went wrong on our end. Please try again in a moment.",
