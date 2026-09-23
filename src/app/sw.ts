@@ -93,33 +93,18 @@ const runtimeCaching: RuntimeCaching[] =
             ],
           }),
         },
-        // next/image optimized responses.
+        // next/image optimized responses (bounded: variants × sources).
         {
           matcher: /\/_next\/image\?url=.+$/i,
           handler: new StaleWhileRevalidate({
             cacheName: "next-image",
             plugins: [
               new ExpirationPlugin({
-                maxEntries: 128,
+                maxEntries: 64,
                 maxAgeSeconds: 30 * 24 * 60 * 60,
                 maxAgeFrom: "last-used",
               }),
             ],
-          }),
-        },
-        // App Router route data.
-        {
-          matcher: /\/_next\/data\/.+\/.+\.json$/i,
-          handler: new NetworkFirst({
-            cacheName: "next-data",
-            plugins: [
-              new ExpirationPlugin({
-                maxEntries: 32,
-                maxAgeSeconds: 24 * 60 * 60,
-                maxAgeFrom: "last-used",
-              }),
-            ],
-            networkTimeoutSeconds: 10,
           }),
         },
         // RSC payloads for client-side navigations.
@@ -136,6 +121,7 @@ const runtimeCaching: RuntimeCaching[] =
                 maxAgeSeconds: 24 * 60 * 60,
               }),
             ],
+            networkTimeoutSeconds: 3,
           }),
         },
         // Document navigations — fresh HTML wins; precache is the fallback.
