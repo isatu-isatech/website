@@ -11,10 +11,13 @@ const envSchema = z.object({
   // Dashboard: Membership Application Dashboard (3c7f42d3-fa72-80d2-86ad-ddcc19b555e0)
   // Campaigns DB: Membership Campaigns (3c7f42d3-fa72-8095-b5a7-000bc5bec8d2)
   // Submissions DB: Form Submissions (3c7f42d3-fa72-8049-9d58-000badfe03e9)
+  // Optional for contact/quiz-only builds: the apply route treats a missing
+  // value as "no active campaign" (closed state) instead of crashing.
   NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID: z
     .string()
     .trim()
-    .min(1, "NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID is required"),
+    .min(1, "NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID is required")
+    .optional(),
   // Per-campaign Form Submissions DB — dynamic per active campaign (extracted from campaign page's inline DB).
   // Kept optional as fallback for campaigns created without template (blank pages) and for local build without Notion.
   NOTION_MEMBERSHIP_SUBMISSIONS_DATABASE_ID: z.string().trim().optional(),

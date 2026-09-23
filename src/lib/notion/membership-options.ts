@@ -105,12 +105,14 @@ export async function getMembershipOptions(
     if (!dbId) throw new Error("No submissions data source ID available");
     // Use generic request() so we can handle both data-source IDs (…8095…/023f…)
     // and database page IDs (…8000…/d14f…) regardless of SDK method names.
+    // Retrieve paths carry no `/retrieve` suffix: GET /v1/data_sources/{id}
+    // and GET /v1/databases/{id} (only `/query` takes a suffix).
     let db: unknown;
     try {
       db = await (
         notion as unknown as { request: (args: unknown) => Promise<unknown> }
       ).request({
-        path: `data_sources/${dbId}/retrieve`,
+        path: `data_sources/${dbId}`,
         method: "get",
       });
     } catch (err) {
@@ -122,7 +124,7 @@ export async function getMembershipOptions(
         db = await (
           notion as unknown as { request: (args: unknown) => Promise<unknown> }
         ).request({
-          path: `databases/${dbId}/retrieve`,
+          path: `databases/${dbId}`,
           method: "get",
         });
       } else {

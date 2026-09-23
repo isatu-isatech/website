@@ -120,10 +120,28 @@ export async function createPageInDataSource(
   properties: CreatePageParameters["properties"],
 ): Promise<CreatePageResponse> {
   const notion = getNotionClient();
-  return withRetry(() =>
-    notion.pages.create({
-      parent: { data_source_id: dataSourceId },
-      properties,
-    }),
-  );
+  try {
+    return await withRetry(() =>
+      notion.pages.create({
+        parent: { data_source_id: dataSourceId },
+        properties,
+      }),
+    );
+  } catch (error) {
+    // The fallback env var may hold a database *page* ID instead of a
+    // data-source ID — retry under `database_id` like `createPage` does.
+    const msg = (error as { message?: string })?.message ?? String(error);
+    if (
+      msg.includes("Could not find data_source") ||
+      msg.includes("data_source with ID")
+    ) {
+      return withRetry(() =>
+        notion.pages.create({
+          parent: { database_id: dataSourceId },
+          properties,
+        }),
+      );
+    }
+    throw error;
+  }
 }

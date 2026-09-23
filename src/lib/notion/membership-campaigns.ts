@@ -34,6 +34,14 @@ export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
   try {
     const notion = getNotionClient();
     const databaseId = env.NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID;
+    // Contact/quiz-only builds may omit the campaigns DB: treat as closed
+    // rather than throwing at import/request time.
+    if (!databaseId) {
+      console.warn(
+        "[membership-campaigns] NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID is not configured — treating applications as closed",
+      );
+      return null;
+    }
 
     // Use the SDK's generic request() — works for both data-source IDs
     // (collection://…8095…) and database page IDs (…8000…) regardless of
