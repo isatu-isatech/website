@@ -56,6 +56,16 @@ export function HomepageHeroSection() {
   const pickedRef = useRef<string | null>(null);
 
   useEffect(() => {
+    // Ambient video is decorative: skip it for reduced-motion or Save-Data
+    // so the branded frame stays as the hero background.
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const saveData =
+      typeof navigator !== "undefined" &&
+      (navigator as Navigator & { connection?: { saveData?: boolean } })
+        .connection?.saveData === true;
+    if (prefersReduced || saveData) return;
     if (!pickedRef.current) {
       const tall =
         typeof window !== "undefined" &&
@@ -92,6 +102,7 @@ export function HomepageHeroSection() {
         <motion.div
           style={{ y: videoTranslate, willChange: "transform" }}
           className="absolute top-[-25%] -z-1 flex h-[150%] w-full items-center justify-center"
+          aria-hidden="true"
         >
           <YouTubePlayer
             videoId={videoId}
@@ -101,6 +112,7 @@ export function HomepageHeroSection() {
             hideControls
             disableKeyboard
             loading="eager"
+            title="Ambient ISATech showcase video (decorative, no controls)"
             onLoad={() => setPlayerReady(true)}
             className="pointer-events-none absolute top-1/2 left-1/2 aspect-video h-full max-w-none min-w-full -translate-x-1/2 -translate-y-1/2"
           />

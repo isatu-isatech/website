@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 type YTWindow = Window & {
   YT?: any;
@@ -49,8 +49,11 @@ function loadYouTubeAPI(callback: () => void): void {
   };
   const tag = document.createElement("script");
   tag.src = "https://www.youtube.com/iframe_api";
+  tag.async = true;
   document.head.appendChild(tag);
 }
+
+const YT_NOCOOKIE_HOST = "https://www.youtube-nocookie.com";
 
 const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
   videoId,
@@ -60,11 +63,13 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
   loop = false,
   title = "YouTube video player",
   className,
+  loading = "eager",
   disableKeyboard = false,
   onLoad,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
+  const [deferred, setDeferred] = useState(loading === "eager");
 
   // Ambient player config is intentionally static for a given video; keep the
   // latest prop values in a ref so the player is constructed once per videoId
@@ -88,7 +93,33 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
     };
   });
 
+  // `loading="lazy"` defers API + player construction until the container
+  // nears the viewport; `eager` preserves current hero behavior.
   useEffect(() => {
+    if (loading === "eager") {
+      setDeferred(true);
+      return;
+    }
+    const el = containerRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setDeferred(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setDeferred(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "400px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [loading]);
+
+  useEffect(() => {
+    if (!deferred) return;
     const container = containerRef.current;
     if (!container) return;
 
@@ -109,6 +140,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
         videoId,
         width: "100%",
         height: "100%",
+        host: YT_NOCOOKIE_HOST,
         playerVars: {
           autoplay: cfg.autoPlay ? 1 : 0,
           controls: cfg.hideControls ? 0 : 1,
@@ -142,7 +174,7 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
       playerRef.current = null;
     };
     // Props are static for this ambient player; constructed once per videoId.
-  }, [videoId]);
+  }, [videoId, deferred]);
 
   return (
     <div
