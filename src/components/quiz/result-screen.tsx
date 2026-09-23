@@ -15,6 +15,7 @@ import {
 } from "@/lib/quiz";
 import { COLORS } from "@/lib/constants/design-tokens";
 import { cn } from "@/lib/utils";
+import { useKiosk } from "@/components/kiosk";
 
 export const ResultScreen = memo(function ResultScreen({
   result,
@@ -26,6 +27,9 @@ export const ResultScreen = memo(function ResultScreen({
   onShare: () => void;
 }) {
   const reduceMotion = useMountedReducedMotion();
+  // Kiosk display hides sharing and the membership funnel so the result
+  // screen can't leak the visitor off the quiz on shared devices.
+  const { isKioskEnforced } = useKiosk();
 
   // Generalist renders in the brand gold pair (from design tokens);
   // archetypes use their canonical gradient classes (COLORS.quiz.archetypes).
@@ -170,16 +174,18 @@ export const ResultScreen = memo(function ResultScreen({
         transition={reduceMotion ? { duration: 0 } : { delay: 0.9 }}
         className="flex flex-row justify-center gap-3"
       >
-        <Button
-          type="button"
-          onClick={onShare}
-          variant="secondary"
-          size="sm"
-          className="gap-2"
-        >
-          <Share2 className="size-4" />
-          Share
-        </Button>
+        {!isKioskEnforced && (
+          <Button
+            type="button"
+            onClick={onShare}
+            variant="secondary"
+            size="sm"
+            className="gap-2"
+          >
+            <Share2 className="size-4" />
+            Share
+          </Button>
+        )}
         <Button
           type="button"
           onClick={onReset}
@@ -192,28 +198,31 @@ export const ResultScreen = memo(function ResultScreen({
         </Button>
       </motion.div>
 
-      {/* Funnel hand-off — the quiz peak leads into membership (FR-014) */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={reduceMotion ? { duration: 0 } : { delay: 1.1 }}
-        className="mt-8 flex flex-col items-center gap-2 text-center"
-      >
-        <Button
-          variant="secondary"
-          size="lg"
-          asChild
-          className="min-h-[48px] w-full sm:w-auto"
+      {/* Funnel hand-off — the quiz peak leads into membership (FR-014).
+          Hidden in kiosk display: no outbound navigation on shared devices. */}
+      {!isKioskEnforced && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={reduceMotion ? { duration: 0 } : { delay: 1.1 }}
+          className="mt-8 flex flex-col items-center gap-2 text-center"
         >
-          <Link href="/membership" className="inline-flex items-center gap-1">
-            Join ISATech as a {result.role}
-            <ArrowRight aria-hidden className="size-4" />
-          </Link>
-        </Button>
-        <p className="text-muted-foreground text-xs">
-          See what membership offers first — no commitment.
-        </p>
-      </motion.div>
+          <Button
+            variant="secondary"
+            size="lg"
+            asChild
+            className="min-h-[48px] w-full sm:w-auto"
+          >
+            <Link href="/membership" className="inline-flex items-center gap-1">
+              Join ISATech as a {result.role}
+              <ArrowRight aria-hidden className="size-4" />
+            </Link>
+          </Button>
+          <p className="text-muted-foreground text-xs">
+            See what membership offers first — no commitment.
+          </p>
+        </motion.div>
+      )}
     </motion.div>
   );
 });

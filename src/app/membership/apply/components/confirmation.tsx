@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
 import { IdleCountdown } from "@/components/common";
+import { useKiosk } from "@/components/kiosk";
 import { SOCIAL_LINKS } from "@/lib/constants/site";
 
 export function MembershipConfirmation({
@@ -18,6 +19,9 @@ export function MembershipConfirmation({
   secondsLeft?: number | null;
   onReset: () => void;
 }) {
+  // Kiosk display hides the outbound back link so visitors can't wander
+  // off the application on shared devices; reset stays available.
+  const { isKioskEnforced } = useKiosk();
   return (
     // Margin-auto centers on lg without the overflow-clipping that
     // items-center/justify-center cause on short viewports; top-nudged
@@ -62,9 +66,11 @@ export function MembershipConfirmation({
       </div>
 
       <div className="flex w-full flex-col items-center gap-2 sm:flex-row sm:justify-center">
-        <Button variant="default" asChild>
-          <Link href="/membership">Back to membership</Link>
-        </Button>
+        {!isKioskEnforced && (
+          <Button variant="default" asChild>
+            <Link href="/membership">Back to membership</Link>
+          </Button>
+        )}
         <Button variant="outline" onClick={onReset}>
           Submit another application
         </Button>

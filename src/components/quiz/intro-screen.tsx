@@ -9,6 +9,7 @@ import { Sparkles } from "lucide-react";
 import Image from "next/image";
 import { archetypeIcons, questions, ARCHETYPE_KEYS } from "@/lib/quiz";
 import { COLORS } from "@/lib/constants/design-tokens";
+import { useKiosk } from "@/components/kiosk";
 
 export const IntroScreen = memo(function IntroScreen({
   onStart,
@@ -16,6 +17,9 @@ export const IntroScreen = memo(function IntroScreen({
   onStart: () => void;
 }) {
   const reduceMotion = useMountedReducedMotion();
+  // Kiosk display hides the outbound "what the roles mean" link so
+  // visitors can't wander off the quiz on shared devices.
+  const { isKioskEnforced } = useKiosk();
 
   return (
     <motion.div
@@ -91,12 +95,14 @@ export const IntroScreen = memo(function IntroScreen({
         {questions.length} questions · at your own pace{" "}
         {/* TODO(org-copy): org may provide wording for the intro time/count string */}
       </p>
-      <p className="text-muted-foreground mt-1 text-xs">
-        New here?{" "}
-        <Link href="/about" className="text-primary underline">
-          What the 4H roles mean
-        </Link>
-      </p>
+      {!isKioskEnforced && (
+        <p className="text-muted-foreground mt-1 text-xs">
+          New here?{" "}
+          <Link href="/about" className="text-primary underline">
+            What the 4H roles mean
+          </Link>
+        </p>
+      )}
     </motion.div>
   );
 });
