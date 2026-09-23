@@ -6,6 +6,7 @@ import type { LucideProps } from "lucide-react";
 import { ISATechLogoType } from "@/components/assets/logos";
 import { FacebookIcon, LinkedinIcon } from "@/components/assets/social-icons";
 import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants";
+import CookiePreferencesButton from "./cookie-preferences-button";
 
 /**
  * ################################################################################
@@ -35,10 +36,7 @@ const navLinks: {
   },
   {
     section: "Legal",
-    links: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Cookie Preferences", href: "/privacy#manage-cookies" },
-    ],
+    links: [{ label: "Privacy Policy", href: "/privacy" }],
   },
 ];
 
@@ -100,6 +98,7 @@ export default function FooterComponent() {
                         </p>
                       </Link>
                     ))}
+                    {section.section === "Legal" && <CookiePreferencesButton />}
                   </div>
                 </div>
               ))}
