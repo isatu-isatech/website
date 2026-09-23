@@ -147,17 +147,22 @@ export async function GET(request: NextRequest) {
   const iconName = isGeneralist
     ? "4h-vertical.png"
     : (ARCHETYPE_ICON[archetype] ?? "hustler.png");
-  let iconUri: string;
-  let regular: Buffer;
-  let bold: Buffer;
+  const isInviteRequest = role === null;
+  let iconUri: string | null = null;
+  let regular: Buffer | null = null;
+  let bold: Buffer | null = null;
   try {
     iconUri = await iconDataUri(iconName);
     ({ regular, bold } = await loadFonts());
   } catch (error) {
     // Transient asset read failure → invite banner, never a 500 (same
-    // posture as non-canonical roles above).
+    // posture as non-canonical roles above). Never redirect when already
+    // serving the invite: its own assets are what just failed, so a
+    // redirect would loop. Fall through to the asset-free fallback below.
     console.error("[og/quiz] asset load failed, serving invite banner:", error);
-    return NextResponse.redirect(new URL("/api/og/quiz", request.url), 302);
+    if (!isInviteRequest) {
+      return NextResponse.redirect(new URL("/api/og/quiz", request.url), 302);
+    }
   }
 
   const ogResponse = new ImageResponse(
@@ -198,7 +203,9 @@ export async function GET(request: NextRequest) {
           zIndex: 10,
         }}
       >
-        {/* Archetype icon badge — same art as the in-app result (FR-010) */}
+        {/* Archetype icon badge — same art as the in-app result (FR-010).
+            Omitted when the asset read failed (invite fallback): an empty
+            gradient badge keeps the layout without needing the PNG. */}
         <div
           style={{
             display: "flex",
@@ -213,12 +220,14 @@ export async function GET(request: NextRequest) {
             overflow: "hidden",
           }}
         >
-          {/* oxlint-disable-next-line next/no-img-element -- Satori/ImageResponse requires a raw <img>; next/image cannot render inside server-generated OG images */}
-          <img
-            src={iconUri}
-            alt=""
-            style={{ width: "132px", height: "132px", objectFit: "contain" }}
-          />
+          {iconUri ? (
+            /* oxlint-disable-next-line next/no-img-element -- Satori/ImageResponse requires a raw <img>; next/image cannot render inside server-generated OG images */
+            <img
+              src={iconUri}
+              alt=""
+              style={{ width: "132px", height: "132px", objectFit: "contain" }}
+            />
+          ) : null}
         </div>
 
         {/* "I am a..." text */}
@@ -292,10 +301,15 @@ export async function GET(request: NextRequest) {
     {
       width: 1200,
       height: 630,
-      fonts: [
-        { name: "Poppins", data: regular, weight: 400, style: "normal" },
-        { name: "Poppins", data: bold, weight: 700, style: "normal" },
-      ],
+      // Asset-free invite fallback carries no custom fonts — Satori falls
+      // back to system fonts instead of throwing on null data.
+      fonts:
+        regular && bold
+          ? [
+              { name: "Poppins", data: regular, weight: 400, style: "normal" },
+              { name: "Poppins", data: bold, weight: 700, style: "normal" },
+            ]
+          : undefined,
     },
   );
 
