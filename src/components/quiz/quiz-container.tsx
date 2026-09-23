@@ -22,6 +22,7 @@ import {
 } from "@/lib/quiz";
 import { toast } from "sonner";
 import { COLORS } from "@/lib/constants/design-tokens";
+import { useKiosk } from "@/components/kiosk";
 import { useMountedReducedMotion, useQuizLeaveGuard } from "@/lib/hooks";
 import { IdleCountdown } from "./idle-countdown";
 import { IntroScreen } from "./intro-screen";
@@ -185,9 +186,30 @@ export function QuizContainer() {
     state.usedTieBreakers,
   ]);
 
+  // Shared/kiosk devices turn over between visitors on the same tab: while
+  // kiosk display is enforced, progress is neither restored nor persisted
+  // so a reload can never resurrect the previous visitor's quiz.
+  const { isKioskEnforced, isKioskReady } = useKiosk();
+
+  // If kiosk display is enabled mid-quiz (staff toggle), drop whatever was
+  // persisted so far. In-memory state is left untouched.
+  useEffect(() => {
+    if (isKioskEnforced) clearProgress();
+  }, [isKioskEnforced]);
+
   // Session persistence (FR-008): restore an in-progress quiz on mount so a
   // refresh or back/forward resumes at the same question with answers intact.
+  // Waits for `isKioskReady`: on a kiosk reload the pre-resolution kiosk
+  // flag is always false, so restoring earlier would resurrect the previous
+  // visitor's progress before kiosk enforcement is known.
   useEffect(() => {
+    if (!isKioskReady || restored) return;
+    if (isKioskEnforced) {
+      clearProgress();
+      // oxlint-disable-next-line react/set-state-in-effect
+      setRestored(true);
+      return;
+    }
     const saved = loadProgress();
     if (saved) {
       // Mount-time hydration from sessionStorage is a legitimate external
@@ -216,12 +238,18 @@ export function QuizContainer() {
         tieChoiceOrders: saved.tieChoiceOrders,
       });
     }
+    // oxlint-disable-next-line react/set-state-in-effect
     setRestored(true);
-  }, []);
+  }, [isKioskReady, isKioskEnforced, restored]);
 
   // Save after every committed transition; clear on result / retake / intro.
+  // Never persists while kiosk display is enforced (shared-device turnover).
   useEffect(() => {
     if (!restored || leavingRef.current) return;
+    if (isKioskEnforced) {
+      clearProgress();
+      return;
+    }
     if (state.phase === "quiz" || state.phase === "tiebreaker") {
       saveProgress({
         version: makeProgressVersion(),
@@ -239,7 +267,7 @@ export function QuizContainer() {
     } else {
       clearProgress();
     }
-  }, [state, restored]);
+  }, [state, restored, isKioskEnforced]);
 
   const result = useMemo(
     () =>

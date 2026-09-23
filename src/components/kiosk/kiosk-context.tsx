@@ -21,6 +21,14 @@ interface KioskContextValue {
   isKiosk: boolean;
   /** Effective kiosk UI — intent gated on desktop-portrait eligibility. */
   isKioskEnforced: boolean;
+  /**
+   * True once the persisted intent and media eligibility have been read
+   * (first effect after mount). Session-restore effects (quiz progress,
+   * apply draft) must wait for this before touching storage: on a kiosk
+   * reload the pre-resolution value of `isKioskEnforced` is always false,
+   * so restoring earlier would resurrect the previous visitor's data.
+   */
+  isKioskReady: boolean;
   enter: () => void;
   exit: () => void;
   toggle: () => void;
@@ -53,6 +61,7 @@ function isKioskEligible() {
 export function KioskProvider({ children }: { children: ReactNode }) {
   const [isKiosk, setIsKiosk] = useState(false);
   const [isEligible, setIsEligible] = useState(false);
+  const [isKioskReady, setIsKioskReady] = useState(false);
   const isKioskRef = useRef(false);
 
   useEffect(() => {
@@ -74,6 +83,10 @@ export function KioskProvider({ children }: { children: ReactNode }) {
     const mq = window.matchMedia(KIOSK_MEDIA_QUERY);
     // oxlint-disable-next-line react/set-state-in-effect
     setIsEligible(mq.matches);
+    // Intent + eligibility are now resolved — session-restore effects
+    // waiting on `isKioskReady` may proceed (see the interface docs).
+    // oxlint-disable-next-line react/set-state-in-effect
+    setIsKioskReady(true);
     const onChange = (event: MediaQueryListEvent) =>
       setIsEligible(event.matches);
     mq.addEventListener("change", onChange);
@@ -141,11 +154,12 @@ export function KioskProvider({ children }: { children: ReactNode }) {
     () => ({
       isKiosk,
       isKioskEnforced: isKiosk && isEligible,
+      isKioskReady,
       enter,
       exit,
       toggle,
     }),
-    [isKiosk, isEligible, enter, exit, toggle],
+    [isKiosk, isEligible, isKioskReady, enter, exit, toggle],
   );
 
   return (

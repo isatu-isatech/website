@@ -173,7 +173,7 @@ export function MembershipWizard({
   // abandoned draft (full PII) must never auto-resume for the next visitor.
   // While kiosk display is enforced the wizard neither restores nor persists
   // a draft — every visitor starts clean on the intro.
-  const { isKioskEnforced } = useKiosk();
+  const { isKioskEnforced, isKioskReady } = useKiosk();
   const wizardTopRef = useRef<HTMLDivElement>(null);
   // Focus target for step changes — keyboard/SR users must land on the new
   // step, not on the unmounted Next/Submit button. `tabIndex={-1}` allows
@@ -256,7 +256,12 @@ export function MembershipWizard({
   // `loadDraft`, leaving the visitor on the intro. Skipped entirely on
   // kiosk displays (see above) — any pre-existing record is dropped so it
   // can never leak into the next visitor's form.
+  //
+  // Waits for `isKioskReady`: on a kiosk reload the pre-resolution kiosk
+  // flag is always false, so restoring earlier would resurrect the previous
+  // visitor's draft before kiosk enforcement is known.
   useEffect(() => {
+    if (!isKioskReady || restored) return;
     if (isKioskEnforced) {
       clearDraft();
       setRestored(true);
@@ -277,9 +282,9 @@ export function MembershipWizard({
       // oxlint-disable-next-line react/set-state-in-effect
       setPhase("form");
     }
+    // oxlint-disable-next-line react/set-state-in-effect
     setRestored(true);
-    // Mount-only, mirroring the quiz restore effect.
-  }, []);
+  }, [isKioskReady, isKioskEnforced, restored, activeCampaign, form]);
 
   // If kiosk display is enabled mid-form (staff toggle), drop whatever was
   // persisted so far. The in-memory form is left untouched — only storage
