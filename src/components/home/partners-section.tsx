@@ -25,14 +25,14 @@ const homepagePartners = [
     className: "h-18.75 w-22.5 lg:h-25 lg:w-30",
     sizes: "(min-width: 1040px) 120px, 90px",
   },
-  {
-    src: "/assets/logos/cci.png",
-    alt: "CCI Logo",
-    width: 500,
-    height: 500,
-    className: "h-18.75 w-18.75 lg:h-25 lg:w-25",
-    sizes: "(min-width: 1040px) 100px, 75px",
-  },
+  // {
+  //   src: "/assets/logos/cci.png",
+  //   alt: "CCI Logo",
+  //   width: 500,
+  //   height: 500,
+  //   className: "h-18.75 w-18.75 lg:h-25 lg:w-25",
+  //   sizes: "(min-width: 1040px) 100px, 75px",
+  // },
 ];
 
 export function HomepagePartnersSection() {
