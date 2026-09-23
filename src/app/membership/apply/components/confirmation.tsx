@@ -3,24 +3,33 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CheckCircle } from "lucide-react";
+import { IdleCountdown } from "@/components/common";
 import { SOCIAL_LINKS } from "@/lib/constants/site";
 
 export function MembershipConfirmation({
   academicYear,
   email,
+  secondsLeft = null,
   onReset,
 }: {
   academicYear?: string;
   email?: string;
+  /** Idle-reset countdown — rendered snug above the icon when present. */
+  secondsLeft?: number | null;
   onReset: () => void;
 }) {
   return (
     // Margin-auto centers on lg without the overflow-clipping that
     // items-center/justify-center cause on short viewports; top-nudged
-    // toward eye level on portrait.
-    <div className="m-auto flex flex-col items-center gap-6 py-8 text-center portrait:pt-[3svh]">
-      <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-full">
-        <CheckCircle className="text-primary h-8 w-8" />
+    // toward eye level on portrait. Base rhythm mirrors the quiz result
+    // screen (py-3 / md:py-4); portrait top padding adds the quiz shell's
+    // 2rem base (3rem at md) on top of the section's svh nudge.
+    <div className="m-auto flex flex-col items-center gap-6 py-3 text-center md:py-4 portrait:mt-0 portrait:mb-auto portrait:pt-[2.75rem] md:portrait:pt-[4rem]">
+      <div className="flex flex-col items-center">
+        {secondsLeft !== null && <IdleCountdown secondsLeft={secondsLeft} />}
+        <div className="bg-primary/10 flex h-16 w-16 items-center justify-center rounded-full">
+          <CheckCircle className="text-primary h-8 w-8" />
+        </div>
       </div>
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-2">
         <h3 className="text-xl font-semibold">Application Submitted!</h3>

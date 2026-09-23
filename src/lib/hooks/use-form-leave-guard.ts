@@ -9,16 +9,19 @@ type LeaveAction = { type: "back" } | { type: "navigate"; href: string };
  * Guard against leaving a form with unsaved data.
  *
  * When `armed` (form has entered values), any attempt to navigate away — the
- * browser back/forward buttons, a link click (header included), or a refresh
- * / tab close — is intercepted. "Continue" discards the form state (via
- * `onDiscard`) and then performs the pending navigation; "Cancel" keeps the
- * visitor on the form with nothing lost.
+ * browser back/forward buttons or a link click (header included) — is
+ * intercepted. "Continue" discards the form state (via `onDiscard`) and then
+ * performs the pending navigation; "Cancel" keeps the visitor on the form
+ * with nothing lost.
  *
  * Browser back/forward uses a history sentinel (one duplicate same-URL
  * `pushState` while armed); a `popstate` while armed is cancelled and the
  * modal opens instead. Link clicks are intercepted with a capture-phase
- * document listener so the server-rendered header links are covered. A
- * `beforeunload` handler surfaces the native prompt on refresh/close.
+ * document listener so the server-rendered header links are covered.
+ *
+ * There is deliberately no `beforeunload` prompt: the draft is persisted to
+ * `sessionStorage` on every change, so a refresh resumes where the visitor
+ * left off (quiz FR-008 parity) instead of losing data.
  *
  * Listeners attach only while `armed`, so handlers always close over the
  * current value.
@@ -116,17 +119,6 @@ export function useFormLeaveGuard(armed: boolean, onDiscard?: () => void) {
     },
     [armed, triggerLeave],
   );
-
-  // Warn before a refresh / tab close with unsaved data (native prompt).
-  useEffect(() => {
-    if (!armed) return;
-    const onBeforeUnload = (event: BeforeUnloadEvent) => {
-      event.preventDefault();
-      event.returnValue = "";
-    };
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [armed]);
 
   // Arm: push the history sentinel once and attach the listeners.
   useEffect(() => {
