@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useAutoAdvance, useMountedReducedMotion } from "@/lib/hooks";
-import Image from "next/image";
+import { OptimizedImage } from "@/components/common";
 import Link from "next/link";
 import { useEffect, useRef, useState, type SVGProps } from "react";
 
@@ -318,23 +318,30 @@ export default function MembershipPageMemberSection() {
               </div>
             ))}
           </div>
-          {/* Focused benefit's image — crossfades on switch */}
+          {/* Focused benefit's image — crossfades on switch. Only the
+              active + next images are mounted so 4× ~1MB originals are
+              never all downloaded at once; the rest mount on advance. */}
           <div className="bg-accent/50 border-border/60 relative aspect-4/3 w-full overflow-hidden rounded-2xl border lg:aspect-auto">
-            {images.map((image, key) => (
-              <Image
-                key={image.src}
-                src={image.src}
-                alt={image.alt}
-                fill
-                sizes="(min-width: 1280px) 640px, 100vw"
-                priority={key === 0}
-                className={cn(
-                  "object-cover transition-opacity duration-500",
-                  activeIndex === key ? "opacity-100" : "opacity-0",
-                  reduceMotion && "transition-none",
-                )}
-              />
-            ))}
+            {images.map((image, key) => {
+              const nextIndex = (activeIndex + 1) % images.length;
+              if (key !== activeIndex && key !== nextIndex) return null;
+              return (
+                <OptimizedImage
+                  key={image.src}
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="(min-width: 1280px) 640px, 100vw"
+                  priority={key === 0}
+                  loading={key === activeIndex ? undefined : "lazy"}
+                  className={cn(
+                    "object-cover transition-opacity duration-500",
+                    activeIndex === key ? "opacity-100" : "opacity-0",
+                    reduceMotion && "transition-none",
+                  )}
+                />
+              );
+            })}
           </div>
         </div>
         <Link href="/membership/apply" className="text-caption">

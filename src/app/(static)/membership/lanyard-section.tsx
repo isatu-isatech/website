@@ -26,6 +26,8 @@ export default function MembershipPageReasonSection() {
         alt="ISATech Member ID"
         width={328}
         height={511}
+        sizes="(max-width: 768px) 50vw, 0px"
+        loading="lazy"
         className="pointer-events-none absolute top-0 left-0 h-[130%] w-auto -translate-x-1/2 -translate-y-1/5 md:hidden"
       />
       <div className="pointer-events-none relative z-10 flex w-full max-w-7xl items-center justify-center gap-8 py-20 md:justify-end">
