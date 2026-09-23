@@ -164,7 +164,7 @@ export function HomepageHeroSection() {
       {/* In-hero stats — one continuous glass band (bottom → top) with thin
           divider lines between columns; no per-card glass pills. */}
       <div className="relative z-10 w-full bg-linear-to-t from-black/50 to-transparent px-6 pb-10 md:px-16">
-        <div className="relative mx-auto flex w-full max-w-7xl flex-col overflow-hidden sm:flex-row sm:divide-x">
+        <div className="relative mx-auto flex w-full max-w-7xl flex-row divide-x overflow-hidden">
           {HERO_STATS.map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -175,13 +175,17 @@ export function HomepageHeroSection() {
                 duration: 0.5,
                 ease: "easeOut",
               }}
-              className="relative flex flex-1 flex-col items-center justify-center gap-1.5 px-2 py-5 sm:py-6"
+              className="relative flex flex-1 flex-col items-center justify-center gap-1 px-1 py-4 text-center sm:gap-1.5 sm:px-2 sm:py-6"
             >
-              <p className="text-secondary text-2xl leading-none font-bold tabular-nums md:text-4xl">
+              <p className="text-secondary text-xl leading-none font-bold tabular-nums sm:text-2xl md:text-4xl">
                 <CountUpComponent from={0} to={stat.quantity} />+
               </p>
               <p className="text-caption leading-tight text-white/80">
-                {stat.label}
+                {stat.label.split(" ").slice(0, 1)}
+                <span className="hidden sm:inline">
+                  {" "}
+                  {stat.label.split(" ").slice(1).join(" ")}
+                </span>
               </p>
             </motion.div>
           ))}
