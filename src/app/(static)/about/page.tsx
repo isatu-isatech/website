@@ -11,6 +11,8 @@ import AboutHeroLockup from "./hero-lockup";
 import AboutUsAdvisersSection, { AdviserProps } from "./carousel";
 import AboutDescriptionBand from "./description-band";
 import { SITE_CONFIG } from "@/lib/constants/site";
+import { createBlobConfig } from "@/components/ui/blobs-config";
+import { BlobsAnimatedBackground } from "@/components/ui/blobs";
 
 /**
  * ################################################################################
@@ -113,10 +115,10 @@ const advisers: AdviserProps[] = [
 function AboutUsHeroSection() {
   return (
     <section
-      className="flex w-full items-center justify-center px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
+      className="relative flex w-full items-center justify-center overflow-hidden px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="hero"
     >
-      <div className="grid w-full max-w-7xl grid-cols-1 items-center gap-6 py-6 sm:gap-8 sm:py-8 lg:gap-12 lg:py-16">
+      <div className="grid w-full max-w-7xl grid-cols-1 items-center gap-6 py-6 sm:grid-cols-2 sm:gap-8 sm:py-8 lg:gap-12 lg:py-16">
         {/* Text Content */}
         <div className="flex w-full gap-4 md:gap-8">
           {/* Divider — bolder brand accent */}
@@ -135,12 +137,12 @@ function AboutUsHeroSection() {
             height={329}
             className="h-32 w-fit md:h-64"
             sizes="(min-width: 780px) 217px, 109px"
-            priority
+            preload
             brandPlaceholder
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute -z-1 aspect-306/466 h-auto w-28 bg-[#203C90] mask-center md:w-36 lg:w-52"
+            className="pointer-events-none absolute top-1/2 left-1/2 -z-1 aspect-306/466 h-auto w-32 -translate-x-1/2 -translate-y-1/2 bg-[#203C90] mask-center md:w-40 lg:w-64"
           />
         </div>
       </div>
@@ -158,11 +160,7 @@ function AboutUsDescriptionSection() {
         {/* Decorations */}
         <div
           aria-hidden
-          className="absolute top-0 left-0 hidden aspect-364/527 h-auto w-[min(300px,100%)] bg-current mask-left opacity-10 lg:block"
-        />
-        <div
-          aria-hidden
-          className="absolute right-0 bottom-0 aspect-320/528 h-auto w-[min(260px,100%)] bg-current mask-right opacity-10"
+          className="absolute bottom-0 left-0 hidden aspect-364/527 h-auto w-[min(300px,100%)] bg-current mask-left opacity-10 lg:block"
         />
       </div>
       {/* Full-bleed description photo band (parallax) */}
@@ -240,11 +238,31 @@ function AboutUsEmpowermentSection() {
 }
 
 function AboutUsInitiativesSection() {
+  const blobsConfig = [
+    createBlobConfig({
+      id: "default-blob-2",
+      top: "-10rem",
+      left: "-10rem",
+      animateX: [0, -30, 0],
+      animateY: [0, -40, 0],
+      duration: 6,
+      colorClass: "bg-secondary/60",
+    }),
+  ];
+
   return (
     <section
-      className="flex w-full items-center justify-center px-4 py-10 sm:px-6 sm:py-14 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
+      className="relative flex w-full items-center justify-center px-4 py-10 sm:px-6 sm:py-14 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="initiatives"
     >
+      <BlobsAnimatedBackground
+        className="absolute h-full w-full"
+        blobs={blobsConfig}
+      />
+      <div
+        aria-hidden
+        className="absolute right-0 bottom-0 aspect-320/528 h-auto w-[min(260px,100%)] bg-current mask-right opacity-10"
+      />
       <div className="flex w-full max-w-7xl flex-col gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
         <div className="flex w-full items-center justify-center">
           <OptimizedImage
