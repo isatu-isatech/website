@@ -7,11 +7,11 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 export function ConsentGatedAnalytics() {
   const { acceptedCategories } = useCookieConsent();
 
-  if (!acceptedCategories.includes("analytics")) return null;
-
+  // Speed Insights is anonymous RUM (no cookies) — mount unconditionally so
+  // pre-consent field data isn't lost. Vercel Analytics stays gated.
   return (
     <>
-      <Analytics />
+      {acceptedCategories.includes("analytics") && <Analytics />}
       <SpeedInsights />
     </>
   );

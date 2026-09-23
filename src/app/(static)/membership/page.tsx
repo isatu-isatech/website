@@ -13,7 +13,9 @@ import Image from "next/image";
 import Link from "next/link";
 import MembershipPageMemberSection from "./member-section";
 
-const MembershipPageReasonSection = dynamic(() => import("./lanyard-section"));
+const MembershipPageReasonSection = dynamic(() => import("./lanyard-section"), {
+  loading: () => <div className="min-h-[60svh] w-full" aria-hidden="true" />,
+});
 
 /**
  * ################################################################################
@@ -50,6 +52,24 @@ export const metadata: Metadata = {
     url: `${SITE_CONFIG.url}/membership`,
     siteName: "ISATech Society",
     type: "website",
+    images: [
+      {
+        url: "/assets/seo/ogimage.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Become a Member of ISATech Society",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Become a Member of ISATech Society",
+    description:
+      "Join the ISATech Society to enhance your skills, network with peers, and contribute to innovative projects that shape the future.",
+    images: ["/assets/seo/ogimage.jpg"],
+  },
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/membership`,
   },
 };
 
@@ -62,21 +82,25 @@ function MembershipPageHeroSection() {
   const blobsConfig = [
     createBlobConfig({
       id: "default-blob-1",
-      top: "-10rem",
-      left: "-10rem",
-      animateX: [0, -30, 0],
-      animateY: [0, -40, 0],
+      top: "-8rem",
+      left: "-8rem",
+      animateX: [0, -20, 0],
+      animateY: [0, -30, 0],
       duration: 6,
       colorClass: "bg-primary/60",
+      sizeClass: "h-72 w-72",
+      blurClass: "blur-[80px]",
     }),
     createBlobConfig({
       id: "default-blob-2",
-      bottom: "-10rem",
-      right: "-10rem",
-      animateX: [0, -30, 0],
-      animateY: [0, -40, 0],
+      bottom: "-8rem",
+      right: "-8rem",
+      animateX: [0, -20, 0],
+      animateY: [0, -30, 0],
       duration: 6,
       colorClass: "bg-primary/60",
+      sizeClass: "h-72 w-72",
+      blurClass: "blur-[80px]",
     }),
   ];
 
@@ -103,16 +127,22 @@ function MembershipPageHeroSection() {
               </h5>
             </div>
             <div className="flex w-full justify-center gap-2 md:justify-start">
-              <Link href="#apply" className="text-caption">
-                <Button variant={"default"} size={"lg"}>
-                  Apply Now
-                </Button>
-              </Link>
-              <Link href="/quiz" className="text-caption">
-                <Button variant={"ghost"} size={"lg"}>
-                  Take the Quiz
-                </Button>
-              </Link>
+              <Button
+                asChild
+                variant={"default"}
+                size={"lg"}
+                className="text-caption"
+              >
+                <Link href="/membership/apply">Apply Now</Link>
+              </Button>
+              <Button
+                asChild
+                variant={"ghost"}
+                size={"lg"}
+                className="text-caption"
+              >
+                <Link href="/quiz">Take the Quiz</Link>
+              </Button>
             </div>
           </div>
 
@@ -120,7 +150,7 @@ function MembershipPageHeroSection() {
             {/* Decoration */}
             <div
               aria-hidden
-              className="mask-isatech absolute top-0 right-0 -z-1 aspect-667/492 h-full w-auto translate-x-1/2 bg-[#FFAC03]"
+              className="mask-isatech absolute top-0 right-0 -z-1 aspect-667/492 h-[85%] w-auto translate-x-1/2 bg-[#FFAC03]"
             />
 
             <Image
@@ -131,6 +161,9 @@ function MembershipPageHeroSection() {
               sizes="(min-width: 1360px) 562px, (min-width: 1040px) calc(40.33vw + 22px), calc(99.86vw - 51px)"
               className="h-auto w-full object-contain"
               priority
+              fetchPriority="high"
+              placeholder="blur"
+              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PC9zdmc+"
             />
           </div>
         </div>
@@ -144,21 +177,25 @@ function MembershipPageTeamSection() {
   const blobsConfig = [
     createBlobConfig({
       id: "blob-1",
-      top: "-10rem",
-      left: "-10rem",
-      animateX: [0, -30, 0],
-      animateY: [0, -40, 0],
+      top: "-8rem",
+      left: "-8rem",
+      animateX: [0, -20, 0],
+      animateY: [0, -30, 0],
       duration: 6,
       colorClass: "bg-secondary/60",
+      sizeClass: "h-72 w-72",
+      blurClass: "blur-[80px]",
     }),
     createBlobConfig({
       id: "blob-2",
-      bottom: "-10rem",
-      right: "-10rem",
-      animateX: [0, -30, 0],
-      animateY: [0, -40, 0],
+      bottom: "-8rem",
+      right: "-8rem",
+      animateX: [0, -20, 0],
+      animateY: [0, -30, 0],
       duration: 6,
       colorClass: "bg-secondary/60",
+      sizeClass: "h-72 w-72",
+      blurClass: "blur-[80px]",
     }),
   ];
 

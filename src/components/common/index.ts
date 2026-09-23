@@ -7,3 +7,5 @@ export { OverlayScrollbarsProvider } from "./overlay-scrollbars-provider";
 export { RevealOnView } from "./reveal-on-view";
 export { SectionErrorBoundary } from "./section-error-boundary";
 export { OptimizedImage } from "./optimized-image";
+export { RotateGuard } from "./rotate-guard";
+export { IdleCountdown } from "./idle-countdown";

@@ -25,9 +25,9 @@ export function proxy(request: NextRequest) {
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     img-src 'self' blob: data: https://www.notion.so https://prod-files-secure.s3.us-west-2.amazonaws.com https://images.unsplash.com ${isDevelopment ? "https://*.githubusercontent.com" : ""};
     font-src 'self' https://fonts.gstatic.com;
-    connect-src 'self' https://www.youtube.com https://s.ytimg.com https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ${isDevelopment ? "https://vercel.live ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app" : ""};
+    connect-src 'self' https://www.youtube.com https://www.youtube-nocookie.com https://s.ytimg.com https://i.ytimg.com https://*.ytimg.com https://*.googlevideo.com https://challenges.cloudflare.com https://vitals.vercel-analytics.com https://va.vercel-scripts.com https://*.vercel-insights.com https://*.vercel-analytics.com ${isDevelopment ? "https://vercel.live ws://localhost:* wss://localhost:* http://localhost:* https://localhost:* https://dev.isatech.club https://*.vercel.app" : ""};
     frame-src 'self' https://www.youtube-nocookie.com https://www.youtube.com https://challenges.cloudflare.com https://www.openstreetmap.org;
-    media-src 'self' https://www.youtube-nocookie.com;
+    media-src 'self' https://www.youtube-nocookie.com https://*.googlevideo.com https://*.ytimg.com;
     worker-src 'self' blob:;
     child-src 'self' blob:;
     object-src 'none';

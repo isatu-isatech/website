@@ -1,21 +1,35 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { memo } from "react";
+import { motion } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Sparkles } from "lucide-react";
 import Image from "next/image";
 import { archetypeIcons, questions, ARCHETYPE_KEYS } from "@/lib/quiz";
 import { COLORS } from "@/lib/constants/design-tokens";
+import { useKiosk } from "@/components/kiosk";
 
-export function IntroScreen({ onStart }: { onStart: () => void }) {
-  const reduceMotion = useReducedMotion();
+export const IntroScreen = memo(function IntroScreen({
+  onStart,
+}: {
+  onStart: () => void;
+}) {
+  const reduceMotion = useMountedReducedMotion();
+  // Kiosk display hides the outbound "what the roles mean" link so
+  // visitors can't wander off the quiz on shared devices.
+  const { isKioskEnforced } = useKiosk();
 
   return (
     <motion.div
-      initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      className="flex flex-col items-center justify-center px-4 py-4 text-center md:py-6"
+      exit={reduceMotion ? { opacity: 0 } : { opacity: 0, y: -20 }}
+      transition={reduceMotion ? { duration: 0 } : undefined}
+      // Portrait arrival claims viewport height and centers within itself;
+      // lg portrait collapses back to top-anchored like every other phase.
+      className="flex flex-col items-center justify-center p-4 text-center md:py-6 portrait:min-h-[60svh] lg:portrait:min-h-0"
     >
       {/* Floating 4H images */}
       <div className="relative mb-4 md:mb-6">
@@ -33,6 +47,7 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
                 src={archetypeIcons[archetype]}
                 alt={archetype}
                 fill
+                sizes="64px"
                 className="object-contain"
               />
             </div>
@@ -63,7 +78,7 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
         type="button"
         onClick={onStart}
         size="lg"
-        className="group from-primary hover:from-primary/90 relative overflow-hidden bg-linear-to-r to-blue-600 px-6 py-4 text-base text-white shadow-xl transition-all duration-300 hover:to-blue-500 hover:shadow-2xl active:scale-[0.98] md:px-8 md:py-5 md:text-lg"
+        className="group from-primary hover:from-primary/90 to-secondary hover:to-secondary/90 relative overflow-hidden bg-linear-to-r px-6 py-4 text-base text-white shadow-xl transition-all duration-300 hover:shadow-2xl active:scale-[0.98] md:px-8 md:py-5 md:text-lg"
       >
         <Sparkles className="mr-2 size-4 md:size-5" />
         Start the Quiz
@@ -80,6 +95,14 @@ export function IntroScreen({ onStart }: { onStart: () => void }) {
         {questions.length} questions · at your own pace{" "}
         {/* TODO(org-copy): org may provide wording for the intro time/count string */}
       </p>
+      {!isKioskEnforced && (
+        <p className="text-muted-foreground mt-1 text-xs">
+          New here?{" "}
+          <Link href="/about" className="text-primary underline">
+            What the 4H roles mean
+          </Link>
+        </p>
+      )}
     </motion.div>
   );
-}
+});

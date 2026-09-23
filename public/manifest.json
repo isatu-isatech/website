@@ -6,9 +6,10 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#203c90",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "scope": "/",
-  "lang": "en-US",
+  "id": "/",
+  "lang": "en-PH",
   "dir": "ltr",
   "categories": ["education", "business", "productivity", "social"],
   "icons": [
@@ -22,10 +23,10 @@
       "src": "/assets/logos/isatech.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
-      "src": "/favicon.ico",
+      "src": "/assets/seo/favicon-light.ico",
       "sizes": "48x48",
       "type": "image/x-icon"
     }

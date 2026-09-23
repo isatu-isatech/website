@@ -14,6 +14,7 @@ import {
   archetypes,
   SCORE_THRESHOLD,
   type ArchetypeKey,
+  type CanonicalRole,
 } from "./data";
 
 export type Scores = Record<ArchetypeKey, number>;
@@ -32,11 +33,11 @@ export interface TieBreakerResult {
 
 export interface FinalResult {
   needsTieBreaker: false;
-  role: string;
+  role: CanonicalRole;
   description: string;
   primaryArchetype: ArchetypeKey;
   secondaryArchetype: ArchetypeKey | null;
-  breakdown: Record<string, number>;
+  breakdown: Record<ArchetypeKey, number>;
   isGeneralist: boolean;
 }
 
@@ -108,28 +109,43 @@ export function deriveResult(
   const isGeneralist =
     top1[1] === top2[1] && top2[1] === top3[1] && top3[1] === top4[1];
 
-  let role: string;
+  let role: CanonicalRole;
   const primaryArchetype: ArchetypeKey = top1[0];
   let secondaryArchetype: ArchetypeKey | null = null;
 
   if (isGeneralist) {
     role = "Generalist";
   } else if (top1[1] - top2[1] < SCORE_THRESHOLD) {
-    role = `${adjectives[top2[0]]} ${top1[0]}`;
+    role = `${adjectives[top2[0]]} ${top1[0]}` as CanonicalRole;
     secondaryArchetype = top2[0];
   } else {
-    role = `True ${top1[0]}`;
+    role = `True ${top1[0]}` as CanonicalRole;
   }
 
-  const breakdown: Record<string, number> = {};
-  for (const [key, value] of sortedScores) {
-    breakdown[key] = Math.round((value / total) * 100);
+  // Largest-remainder rounding so the displayed shares always sum to 100.
+  const exact = sortedScores.map(
+    ([key, value]) => [key, (value / total) * 100] as const,
+  );
+  const breakdown = {} as Record<ArchetypeKey, number>;
+  let assigned = 0;
+  let largestIdx = 0;
+  let largestRemainder = -1;
+  for (let i = 0; i < exact.length; i++) {
+    const floored = Math.floor(exact[i]![1]);
+    breakdown[exact[i]![0]] = floored;
+    assigned += floored;
+    const remainder = exact[i]![1] - floored;
+    if (remainder > largestRemainder) {
+      largestRemainder = remainder;
+      largestIdx = i;
+    }
   }
+  breakdown[exact[largestIdx]![0]]! += 100 - assigned;
 
   return {
     needsTieBreaker: false,
     role,
-    description: archetypes[role] ?? archetypes["Generalist"] ?? "Generalist",
+    description: archetypes[role] ?? archetypes.Generalist,
     primaryArchetype,
     secondaryArchetype,
     breakdown,

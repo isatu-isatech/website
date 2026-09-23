@@ -4,12 +4,14 @@
  * An in-progress quiz survives an accidental page refresh or back/forward
  * navigation within the same browser session: the record lives in
  * `sessionStorage` (per-tab, discarded when the tab closes). A stored record
- * whose quiz-data version no longer matches is discarded, so a restored quiz
+ * whose quiz data version no longer matches is discarded, so a restored quiz
  * is never inconsistent with the current questions.
  */
 
 import {
+  adjectives,
   questions,
+  SCORE_THRESHOLD,
   tieBreakers,
   type ArchetypeKey,
   type Choice,
@@ -17,7 +19,7 @@ import {
 } from "./data";
 import { ARCHETYPE_KEYS } from "./canonical";
 
-export const QUIZ_PROGRESS_KEY = "4h-quiz-progress-v1";
+export const QUIZ_PROGRESS_KEY = "4h-quiz-progress-v3";
 
 export interface SavedQuizProgress {
   version: string;
@@ -26,6 +28,8 @@ export interface SavedQuizProgress {
   usedTieBreakers: number;
   scores: Record<ArchetypeKey, number>;
   answers: Choice[];
+  /** Index into the shuffled choices for each answer (exact highlight restore). */
+  answerIndexes: number[];
   /** Shuffled order of the main questions (indexes into `questions`). */
   questionOrder: number[];
   /** Shuffled order of the tiebreakers (indexes into `tieBreakers`). */
@@ -37,17 +41,68 @@ export interface SavedQuizProgress {
 }
 
 /**
- * Version token derived from the quiz-data shape. Stored records with a
- * different token are treated as stale and discarded.
+ * Version token derived from the quiz data shape plus the persistence schema
+ * version (v3: `choiceOrders` keyed by original index, answers appended
+ * sequentially, `answerIndexes` for exact highlight restore). Any weight,
+ * copy, threshold, or structure retune invalidates stale records so restored
+ * scores are never replayed against new questions.
  */
 export function makeProgressVersion(): string {
-  return `${questions.length}:${tieBreakers.length}`;
+  let hash = 0;
+  const sig = JSON.stringify({
+    choices: questions.map((q) => q.choices.length),
+    tieChoices: tieBreakers.map((q) => q.choices.length),
+    // Copy is part of the hash: same counts/weights with edited wording must
+    // not restore stale answerIndexes/questionOrder against new text.
+    copy: questions.map((q) => [q.question, q.choices.map((c) => c.choice)]),
+    tieCopy: tieBreakers.map((q) => [
+      q.question,
+      q.choices.map((c) => c.choice),
+    ]),
+    weights: questions.flatMap((q) => q.choices.map((c) => c.weight)),
+    tieWeights: tieBreakers.flatMap((q) => q.choices.map((c) => c.weight)),
+    adjectives,
+    threshold: SCORE_THRESHOLD,
+  });
+  for (let i = 0; i < sig.length; i++) {
+    hash = (hash * 31 + sig.charCodeAt(i)) | 0;
+  }
+  return `v3:${questions.length}:${tieBreakers.length}:${(hash >>> 0).toString(36)}`;
+}
+
+/**
+ * Single source for the quiz progress-bar fraction (0–100). Quiz phase
+ * climbs toward—but never hits—100% on the last main question; the
+ * tiebreaker phase continues monotonically over the combined total.
+ */
+export function getQuizProgressFraction(args: {
+  phase: "intro" | "quiz" | "tiebreaker" | "result";
+  currentQuestionIndex: number;
+  usedTieBreakers: number;
+  mainLen: number;
+  tieTotal: number;
+}): number {
+  const { phase, currentQuestionIndex, usedTieBreakers, mainLen, tieTotal } =
+    args;
+  if (mainLen <= 0) return 0;
+  if (phase === "quiz") {
+    return ((currentQuestionIndex + 1) / (mainLen + tieTotal)) * 100;
+  }
+  if (phase === "tiebreaker") {
+    return ((mainLen + usedTieBreakers + 1) / (mainLen + tieTotal)) * 100;
+  }
+  return 0;
 }
 
 function isWeight(value: unknown): value is Record<ArchetypeKey, number> {
   if (typeof value !== "object" || value === null) return false;
   const record = value as Record<string, unknown>;
-  return ARCHETYPE_KEYS.every((key) => typeof record[key] === "number");
+  return ARCHETYPE_KEYS.every(
+    (key) =>
+      typeof record[key] === "number" &&
+      Number.isFinite(record[key]) &&
+      (record[key] as number) >= 0,
+  );
 }
 
 function isChoice(value: unknown): value is Choice {
@@ -114,6 +169,11 @@ export function loadProgress(): SavedQuizProgress | null {
       (record.phase === "tiebreaker" &&
         (record.currentQuestionIndex >= questions.length ||
           record.usedTieBreakers < 0 ||
+          // `usedTieBreakers` must index a remaining tiebreaker to render:
+          // an exhausted set (== length) has no next question, so the
+          // restore would land on a blank screen. Such a record means every
+          // question was already answered — discard it and let the visitor
+          // start fresh instead of resuming into nothing.
           record.usedTieBreakers >= tieBreakers.length))
     ) {
       return null;
@@ -126,6 +186,36 @@ export function loadProgress(): SavedQuizProgress | null {
     if (!isValidOrder(record.tieBreakerOrder, tieBreakers.length)) return null;
     if (!isValidChoiceOrders(record.choiceOrders, questions)) return null;
     if (!isValidChoiceOrders(record.tieChoiceOrders, tieBreakers)) return null;
+    // Answers append sequentially: quiz answers occupy `answers[0..N)`,
+    // tiebreaker answers append after them.
+    const answers = record.answers as Choice[];
+    const questionOrder = record.questionOrder as number[];
+    const tieBreakerOrder = record.tieBreakerOrder as number[];
+    const expectedAnswers =
+      record.phase === "quiz"
+        ? record.currentQuestionIndex
+        : questions.length + (record.usedTieBreakers as number);
+    if (answers.length !== expectedAnswers) return null;
+    // Exact highlight indexes, one per answer, bounded by the shuffled
+    // question's choice count.
+    if (
+      !Array.isArray(record.answerIndexes) ||
+      record.answerIndexes.length !== answers.length
+    ) {
+      return null;
+    }
+    const answerIndexes = record.answerIndexes as unknown[];
+    for (let i = 0; i < answerIndexes.length; i++) {
+      const idx = answerIndexes[i];
+      if (typeof idx !== "number" || !Number.isInteger(idx) || idx < 0) {
+        return null;
+      }
+      const bound =
+        i < questions.length
+          ? questions[questionOrder[i]!]!.choices.length
+          : tieBreakers[tieBreakerOrder[i - questions.length]!]!.choices.length;
+      if (idx >= bound) return null;
+    }
 
     return {
       version: record.version,
@@ -133,9 +223,10 @@ export function loadProgress(): SavedQuizProgress | null {
       currentQuestionIndex: record.currentQuestionIndex,
       usedTieBreakers: record.usedTieBreakers,
       scores: record.scores,
-      answers: record.answers,
-      questionOrder: record.questionOrder,
-      tieBreakerOrder: record.tieBreakerOrder,
+      answers,
+      answerIndexes: answerIndexes as number[],
+      questionOrder,
+      tieBreakerOrder,
       choiceOrders: record.choiceOrders,
       tieChoiceOrders: record.tieChoiceOrders,
     };

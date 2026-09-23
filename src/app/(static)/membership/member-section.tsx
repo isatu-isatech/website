@@ -2,9 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useAutoAdvance } from "@/lib/hooks";
-import { useReducedMotion } from "motion/react";
-import Image from "next/image";
+import { useAutoAdvance, useMountedReducedMotion } from "@/lib/hooks";
+import { OptimizedImage } from "@/components/common";
 import Link from "next/link";
 import { useEffect, useRef, useState, type SVGProps } from "react";
 
@@ -194,7 +193,6 @@ function GradientBlob2Decoration(props: SVGProps<SVGSVGElement>) {
  * #################################### CONFIG ####################################
  * ################################################################################
  */
-const membershipFormLink = "https://forms.gle/ViNChagDv6Xcfp3bA";
 const AUTO_ADVANCE_MS = 3500;
 
 const benefits = [
@@ -246,11 +244,15 @@ const images = [
  *
  * Screen-height benefits band with hover-driven storytelling: while the
  * visitor is idle the section automatically focuses the next benefit (card +
- * matching image advance together); hovering a card focuses that benefit and
- * pauses the auto-advance until the pointer leaves the list.
+ * matching image advance together); hovering or keyboard-focusing a card
+ * focuses that benefit and pauses the auto-advance until the pointer leaves
+ * the list or focus moves away.
  */
 export default function MembershipPageMemberSection() {
-  const reduceMotion = useReducedMotion();
+  // Mount-gated so SSR + first client render match (both animated),
+  // avoiding a hydration mismatch on the crossfade's `transition-none`
+  // class when the OS prefers reduced motion.
+  const reduceMotion = useMountedReducedMotion();
   const [activeIndex, setActiveIndex] = useState(0);
   const pausedRef = useRef(false);
 
@@ -279,9 +281,9 @@ export default function MembershipPageMemberSection() {
       id="member"
     >
       {/* Decorations */}
-      <div className="pointer-events-none absolute -z-1 flex h-full w-full items-center justify-center opacity-80">
-        <GradientBlob1Decoration className="absolute right-0 bottom-0 h-full w-full translate-x-1/2 translate-y-1/2" />
-        <GradientBlob2Decoration className="absolute top-0 right-0 h-full w-full -translate-x-1/2 -translate-y-1/2" />
+      <div className="pointer-events-none absolute -z-1 flex h-full w-full items-center justify-center opacity-60">
+        <GradientBlob1Decoration className="absolute right-0 bottom-0 h-[80%] w-[80%] translate-x-1/3 translate-y-1/3" />
+        <GradientBlob2Decoration className="absolute top-0 right-0 h-[80%] w-[80%] -translate-x-1/3 -translate-y-1/3" />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center gap-6">
         <div className="flex w-full flex-col items-center gap-1.5 text-center">
@@ -295,51 +297,75 @@ export default function MembershipPageMemberSection() {
           </h5>
         </div>
         <div className="grid w-full items-stretch gap-4 lg:grid-cols-2">
-          {/* Benefit list — hover a card to focus it; idle auto-advances */}
+          {/* Benefit list — hover, focus, or activate a card to focus it;
+              idle auto-advances. Buttons so Enter/Space work; the live
+              region below announces auto-advance to screen readers. */}
           <div className="flex w-full flex-col gap-1">
             {benefits.map((benefit, key) => (
-              <div
+              <button
                 key={benefit.title}
+                type="button"
                 onMouseEnter={() => focusBenefit(key)}
                 onMouseLeave={resumeAutoAdvance}
+                onFocus={() => focusBenefit(key)}
+                onBlur={resumeAutoAdvance}
+                onClick={() => focusBenefit(key)}
+                aria-pressed={activeIndex === key}
                 className={cn(
-                  "border-border/60 bg-accent/50 flex w-full cursor-default flex-col gap-1 rounded-2xl border px-4 py-2 backdrop-blur-md transition-colors duration-300",
+                  "border-border/60 bg-accent/50 flex w-full cursor-pointer flex-col gap-1 rounded-2xl border px-4 py-2 text-left backdrop-blur-md transition-colors duration-300",
                   activeIndex === key && "border-secondary/60 bg-accent",
                 )}
               >
-                <p className="text-body-bold">{benefit.title}</p>
-                <p className="text-label lg:line-clamp-3">{benefit.subtitle}</p>
-              </div>
+                <span className="text-body-bold">{benefit.title}</span>
+                <span className="text-label lg:line-clamp-3">
+                  {benefit.subtitle}
+                </span>
+              </button>
             ))}
           </div>
-          {/* Focused benefit's image — crossfades on switch */}
+          <p aria-live="polite" className="sr-only">
+            {benefits[activeIndex]?.title}
+          </p>
+          {/* Focused benefit's image — crossfades on switch. Only the
+              active + next images are mounted so 4× ~1MB originals are
+              never all downloaded at once; the rest mount on advance. */}
           <div className="bg-accent/50 border-border/60 relative aspect-4/3 w-full overflow-hidden rounded-2xl border lg:aspect-auto">
-            {images.map((image, key) => (
-              <Image
-                key={image.src}
-                src={image.src}
-                alt={image.alt}
-                fill
-                sizes="(min-width: 1280px) 640px, 100vw"
-                priority={key === 0}
-                className={cn(
-                  "object-cover transition-opacity duration-500",
-                  activeIndex === key ? "opacity-100" : "opacity-0",
-                  reduceMotion && "transition-none",
-                )}
-              />
-            ))}
+            {images.map((image, key) => {
+              const nextIndex = (activeIndex + 1) % images.length;
+              if (key !== activeIndex && key !== nextIndex) return null;
+              // Next.js forbids priority + loading on the same image:
+              // priority only for the first paint (key 0 while active),
+              // everything else lazy-loads when offscreen.
+              const isFirstPaint = key === 0 && activeIndex === 0;
+              return (
+                <OptimizedImage
+                  key={image.src}
+                  src={image.src}
+                  alt={image.alt}
+                  fill
+                  sizes="(min-width: 1280px) 640px, 100vw"
+                  priority={isFirstPaint}
+                  loading={
+                    isFirstPaint || key === activeIndex ? undefined : "lazy"
+                  }
+                  className={cn(
+                    "object-cover transition-opacity duration-500",
+                    activeIndex === key ? "opacity-100" : "opacity-0",
+                    reduceMotion && "transition-none",
+                  )}
+                />
+              );
+            })}
           </div>
         </div>
-        <Link
-          href={membershipFormLink}
-          target="_blank"
+        <Button
+          asChild
+          variant={"default"}
+          size={"lg"}
           className="text-caption"
         >
-          <Button variant={"default"} size={"lg"}>
-            Apply as Member
-          </Button>
-        </Link>
+          <Link href="/membership/apply">Apply as Member</Link>
+        </Button>
       </div>
     </section>
   );

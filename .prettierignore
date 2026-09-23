@@ -34,6 +34,9 @@ public/*.ico
 # Deployment
 .vercel/
 
+# Live-preview tooling (skill working files, not source)
+.impeccable/
+
 # Package manager files
 .pnp*
 *.tsbuildinfo

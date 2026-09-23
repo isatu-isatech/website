@@ -24,32 +24,32 @@ export function HomepageKwadraSection() {
       id="kwadra"
     >
       {/* Decorations */}
-      <div className="absolute -z-1 flex h-full w-full items-center justify-center">
+      <div className="absolute -z-1 flex h-full w-full items-center justify-center overflow-clip">
         <BlobsAnimatedBackground
           className="absolute h-full w-full"
           blobs={blobsConfig}
         />
         <div
           aria-hidden
-          className="absolute top-0 left-0 aspect-[364/527] h-auto w-full bg-current mask-left opacity-10 md:h-full md:w-auto"
+          className="absolute top-0 left-0 aspect-[364/527] h-full w-auto bg-current mask-left opacity-10"
         />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-6 md:flex-row">
         {/* Main Image Container */}
-        <div className="flex w-full items-center justify-center md:w-1/2">
+        <div className="flex w-full items-center justify-start md:w-1/2 md:justify-center">
           <OptimizedImage
             src="/assets/logos/kwadra-tbi.png"
             alt="KWADRA TBI Icon"
             width={1080}
             height={1080}
-            className="h-37.5 w-37.5 md:h-72.5 md:w-72.5"
-            sizes="(min-width: 780px) 290px, 150px"
+            className="h-25 w-25 md:h-72.5 md:w-72.5"
+            sizes="(min-width: 780px) 290px, 100px"
             brandPlaceholder
           />
         </div>
         {/* Section Content Container */}
-        <div className="flex w-full flex-col items-center justify-center gap-4 md:w-1/2 md:gap-6">
-          <div className="flex w-full flex-col items-center justify-center gap-2 text-center md:items-start md:text-start">
+        <div className="flex w-full flex-col items-start justify-center gap-4 md:w-1/2 md:gap-6">
+          <div className="flex w-full flex-col items-start justify-center gap-2 text-start md:items-start md:text-start">
             <h2 className="text-secondary-dark dark:text-secondary">
               What is Kwadra-TBI?
             </h2>
@@ -59,16 +59,21 @@ export function HomepageKwadraSection() {
               nurture deep technology startups.
             </h5>
           </div>
-          <div className="flex w-full items-center justify-center md:justify-start">
-            <Link
-              href="https://www.facebook.com/KwadraTBI"
-              target="_blank"
+          <div className="flex w-full items-center justify-start md:justify-start">
+            <Button
+              asChild
+              variant={"default"}
+              size={"lg"}
               className="text-caption"
             >
-              <Button variant={"default"} size={"lg"}>
+              <Link
+                href="https://www.facebook.com/KwadraTBI"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Learn More
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

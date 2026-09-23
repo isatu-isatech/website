@@ -1,8 +1,6 @@
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { ISATechLogoMark } from "@/components/assets/logos";
 import { Toaster } from "@/components/ui/sonner";
+import { RotateGuard } from "@/components/common";
+import { KioskHeader, KioskProvider } from "@/components/kiosk";
 
 /**
  * Quiz Layout - Simplified header without navigation, no footer.
@@ -19,29 +17,21 @@ export default function QuizLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex h-svh flex-col">
-      {/* Simplified Header */}
-      <header className="border-border/50 bg-background/80 z-90 flex shrink-0 items-center justify-center border-b px-6 py-3 backdrop-blur-md">
-        <div className="flex w-full max-w-6xl items-center justify-between">
-          <Link
-            href="/"
-            className="text-muted-foreground hover:text-foreground flex items-center gap-2 transition-colors"
-          >
-            <Button variant="ghost" size="sm" className="gap-2">
-              <ArrowLeft className="size-4" />
-              <span className="hidden sm:inline">Back to Home</span>
-            </Button>
-          </Link>
+    <KioskProvider>
+      <div className="flex h-svh flex-col">
+        {/* Simplified Header — the right-side logo toggles kiosk mode on
+            desktop portrait screens (see `components/kiosk`). */}
+        <KioskHeader
+          backHref="/"
+          backLabel="Back to Home"
+          headerClassName="border-border/50 bg-background/80 z-90 flex shrink-0 items-center justify-center border-b px-6 py-3 backdrop-blur-md"
+        />
 
-          <Link href="/">
-            <ISATechLogoMark />
-          </Link>
-        </div>
-      </header>
-
-      {/* Main Content - No Footer; fills the remaining viewport height */}
-      <div className="min-h-0 flex-1">{children}</div>
-      <Toaster />
-    </div>
+        {/* Main Content - No Footer; fills the remaining viewport height */}
+        <div className="min-h-0 flex-1">{children}</div>
+        <RotateGuard />
+        <Toaster />
+      </div>
+    </KioskProvider>
   );
 }

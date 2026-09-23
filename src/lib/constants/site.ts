@@ -16,7 +16,7 @@ export const SITE_CONFIG = {
 export const SOCIAL_LINKS = {
   facebook: "https://www.facebook.com/ISATech.ISATU",
   linkedin: "https://www.linkedin.com/company/isatech-society/",
-  email: "isatech@isatu.edu.ph", // Update with actual email
+  email: "isatech@isatu.edu.ph",
 } as const;
 
 export const HERO_STATS = [

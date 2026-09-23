@@ -45,6 +45,7 @@ export function useQuizLeaveGuard(armed: boolean, onResetToIntro: () => void) {
   // Set right before a deliberate history traversal so the resulting
   // popstate is not intercepted again.
   const allowNavigation = useRef(false);
+  const allowTimeoutRef = useRef<number | undefined>(undefined);
   /** Number of our duplicate same-URL sentinels currently in the stack. */
   const sentinelCount = useRef(0);
 
@@ -73,7 +74,10 @@ export function useQuizLeaveGuard(armed: boolean, onResetToIntro: () => void) {
       window.history.go(-depth);
       // If no popstate follows (traversal out of range), don't leave the
       // allow-flag set and swallow a later legitimate back press.
-      window.setTimeout(() => {
+      if (allowTimeoutRef.current !== undefined) {
+        window.clearTimeout(allowTimeoutRef.current);
+      }
+      allowTimeoutRef.current = window.setTimeout(() => {
         allowNavigation.current = false;
       }, 1000);
     } else if (action.href.startsWith("/")) {
@@ -149,7 +153,12 @@ export function useQuizLeaveGuard(armed: boolean, onResetToIntro: () => void) {
       }
     };
     window.addEventListener("pageshow", onPageShow);
-    return () => window.removeEventListener("pageshow", onPageShow);
+    return () => {
+      window.removeEventListener("pageshow", onPageShow);
+      if (allowTimeoutRef.current !== undefined) {
+        window.clearTimeout(allowTimeoutRef.current);
+      }
+    };
   }, [armed, onResetToIntro]);
 
   // Arm: push the history sentinel once and attach the listeners.

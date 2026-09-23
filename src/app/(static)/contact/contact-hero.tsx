@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { motion } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 
 /**
  * Contact page header — intentionally minimal: just the page title, nothing
@@ -8,7 +9,9 @@ import { motion, useReducedMotion } from "motion/react";
  * carry the page.
  */
 export default function ContactHeroLockup() {
-  const reduceMotion = useReducedMotion();
+  // Mount-gated so SSR + first client render match (both animated): an early
+  // return on reduced motion would otherwise hydrate-mismatch.
+  const reduceMotion = useMountedReducedMotion();
 
   const content = (
     <h1 className="text-center">

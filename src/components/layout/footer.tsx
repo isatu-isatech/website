@@ -6,6 +6,7 @@ import type { LucideProps } from "lucide-react";
 import { ISATechLogoType } from "@/components/assets/logos";
 import { FacebookIcon, LinkedinIcon } from "@/components/assets/social-icons";
 import { SITE_CONFIG, SOCIAL_LINKS } from "@/lib/constants";
+import CookiePreferencesButton from "./cookie-preferences-button";
 
 /**
  * ################################################################################
@@ -31,17 +32,11 @@ const navLinks: {
   },
   {
     section: "Membership",
-    links: [
-      { label: "Member Application", href: "/membership#member" },
-      { label: "Core Member Application", href: "/membership#core" },
-    ],
+    links: [{ label: "Member Application", href: "/membership/apply" }],
   },
   {
     section: "Legal",
-    links: [
-      { label: "Privacy Policy", href: "/privacy" },
-      { label: "Cookie Preferences", href: "/privacy#manage-cookies" },
-    ],
+    links: [{ label: "Privacy Policy", href: "/privacy" }],
   },
 ];
 
@@ -67,7 +62,7 @@ export default function FooterComponent() {
       <div className="bg-primary relative flex w-full items-center justify-center px-6 lg:px-8 xl:px-16">
         <div
           aria-hidden
-          className="mask-isatech pointer-events-none absolute right-0 bottom-0 aspect-[667/492] w-full max-w-[667px] bg-white opacity-10 md:top-0 md:h-full md:w-auto"
+          className="mask-isatech pointer-events-none absolute right-0 bottom-0 aspect-667/492 w-full max-w-166.75 bg-white opacity-10 md:top-0 md:h-full md:w-auto"
         />
 
         <div className="flex max-w-7xl flex-col items-center justify-center gap-6 self-stretch pt-8 pb-16">
@@ -103,6 +98,7 @@ export default function FooterComponent() {
                         </p>
                       </Link>
                     ))}
+                    {section.section === "Legal" && <CookiePreferencesButton />}
                   </div>
                 </div>
               ))}
@@ -132,9 +128,12 @@ export default function FooterComponent() {
       <div className="bg-secondary flex w-full justify-center">
         <div className="flex w-full max-w-7xl items-center justify-center px-12 py-2 text-center">
           <p className="text-micro">
-            © {new Date().getFullYear()} {SITE_CONFIG.name}. All rights
-            reserved. All logos and brands are property of their respective
-            owners. Made by ISATech Creatives.
+            © 2025-
+            <span suppressHydrationWarning>
+              {new Date().getFullYear()}
+            </span>{" "}
+            {SITE_CONFIG.name}. All rights reserved. All logos and brands are
+            property of their respective owners. Made by ISATech Creatives.
           </p>
         </div>
       </div>

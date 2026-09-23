@@ -9,7 +9,8 @@ import {
   useMotionValue,
   useVelocity,
   useAnimationFrame,
-} from "framer-motion";
+} from "motion/react";
+import { cn } from "@/lib/utils";
 
 interface VelocityMapping {
   input: [number, number];
@@ -142,7 +143,7 @@ export const ScrollVelocityComponent: React.FC<ScrollVelocityProps> = ({
     for (let i = 0; i < numCopies!; i++) {
       spans.push(
         <span
-          className={`shrink-0 ${className}`}
+          className={cn("shrink-0", className)}
           key={i}
           ref={i === 0 ? copyRef : null}
         >
@@ -153,11 +154,14 @@ export const ScrollVelocityComponent: React.FC<ScrollVelocityProps> = ({
 
     return (
       <div
-        className={`${parallaxClassName} relative overflow-hidden`}
+        className={cn(parallaxClassName, "relative overflow-hidden")}
         style={parallaxStyle}
       >
         <motion.div
-          className={`${scrollerClassName} flex text-center font-sans text-4xl font-bold tracking-[-0.02em] whitespace-nowrap drop-shadow md:text-[5rem] md:leading-20`}
+          className={cn(
+            scrollerClassName,
+            "flex text-center font-sans text-4xl font-bold tracking-[-0.02em] whitespace-nowrap drop-shadow md:text-[5rem] md:leading-20",
+          )}
           style={{ x, ...scrollerStyle }}
         >
           {spans}

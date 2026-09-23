@@ -73,16 +73,75 @@ async function withRetry<T>(operation: () => Promise<T>): Promise<T> {
  * zero consumers. When a Notion-backed read surface is built (per ADR 0001),
  * add paginated helpers here using the SDK's `collectPaginatedAPI` rather
  * than re-introducing single-page queries that silently drop rows.
+ *
+ * If the configured ID is a data-source ID (contact DB migrated), retry with
+ * a `data_source_id` parent instead of hard-failing.
  */
 export async function createPage(
   databaseId: string,
   properties: CreatePageParameters["properties"],
 ): Promise<CreatePageResponse> {
   const notion = getNotionClient();
-  return withRetry(() =>
-    notion.pages.create({
-      parent: { database_id: databaseId },
-      properties,
-    }),
-  );
+  try {
+    return await withRetry(() =>
+      notion.pages.create({
+        parent: { database_id: databaseId },
+        properties,
+      }),
+    );
+  } catch (error) {
+    const msg = (error as { message?: string })?.message ?? String(error);
+    if (
+      msg.includes("Could not find database") ||
+      msg.includes("Could not find data_source")
+    ) {
+      return withRetry(() =>
+        notion.pages.create({
+          parent: { data_source_id: databaseId },
+          properties,
+        }),
+      );
+    }
+    throw error;
+  }
+}
+
+/**
+ * Create a page in a Notion data source (the membership submissions path).
+ *
+ * Membership Form Submissions live in data sources (`collection://…`), which
+ * use a separate ID namespace from database page IDs. Creating a page in one
+ * requires `parent: { data_source_id }` — the `database_id` parent only accepts
+ * database page IDs. Kept separate from `createPage` so the contact path
+ * (database IDs) is untouched.
+ */
+export async function createPageInDataSource(
+  dataSourceId: string,
+  properties: CreatePageParameters["properties"],
+): Promise<CreatePageResponse> {
+  const notion = getNotionClient();
+  try {
+    return await withRetry(() =>
+      notion.pages.create({
+        parent: { data_source_id: dataSourceId },
+        properties,
+      }),
+    );
+  } catch (error) {
+    // The fallback env var may hold a database *page* ID instead of a
+    // data-source ID — retry under `database_id` like `createPage` does.
+    const msg = (error as { message?: string })?.message ?? String(error);
+    if (
+      msg.includes("Could not find data_source") ||
+      msg.includes("data_source with ID")
+    ) {
+      return withRetry(() =>
+        notion.pages.create({
+          parent: { database_id: dataSourceId },
+          properties,
+        }),
+      );
+    }
+    throw error;
+  }
 }

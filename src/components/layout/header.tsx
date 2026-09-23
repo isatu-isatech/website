@@ -67,22 +67,23 @@ export default function HeaderComponent() {
             {NAV_LINKS.filter(
               (link) => link.href !== "/" && link.href !== "/membership",
             ).map((link) => (
-              <Link
-                href={link.href}
+              <Button
+                asChild
                 key={link.label}
-                aria-current={currentPath === link.href ? "page" : undefined}
+                variant="ghost"
+                size={"sm"}
+                className={cn(
+                  "relative",
+                  overHero &&
+                    currentPath !== link.href &&
+                    "text-white hover:bg-white/10 hover:text-white",
+                )}
               >
-                <Button
-                  variant="ghost"
-                  size={"sm"}
-                  className={cn(
-                    "relative",
-                    overHero &&
-                      currentPath !== link.href &&
-                      "text-white hover:bg-white/10 hover:text-white",
-                  )}
+                <Link
+                  href={link.href}
+                  aria-current={currentPath === link.href ? "page" : undefined}
                 >
-                  <p className="text-caption">{link.label}</p>
+                  <span className="text-caption">{link.label}</span>
                   <span
                     aria-hidden="true"
                     className={cn(
@@ -90,36 +91,38 @@ export default function HeaderComponent() {
                       currentPath === link.href ? "opacity-100" : "opacity-0",
                     )}
                   />
-                </Button>
-              </Link>
+                </Link>
+              </Button>
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/membership">
-              <Button
-                variant={overHero ? "secondary" : "default"}
-                size={"lg"}
-                className="hidden md:flex"
-              >
-                <p className="text-caption">Join Now</p>
-              </Button>
-            </Link>
-            <Link href="/membership">
-              <Button
-                variant={overHero ? "secondary" : "default"}
-                size={"sm"}
-                className="md:hidden"
-              >
-                <p className="text-caption">Join Now</p>
-              </Button>
-            </Link>
+            <Button
+              asChild
+              variant={overHero ? "secondary" : "default"}
+              size={"lg"}
+              className="hidden md:flex"
+            >
+              <Link href="/membership">
+                <span className="text-caption">Join Now</span>
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant={overHero ? "secondary" : "default"}
+              size={"sm"}
+              className="md:hidden"
+            >
+              <Link href="/membership">
+                <span className="text-caption">Join Now</span>
+              </Link>
+            </Button>
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant={"outline"}
                   size={"icon"}
                   className={cn(
-                    "md:hidden",
+                    "h-10 w-10 bg-transparent md:hidden",
                     overHero &&
                       "border-white/40 text-white hover:bg-white/10 hover:text-white",
                   )}
@@ -138,10 +141,11 @@ export default function HeaderComponent() {
                   ).map((link) => (
                     <Link
                       href={link.href}
+                      onClick={() => setMenuOpen(false)}
                       className={cn(
-                        "w-full px-2 py-1",
+                        "active:bg-accent/50 w-full px-2 py-3 transition-colors",
                         currentPath === link.href &&
-                          "text-secondary font-semibold",
+                          "text-secondary-dark dark:text-secondary font-semibold",
                       )}
                       aria-current={
                         currentPath === link.href ? "page" : undefined
@@ -151,6 +155,20 @@ export default function HeaderComponent() {
                       <h3>{link.label}</h3>
                     </Link>
                   ))}
+                  <Button
+                    asChild
+                    variant="default"
+                    size="lg"
+                    className="min-h-12 w-full"
+                  >
+                    <Link
+                      href="/membership"
+                      onClick={() => setMenuOpen(false)}
+                      className="w-full pt-2"
+                    >
+                      Join Now
+                    </Link>
+                  </Button>
                 </div>
               </SheetContent>
             </Sheet>

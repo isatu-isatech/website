@@ -1,5 +1,7 @@
 "use client";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
 import type { BlobsConfig } from "./blobs-config";
 
 export type { BlobsConfig } from "./blobs-config";
@@ -44,19 +46,30 @@ export function BlobsAnimatedBackground({
   ];
 
   const blobsToRender = blobs && blobs.length > 0 ? blobs : defaultBlobs;
-  const reduceMotion = useReducedMotion();
+  // Mount-gated so SSR + first client render match (both animated),
+  // keeping the same gate as every other reduced-motion branch.
+  const reduceMotion = useMountedReducedMotion();
 
   return (
     // We combine the default classes with the new className prop
-    <div className={`absolute inset-0 -z-10 overflow-hidden ${className}`}>
+    <div className={cn("absolute inset-0 -z-10 overflow-hidden", className)}>
       <div
-        className={`bg-grid-pattern absolute inset-0 ${gridPatternOpacity} ${gridPatternDarkOpacity}`}
+        className={cn(
+          "bg-grid-pattern absolute inset-0",
+          gridPatternOpacity,
+          gridPatternDarkOpacity,
+        )}
       />
 
       {blobsToRender.map((blob) => (
         <motion.div
           key={blob.id}
-          className={`absolute rounded-full ${blob.colorClass} ${blob.sizeClass || "h-96 w-96"} ${blob.blurClass || "blur-[100px]"}`}
+          className={cn(
+            "absolute rounded-full",
+            blob.colorClass,
+            blob.sizeClass || "h-96 w-96",
+            blob.blurClass || "blur-[100px]",
+          )}
           style={{
             top: blob.top,
             bottom: blob.bottom,

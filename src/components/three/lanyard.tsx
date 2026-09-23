@@ -60,7 +60,12 @@ export default function LanyardComponent({
     >
       <Canvas
         camera={{ position, fov }}
-        gl={{ alpha: transparent }}
+        dpr={[1, 1.75]}
+        gl={{
+          alpha: transparent,
+          antialias: true,
+          powerPreference: "high-performance",
+        }}
         onCreated={({ gl }) =>
           gl.setClearColor(new THREE.Color(0x000000), transparent ? 0 : 1)
         }

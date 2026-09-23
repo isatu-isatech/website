@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
-import { AnimatePresence, useReducedMotion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import {
   questions,
   tieBreakers,
@@ -13,20 +13,29 @@ import {
   saveProgress,
   clearProgress,
   makeProgressVersion,
+  getQuizProgressFraction,
   buildShareUrl,
   type ArchetypeKey,
   type Question,
   type Choice,
   type Scores,
 } from "@/lib/quiz";
-import confetti from "canvas-confetti";
 import { toast } from "sonner";
 import { COLORS } from "@/lib/constants/design-tokens";
-import { useQuizLeaveGuard } from "@/lib/hooks";
+import { useKiosk } from "@/components/kiosk";
+import { useMountedReducedMotion, useQuizLeaveGuard } from "@/lib/hooks";
+import { IdleCountdown } from "./idle-countdown";
 import { IntroScreen } from "./intro-screen";
 import { QuestionScreen } from "./question-screen";
 import { ResultScreen } from "./result-screen";
 import { LeaveQuizDialog } from "./leave-quiz-dialog";
+
+/** Idle reset budgets — 3 min on quiz/tiebreaker, 1 min on result. */
+const QUIZ_IDLE_MS = 3 * 60 * 1000;
+const RESULT_IDLE_MS = 60 * 1000;
+/** Countdown pill appears during the final minute of the budget. */
+const WARN_MS = 60 * 1000;
+const TICK_MS = 1000;
 
 function shuffleArray<T>(array: T[]): T[] {
   const shuffled = [...array];
@@ -48,6 +57,8 @@ interface QuizState {
   shuffledTieBreakers: Question[];
   usedTieBreakers: number;
   answers: Choice[];
+  /** Per-answer index into the shuffled choices (exact highlight restore). */
+  answerIndexes: number[];
   /** Shuffle permutations — kept so session persistence round-trips exactly. */
   questionOrder: number[];
   tieBreakerOrder: number[];
@@ -64,6 +75,7 @@ export function QuizContainer() {
     shuffledTieBreakers: [],
     usedTieBreakers: 0,
     answers: [],
+    answerIndexes: [],
     questionOrder: [],
     tieBreakerOrder: [],
     choiceOrders: [],
@@ -79,13 +91,28 @@ export function QuizContainer() {
   // state): no re-render churn and the exiting screen's frozen handlers stay
   // blocked while the new question remains immediately interactive.
   const answerLockRef = useRef(false);
+  const lockTimeoutRef = useRef<number | undefined>(undefined);
+
+  // Clear the answer-lock timer on unmount so the callback cannot fire past
+  // the component lifetime.
+  useEffect(() => {
+    return () => {
+      if (lockTimeoutRef.current !== undefined) {
+        window.clearTimeout(lockTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const startQuiz = useCallback(() => {
     const questionOrder = shuffleArray(questions.map((_, i) => i));
-    const choiceOrders: number[][] = [];
+    // Keyed by original question index so restore (`questionOrder.map((i) =>
+    // choiceOrders[i])`) and the `isValidChoiceOrders` validator (which checks
+    // `orders[index]` against `set[index]`) agree. Positional pushes broke
+    // round-trip for any non-identity shuffle.
+    const choiceOrders: number[][] = new Array<number[]>(questions.length);
     const shuffledQ = questionOrder.map((i) => {
       const order = shuffleArray(questions[i]!.choices.map((_, j) => j));
-      choiceOrders.push(order);
+      choiceOrders[i] = order;
       return {
         ...questions[i]!,
         choices: order.map((j) => questions[i]!.choices[j]!),
@@ -93,10 +120,10 @@ export function QuizContainer() {
     });
 
     const tieBreakerOrder = shuffleArray(tieBreakers.map((_, i) => i));
-    const tieChoiceOrders: number[][] = [];
+    const tieChoiceOrders: number[][] = new Array<number[]>(tieBreakers.length);
     const shuffledTB = tieBreakerOrder.map((i) => {
       const order = shuffleArray(tieBreakers[i]!.choices.map((_, j) => j));
-      tieChoiceOrders.push(order);
+      tieChoiceOrders[i] = order;
       return {
         ...tieBreakers[i]!,
         choices: order.map((j) => tieBreakers[i]!.choices[j]!),
@@ -111,6 +138,7 @@ export function QuizContainer() {
       shuffledTieBreakers: shuffledTB,
       usedTieBreakers: 0,
       answers: [],
+      answerIndexes: [],
       questionOrder,
       tieBreakerOrder,
       choiceOrders,
@@ -125,23 +153,63 @@ export function QuizContainer() {
       return state.shuffledTieBreakers[state.usedTieBreakers];
     }
     return null;
-  }, [state]);
+  }, [
+    state.phase,
+    state.shuffledQuestions,
+    state.shuffledTieBreakers,
+    state.currentQuestionIndex,
+    state.usedTieBreakers,
+  ]);
 
   // Derived highlight for the current question (supports Undo/back without
-  // an effect-driven setState).
+  // an effect-driven setState). Main answers occupy `answers[0..N)` in order;
+  // tiebreaker answers append after them, so the tiebreaker slot is
+  // `answers[shuffledQuestions.length + usedTieBreakers]`. Indexes are stored
+  // at answer time — exact even when two choices share the same text.
   const selectedChoice = useMemo(() => {
     if (!currentQuestion) return null;
-    const previousAnswer = state.answers[state.currentQuestionIndex];
-    if (!previousAnswer) return null;
-    const index = currentQuestion.choices.findIndex(
-      (c) => c.choice === previousAnswer.choice,
-    );
-    return index !== -1 ? index : null;
-  }, [currentQuestion, state.answers, state.currentQuestionIndex]);
+    const answerIndex =
+      state.phase === "tiebreaker"
+        ? state.shuffledQuestions.length + state.usedTieBreakers
+        : state.currentQuestionIndex;
+    const previousIndex = state.answerIndexes[answerIndex];
+    if (previousIndex === undefined) return null;
+    return previousIndex < currentQuestion.choices.length
+      ? previousIndex
+      : null;
+  }, [
+    currentQuestion,
+    state.answerIndexes,
+    state.phase,
+    state.shuffledQuestions.length,
+    state.currentQuestionIndex,
+    state.usedTieBreakers,
+  ]);
+
+  // Shared/kiosk devices turn over between visitors on the same tab: while
+  // kiosk display is enforced, progress is neither restored nor persisted
+  // so a reload can never resurrect the previous visitor's quiz.
+  const { isKioskEnforced, isKioskReady } = useKiosk();
+
+  // If kiosk display is enabled mid-quiz (staff toggle), drop whatever was
+  // persisted so far. In-memory state is left untouched.
+  useEffect(() => {
+    if (isKioskEnforced) clearProgress();
+  }, [isKioskEnforced]);
 
   // Session persistence (FR-008): restore an in-progress quiz on mount so a
   // refresh or back/forward resumes at the same question with answers intact.
+  // Waits for `isKioskReady`: on a kiosk reload the pre-resolution kiosk
+  // flag is always false, so restoring earlier would resurrect the previous
+  // visitor's progress before kiosk enforcement is known.
   useEffect(() => {
+    if (!isKioskReady || restored) return;
+    if (isKioskEnforced) {
+      clearProgress();
+      // oxlint-disable-next-line react/set-state-in-effect
+      setRestored(true);
+      return;
+    }
     const saved = loadProgress();
     if (saved) {
       // Mount-time hydration from sessionStorage is a legitimate external
@@ -163,18 +231,25 @@ export function QuizContainer() {
         })),
         usedTieBreakers: saved.usedTieBreakers,
         answers: saved.answers,
+        answerIndexes: saved.answerIndexes,
         questionOrder: saved.questionOrder,
         tieBreakerOrder: saved.tieBreakerOrder,
         choiceOrders: saved.choiceOrders,
         tieChoiceOrders: saved.tieChoiceOrders,
       });
     }
+    // oxlint-disable-next-line react/set-state-in-effect
     setRestored(true);
-  }, []);
+  }, [isKioskReady, isKioskEnforced, restored]);
 
   // Save after every committed transition; clear on result / retake / intro.
+  // Never persists while kiosk display is enforced (shared-device turnover).
   useEffect(() => {
     if (!restored || leavingRef.current) return;
+    if (isKioskEnforced) {
+      clearProgress();
+      return;
+    }
     if (state.phase === "quiz" || state.phase === "tiebreaker") {
       saveProgress({
         version: makeProgressVersion(),
@@ -183,6 +258,7 @@ export function QuizContainer() {
         usedTieBreakers: state.usedTieBreakers,
         scores: state.scores,
         answers: state.answers,
+        answerIndexes: state.answerIndexes,
         questionOrder: state.questionOrder,
         tieBreakerOrder: state.tieBreakerOrder,
         choiceOrders: state.choiceOrders,
@@ -191,7 +267,7 @@ export function QuizContainer() {
     } else {
       clearProgress();
     }
-  }, [state, restored]);
+  }, [state, restored, isKioskEnforced]);
 
   const result = useMemo(
     () =>
@@ -209,25 +285,30 @@ export function QuizContainer() {
 
       const choice = currentQuestion.choices[choiceIndex];
       if (!choice) return; // index always in-bounds; guard for noUncheckedIndexedAccess
-      const newScores = { ...state.scores };
-
-      for (const [key, value] of Object.entries(choice.weight)) {
-        newScores[key as ArchetypeKey] += value;
-      }
 
       // Lock against double-clicks during the exit transition; the lock
       // releases after the transition, so there is no artificial delay
       // (FR-003) and no state-driven re-renders.
       answerLockRef.current = true;
+      lockTimeoutRef.current = window.setTimeout(() => {
+        answerLockRef.current = false;
+      }, 450);
 
       setState((prev) => {
+        // Accumulate inside the updater from `prev.scores` so rapid
+        // successive answers cannot drop a delta via a stale closure.
+        const nextScores = { ...prev.scores };
+        for (const [key, value] of Object.entries(choice.weight)) {
+          nextScores[key as ArchetypeKey] += value;
+        }
+        // Answers append sequentially: main answers first, then tiebreaker
+        // answers. Slicing by `currentQuestionIndex` during tiebreaker used
+        // to overwrite the last main answer and lose history.
         const newState = {
           ...prev,
-          scores: newScores,
-          answers: [
-            ...prev.answers.slice(0, prev.currentQuestionIndex),
-            choice,
-          ],
+          scores: nextScores,
+          answers: [...prev.answers, choice],
+          answerIndexes: [...prev.answerIndexes, choiceIndex],
         };
 
         if (prev.phase === "quiz") {
@@ -237,7 +318,7 @@ export function QuizContainer() {
               currentQuestionIndex: prev.currentQuestionIndex + 1,
             };
           } else {
-            const sortedScores = sortScores(newScores);
+            const sortedScores = sortScores(nextScores);
             if (
               needsTieBreaker(
                 sortedScores,
@@ -250,7 +331,7 @@ export function QuizContainer() {
             return { ...newState, phase: "result" };
           }
         } else if (prev.phase === "tiebreaker") {
-          const sortedScores = sortScores(newScores);
+          const sortedScores = sortScores(nextScores);
           if (
             needsTieBreaker(
               sortedScores,
@@ -265,12 +346,8 @@ export function QuizContainer() {
 
         return newState;
       });
-      // Release the double-click lock once the exit transition has passed.
-      window.setTimeout(() => {
-        answerLockRef.current = false;
-      }, 450);
     },
-    [currentQuestion, state.scores],
+    [currentQuestion],
   );
 
   const handleBack = useCallback(() => {
@@ -291,10 +368,13 @@ export function QuizContainer() {
       } else if (prev.phase === "quiz") {
         if (newIndex > 0) {
           newIndex--;
+        } else {
+          return prev;
         }
       }
 
-      const answerToUndo = prev.answers[newIndex];
+      // Answers append sequentially, so undo always pops the last entry.
+      const answerToUndo = prev.answers[prev.answers.length - 1];
       const revertedScores = { ...prev.scores };
 
       if (answerToUndo) {
@@ -306,6 +386,8 @@ export function QuizContainer() {
       return {
         ...prev,
         scores: revertedScores,
+        answers: prev.answers.slice(0, -1),
+        answerIndexes: prev.answerIndexes.slice(0, -1),
         phase: newPhase,
         currentQuestionIndex: newIndex,
         usedTieBreakers: newUsedTieBreakers,
@@ -316,63 +398,72 @@ export function QuizContainer() {
     answerLockRef.current = false;
   }, []);
 
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMountedReducedMotion();
 
   useEffect(() => {
     if (state.phase === "result" && result && !result.needsTieBreaker) {
       if (reduceMotion) return; // confetti storm off under reduced motion
-      const duration = 3000;
-      const end = Date.now() + duration;
+      let cancelled = false;
+      // Lazy-load celebration code so every quiz visitor doesn't pay for it.
+      void import("canvas-confetti").then(({ default: confetti }) => {
+        if (cancelled) return;
+        const duration = 3000;
+        const end = Date.now() + duration;
 
-      const frame = () => {
-        confetti({
-          particleCount: 3,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0 },
-          colors: [
-            COLORS.primary.DEFAULT,
-            COLORS.secondary.DEFAULT,
-            COLORS.quiz.archetypes.Hipster.from,
-            COLORS.quiz.archetypes.Hound.from,
-          ],
-        });
-        confetti({
-          particleCount: 3,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1 },
-          colors: [
-            COLORS.primary.DEFAULT,
-            COLORS.secondary.DEFAULT,
-            COLORS.quiz.archetypes.Hipster.from,
-            COLORS.quiz.archetypes.Hound.from,
-          ],
-        });
+        const frame = () => {
+          if (cancelled) return;
+          confetti({
+            particleCount: 3,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors: [
+              COLORS.primary.DEFAULT,
+              COLORS.secondary.DEFAULT,
+              COLORS.quiz.archetypes.Hipster.from,
+              COLORS.quiz.archetypes.Hound.from,
+            ],
+          });
+          confetti({
+            particleCount: 3,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors: [
+              COLORS.primary.DEFAULT,
+              COLORS.secondary.DEFAULT,
+              COLORS.quiz.archetypes.Hipster.from,
+              COLORS.quiz.archetypes.Hound.from,
+            ],
+          });
 
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
+          if (Date.now() < end) {
+            requestAnimationFrame(frame);
+          }
+        };
+        frame();
+      });
+      return () => {
+        cancelled = true;
       };
-      frame();
     }
   }, [state.phase, result, reduceMotion]);
 
   const progress = useMemo(() => {
-    if (state.phase === "quiz") {
-      return (
-        ((state.currentQuestionIndex + 1) / state.shuffledQuestions.length) *
-        100
-      );
-    } else if (state.phase === "tiebreaker") {
-      return (
-        ((state.usedTieBreakers + 1) /
-          (state.shuffledQuestions.length + state.shuffledTieBreakers.length)) *
-        100
-      );
-    }
-    return 0;
-  }, [state]);
+    return getQuizProgressFraction({
+      phase: state.phase,
+      currentQuestionIndex: state.currentQuestionIndex,
+      usedTieBreakers: state.usedTieBreakers,
+      mainLen: state.shuffledQuestions.length,
+      tieTotal: state.shuffledTieBreakers.length,
+    });
+  }, [
+    state.phase,
+    state.currentQuestionIndex,
+    state.shuffledQuestions.length,
+    state.shuffledTieBreakers.length,
+    state.usedTieBreakers,
+  ]);
 
   const resetQuiz = useCallback(() => {
     // A fresh attempt re-enables progress persistence (it was suppressed if
@@ -386,6 +477,7 @@ export function QuizContainer() {
       shuffledTieBreakers: [],
       usedTieBreakers: 0,
       answers: [],
+      answerIndexes: [],
       questionOrder: [],
       tieBreakerOrder: [],
       choiceOrders: [],
@@ -394,24 +486,36 @@ export function QuizContainer() {
   }, []);
 
   const shareResult = useCallback(() => {
-    if (isFinalResult(result)) {
-      const text = `I just took the 4H Personality Quiz and I'm a ${result.role}! 🎉\n\nDiscover your founder archetype at`;
-      // Byte-identical with the result page metadata and the OG banner URL (FR-014).
-      const url = buildShareUrl(
-        {
-          role: result.role,
-          archetype: result.primaryArchetype,
-          isGeneralist: result.isGeneralist,
-        },
-        window.location.origin,
-      ).toString();
+    if (!isFinalResult(result)) return;
+    const text = `I just took the 4H Personality Quiz and I'm a ${result.role}! 🎉\n\nDiscover your founder archetype at`;
+    // Byte-identical with the result page metadata and the OG banner URL (FR-014).
+    const url = buildShareUrl(
+      {
+        role: result.role,
+        archetype: result.primaryArchetype,
+        isGeneralist: result.isGeneralist,
+      },
+      window.location.origin,
+    ).toString();
 
-      if (navigator.share) {
-        navigator.share({ title: "4H Personality Quiz", text, url });
-      } else {
-        navigator.clipboard.writeText(`${text} ${url}`);
-        toast("Result copied to clipboard!");
-      }
+    if (navigator.share) {
+      void navigator
+        .share({ title: "4H Personality Quiz", text, url })
+        .catch(() => {
+          // Share abort/dismissal — no toast, nothing lost.
+        });
+    } else if (
+      typeof navigator.clipboard?.writeText === "function" &&
+      window.isSecureContext
+    ) {
+      void navigator.clipboard
+        .writeText(`${text} ${url}`)
+        .then(() => toast("Result copied to clipboard!"))
+        .catch(() =>
+          toast.error("Copy failed — long-press the link to copy it manually."),
+        );
+    } else {
+      toast.error("Sharing isn't supported in this browser.");
     }
   }, [result]);
 
@@ -425,6 +529,104 @@ export function QuizContainer() {
     resetQuiz,
   );
 
+  // Idle reset for kiosk/LED installations: after a per-phase inactivity
+  // budget (3 min on quiz/tiebreaker, 1 min on result) return to a clean
+  // intro state so the next visitor starts fresh. Intro itself is already
+  // clean, so only quiz/tiebreaker/result are watched. The countdown pill
+  // appears during the final minute (always visible on result). Hidden tabs
+  // pause the timer instead of wiping a visitor who tabbed away, and an open
+  // leave-confirm dialog suppresses the reset.
+  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
+  useEffect(() => {
+    if (state.phase === "intro" || open) {
+      setSecondsLeft(null);
+      return;
+    }
+
+    const timeoutMs = state.phase === "result" ? RESULT_IDLE_MS : QUIZ_IDLE_MS;
+    let timeoutId: number | undefined;
+    let intervalId: number | undefined;
+    let deadline = Date.now() + timeoutMs;
+
+    const clearTimers = () => {
+      if (timeoutId !== undefined) window.clearTimeout(timeoutId);
+      if (intervalId !== undefined) window.clearInterval(intervalId);
+      timeoutId = undefined;
+      intervalId = undefined;
+    };
+
+    const resetToIdle = () => {
+      clearTimers();
+      setSecondsLeft(null);
+      clearProgress();
+      resetQuiz();
+      toast("Session reset due to inactivity");
+    };
+
+    const tick = () => {
+      const remainingMs = Math.max(0, deadline - Date.now());
+      const remainingSec = Math.ceil(remainingMs / 1000);
+      // Result shows the full minute; quiz/tiebreaker only the final minute.
+      setSecondsLeft(
+        state.phase === "result"
+          ? remainingSec
+          : remainingMs <= WARN_MS
+            ? remainingSec
+            : null,
+      );
+    };
+
+    const schedule = () => {
+      clearTimers();
+      deadline = Date.now() + timeoutMs;
+      tick();
+      timeoutId = window.setTimeout(resetToIdle, timeoutMs);
+      intervalId = window.setInterval(tick, TICK_MS);
+    };
+
+    const handleActivity = () => schedule();
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        // Pause while hidden — never wipe a tabbed-away visitor.
+        clearTimers();
+      } else {
+        schedule();
+      }
+    };
+
+    // Initial schedule
+    schedule();
+
+    const bubbleEvents: (keyof WindowEventMap)[] = [
+      "mousemove",
+      "mousedown",
+      "keydown",
+      "touchstart",
+      "touchmove",
+      "click",
+    ];
+    for (const evt of bubbleEvents) {
+      window.addEventListener(evt, handleActivity, { passive: true });
+    }
+    // `scroll` doesn't bubble, so a capture listener is required to catch
+    // scrolls inside the quiz's inner overflow container.
+    window.addEventListener("scroll", handleActivity, {
+      passive: true,
+      capture: true,
+    });
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearTimers();
+      for (const evt of bubbleEvents) {
+        window.removeEventListener(evt, handleActivity);
+      }
+      window.removeEventListener("scroll", handleActivity, { capture: true });
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
+  }, [state.phase, resetQuiz, open]);
+
   // Once the visitor confirms leaving, stop persisting progress for this
   // component instance — a blocked navigation must not resurrect the record
   // the modal promised to erase.
@@ -434,7 +636,8 @@ export function QuizContainer() {
   }, [continueLeave]);
 
   return (
-    <div className="relative mx-auto my-auto flex w-full max-w-4xl flex-col justify-center">
+    <div className="relative mx-auto flex w-full max-w-4xl flex-col justify-start pt-2 md:pt-4 portrait:mt-[4svh] portrait:mb-auto md:portrait:mt-[5svh] landscape:my-auto landscape:pt-0">
+      {secondsLeft !== null && <IdleCountdown secondsLeft={secondsLeft} />}
       <AnimatePresence mode="wait">
         {state.phase === "intro" && (
           <IntroScreen key="intro" onStart={startQuiz} />
@@ -443,7 +646,7 @@ export function QuizContainer() {
         {(state.phase === "quiz" || state.phase === "tiebreaker") &&
           currentQuestion && (
             <QuestionScreen
-              key={`question-${state.currentQuestionIndex}-${state.phase}`}
+              key={`question-${state.phase}-${state.phase === "tiebreaker" ? state.usedTieBreakers : state.currentQuestionIndex}`}
               question={currentQuestion}
               shuffledChoices={currentQuestion.choices}
               selectedChoice={selectedChoice}

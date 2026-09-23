@@ -3,34 +3,53 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
-    open-pull-requests-limit: 10
+      time: "09:00"
+      timezone: "Asia/Manila"
+    open-pull-requests-limit: 5
     versioning-strategy: auto
     commit-message:
       prefix: "chore"
       include: "scope"
     labels:
       - "dependencies"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       nextjs:
         patterns:
           - "next"
           - "next-*"
+          - "@next/*"
       react:
         patterns:
           - "react"
           - "react-*"
           - "@types/react*"
+      prod:
+        dependency-type: "production"
+      dev:
+        dependency-type: "development"
 
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
-      interval: "weekly"
+      interval: "monthly"
       day: "monday"
-    open-pull-requests-limit: 5
+      time: "09:00"
+      timezone: "Asia/Manila"
+    open-pull-requests-limit: 3
     commit-message:
       prefix: "chore"
       include: "scope"
     labels:
       - "dependencies"
+    groups:
+      actions:
+        patterns:
+          - "*"
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]

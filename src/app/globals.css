@@ -2,6 +2,9 @@
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+/* Phone landscape only: narrow + landscape + short. Tablets, desktops,
+   and split-screen windows never match. */
+@custom-variant mobile-landscape (@media (max-width: 1023px) and (orientation: landscape) and (max-height: 500px));
 
 :root {
   --background: oklch(0.9842 0.0034 247.8575);
@@ -264,6 +267,11 @@
     var(--secondary) 75%,
     transparent
   );
+  --scrollbar-thumb-active-primary: color-mix(
+    in oklab,
+    var(--primary) 75%,
+    transparent
+  );
 }
 
 @supports (scrollbar-width: thin) {
@@ -313,6 +321,33 @@ html.is-scrolling::-webkit-scrollbar-thumb {
 
 ::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+/* Apply-form pane scrollbar — thin branded indicator, always present when
+   the pane overflows (Firefox + WebKit/Blink). Uses the same idle/active
+   thumb tokens as the site scrollbar, at pane scale. */
+.form-pane-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-active) transparent;
+}
+
+.form-pane-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.form-pane-scroll::-webkit-scrollbar-button {
+  display: none;
+}
+
+.form-pane-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.form-pane-scroll::-webkit-scrollbar-thumb,
+.form-pane-scroll::-webkit-scrollbar-thumb:hover,
+.form-pane-scroll::-webkit-scrollbar-thumb:active {
+  background: var(--scrollbar-thumb-active-primary);
+  background-clip: padding-box;
 }
 
 .os-theme-isatech.os-theme-isatech {

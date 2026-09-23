@@ -57,12 +57,14 @@ The official website for ISATech Society (ISAT U Innovators and Technopreneurs S
 
 ## Environment Variables
 
-| Variable                                    | Required | Description                                     |
-| ------------------------------------------- | -------- | ----------------------------------------------- |
-| `NOTION_API_KEY`                            | Yes      | Notion integration API key                      |
-| `NOTION_CONTACT_FORM_DATABASE_ID`           | Yes      | Notion database ID for contact form submissions |
-| `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY` | Yes      | Cloudflare Turnstile site key (public)          |
-| `CLOUDFLARE_TURNSTILE_SECRET_KEY`           | Yes      | Cloudflare Turnstile secret key                 |
+| Variable                                    | Required | Description                                                                                       |
+| ------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------- |
+| `NOTION_API_KEY`                            | Yes      | Notion integration API key                                                                        |
+| `NOTION_CONTACT_FORM_DATABASE_ID`           | Yes      | Notion database ID for contact form submissions                                                   |
+| `NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID`   | Yes*     | Campaigns DB for `/membership/apply` (*required for apply, optional for contact/quiz-only builds) |
+| `NOTION_MEMBERSHIP_SUBMISSIONS_DATABASE_ID` | No       | Fallback submissions DB (dynamic per campaign preferred)                                          |
+| `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY` | Yes      | Cloudflare Turnstile site key (public)                                                            |
+| `CLOUDFLARE_TURNSTILE_SECRET_KEY`           | Yes      | Cloudflare Turnstile secret key                                                                   |
 
 ## Project Structure
 
@@ -130,12 +132,13 @@ GitHub Actions (`.github/workflows/ci.yml`) runs three jobs on every push/PR to 
 
 The **Production Build** job runs `next build` (which parses the Zod `envSchema` in `src/lib/env.ts`), so it needs the following **GitHub Actions repository secrets** configured under `Settings → Secrets and variables → Actions`:
 
-| Secret                                      | Required | Notes                      |
-| ------------------------------------------- | -------- | -------------------------- |
-| `NOTION_API_KEY`                            | Yes      | Same value as `.env.local` |
-| `NOTION_CONTACT_FORM_DATABASE_ID`           | Yes      | Same value as `.env.local` |
-| `CLOUDFLARE_TURNSTILE_SECRET_KEY`           | Yes      | Same value as `.env.local` |
-| `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY` | Yes      | Same value as `.env.local` |
+| Secret                                      | Required | Notes                            |
+| ------------------------------------------- | -------- | -------------------------------- |
+| `NOTION_API_KEY`                            | Yes      | Same value as `.env.local`       |
+| `NOTION_CONTACT_FORM_DATABASE_ID`           | Yes      | Same value as `.env.local`       |
+| `NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID`   | Yes*     | Required for `/membership/apply` |
+| `CLOUDFLARE_TURNSTILE_SECRET_KEY`           | Yes      | Same value as `.env.local`       |
+| `NEXT_PUBLIC_CLOUDFLARE_TURNSTILE_SITE_KEY` | Yes      | Same value as `.env.local`       |
 
 Until these secrets are set, the `build` job will fail (`envSchema.parse` requires them) even though lint/typecheck pass — this is expected.
 

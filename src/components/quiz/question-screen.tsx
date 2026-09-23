@@ -1,11 +1,15 @@
 "use client";
 
+import { memo, useEffect, useRef } from "react";
+import type { KeyboardEvent } from "react";
 import { motion } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { Question, Choice } from "@/lib/quiz";
 
-export function QuestionScreen({
+export const QuestionScreen = memo(function QuestionScreen({
   question,
   shuffledChoices,
   selectedChoice,
@@ -28,6 +32,31 @@ export function QuestionScreen({
   onBack: () => void;
   canGoBack: boolean;
 }) {
+  const reduceMotion = useMountedReducedMotion();
+  const headingRef = useRef<HTMLHeadingElement>(null);
+
+  // Move focus to the new question on advance so keyboard/SR users don't
+  // land on the unmounted button (which falls back to body).
+  useEffect(() => {
+    headingRef.current?.focus({ preventScroll: true });
+  }, [question]);
+
+  const handleKeyDown = (e: KeyboardEvent, index: number) => {
+    if (
+      e.key !== "ArrowRight" &&
+      e.key !== "ArrowDown" &&
+      e.key !== "ArrowLeft" &&
+      e.key !== "ArrowUp"
+    ) {
+      return;
+    }
+    e.preventDefault();
+    const delta = e.key === "ArrowRight" || e.key === "ArrowDown" ? 1 : -1;
+    const next =
+      (index + delta + shuffledChoices.length) % shuffledChoices.length;
+    document.getElementById(`quiz-choice-${next}`)?.focus();
+  };
+
   return (
     <div className="relative w-full px-4 py-4 md:py-6">
       {/* Progress bar */}
@@ -35,7 +64,9 @@ export function QuestionScreen({
         <div className="mb-1 flex items-center justify-between">
           <span className="text-muted-foreground text-xs font-medium md:text-sm">
             {isTieBreaker ? (
-              <span className="text-secondary">⚡ Tiebreaker Round</span>
+              <span className="text-secondary-dark dark:text-secondary">
+                <span aria-hidden="true">⚡</span> Tiebreaker Round
+              </span>
             ) : (
               `Question ${questionNumber} of ${totalQuestions}`
             )}
@@ -49,10 +80,10 @@ export function QuestionScreen({
           className="bg-muted h-1.5 overflow-hidden rounded-full md:h-2"
         >
           <motion.div
-            className="from-primary to-secondary h-full rounded-full bg-gradient-to-r"
+            className="from-primary to-secondary h-full rounded-full bg-linear-to-r"
             initial={false}
             animate={{ width: `${progress}%` }}
-            transition={{ duration: 0.5 }}
+            transition={reduceMotion ? { duration: 0 } : { duration: 0.5 }}
           />
         </div>
         {/* Semantic progress for assistive tech (visual bar is aria-hidden). */}
@@ -66,46 +97,70 @@ export function QuestionScreen({
 
       {/* Question and Choices */}
       <motion.div
-        layout
-        initial={{ opacity: 0, x: 0, y: 10 }}
+        initial={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 0, y: 10 }}
         animate={{ opacity: 1, x: 0, y: 0 }}
-        exit={{ opacity: 0, x: 0, y: -10 }}
-        transition={{ duration: 0.4, ease: "easeInOut" }}
+        exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: 0, y: -10 }}
+        transition={
+          reduceMotion ? { duration: 0 } : { duration: 0.4, ease: "easeInOut" }
+        }
         className="relative"
       >
-        {/* Question */}
+        {/* Question — lg capped at xl so long questions fit kiosk widths */}
         <motion.h2
-          initial={{ opacity: 0, y: 10 }}
+          ref={headingRef}
+          tabIndex={-1}
+          initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-4 text-center text-lg font-bold md:mb-6 md:text-xl lg:text-2xl"
+          transition={reduceMotion ? { duration: 0 } : undefined}
+          className="mb-4 text-center text-lg font-bold outline-none md:mb-6 md:text-xl lg:text-xl"
         >
           {question.question}
         </motion.h2>
 
-        {/* Choices */}
-        <div className="space-y-2 md:space-y-3">
+        {/* Choices — single radiogroup with roving focus; the list animates
+            once instead of per-choice stagger to cut motion churn. */}
+        <div
+          role="radiogroup"
+          aria-label={question.question}
+          className="space-y-2 md:space-y-3"
+        >
           {shuffledChoices.map((choice, index) => (
             <motion.button
               key={choice.choice}
+              id={`quiz-choice-${index}`}
               type="button"
-              aria-pressed={selectedChoice === index}
-              initial={{ opacity: 0, y: 20 }}
+              role="radio"
+              aria-checked={selectedChoice === index}
+              tabIndex={
+                selectedChoice === null
+                  ? index === 0
+                    ? 0
+                    : -1
+                  : selectedChoice === index
+                    ? 0
+                    : -1
+              }
+              initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
+              transition={reduceMotion ? { duration: 0 } : undefined}
               onClick={() => onSelect(index)}
-              className={`w-full rounded-lg border-2 p-3 text-left transition-all duration-300 md:rounded-xl md:p-4 ${
+              onKeyDown={(e) => handleKeyDown(e, index)}
+              className={cn(
+                "w-full rounded-lg border-2 p-3 text-left transition-all duration-300 md:rounded-xl md:p-4",
                 selectedChoice === index
                   ? "border-primary bg-primary/10 scale-[1.02]"
-                  : "border-border hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]"
-              } `}
+                  : "border-border bg-card hover:border-primary/50 hover:bg-accent/50 hover:scale-[1.01]",
+              )}
             >
               <div className="flex items-center gap-2 md:gap-3">
                 <div
-                  className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold md:h-8 md:w-8 md:text-sm ${
+                  aria-hidden="true"
+                  className={cn(
+                    "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold md:h-8 md:w-8 md:text-sm",
                     selectedChoice === index
                       ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  } `}
+                      : "bg-muted text-muted-foreground",
+                  )}
                 >
                   {String.fromCharCode(65 + index)}
                 </div>
@@ -134,4 +189,4 @@ export function QuestionScreen({
       )}
     </div>
   );
-}
+});

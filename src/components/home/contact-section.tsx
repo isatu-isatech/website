@@ -19,11 +19,14 @@ export function HomepageContactSection() {
           <h2>Let&apos;s dream big!</h2>
           <h6>Got an idea? Let&apos;s make it happen.</h6>
         </div>
-        <Link href="/contact" className="text-caption z-1">
-          <Button variant={"secondary"} size={"lg"}>
-            Contact Us
-          </Button>
-        </Link>
+        <Button
+          asChild
+          variant={"secondary"}
+          size={"lg"}
+          className="text-caption z-1"
+        >
+          <Link href="/contact">Contact Us</Link>
+        </Button>
       </div>
     </section>
   );

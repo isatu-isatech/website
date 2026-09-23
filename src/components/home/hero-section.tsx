@@ -1,12 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import YouTubePlayer from "@/components/ui/youtube-player";
 import Link from "next/link";
@@ -27,8 +23,14 @@ const HeroYoutubeVideos: readonly string[] = [
   "Hy5PPhihZZc", // ISATech 2023 Teaser
 ];
 
+// Portrait (9:16) library for tall viewports where height ≫ width.
+// Bare 11-char IDs only — add more Shorts here; picked randomly per visit
+// just like the 16:9 pool.
+const HeroYoutubeShorts: readonly string[] = ["krwS02Di0PA"];
+const TALL_MEDIA_QUERY = "(max-aspect-ratio: 3/4)";
+
 export function HomepageHeroSection() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMountedReducedMotion();
 
   // Parallax: the video translates up slower than the content does on scroll, so
   // it appears to stay in place while the foreground rolls over it. The wrapper
@@ -47,15 +49,29 @@ export function HomepageHeroSection() {
   // (videoId = null) so the randomized src can never mismatch the server HTML —
   // the branded loading frame covers the gap until the pick lands. The ref guard
   // makes the pick idempotent under React Strict Mode's double-invoked effects.
+  // Tall viewports (max-aspect-ratio 3/4) use the 9:16 Shorts pool; wide uses
+  // the 16:9 pool. Picked once per visit — no live rotation swap (avoids
+  // YT.Player destroy/remount flash).
   const [videoId, setVideoId] = useState<string | null>(null);
   const pickedRef = useRef<string | null>(null);
 
   useEffect(() => {
+    // Ambient video is decorative: skip it for reduced-motion or Save-Data
+    // so the branded frame stays as the hero background.
+    const prefersReduced =
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const saveData =
+      typeof navigator !== "undefined" &&
+      (navigator as Navigator & { connection?: { saveData?: boolean } })
+        .connection?.saveData === true;
+    if (prefersReduced || saveData) return;
     if (!pickedRef.current) {
-      pickedRef.current =
-        HeroYoutubeVideos[
-          Math.floor(Math.random() * HeroYoutubeVideos.length)
-        ] ?? null;
+      const tall =
+        typeof window !== "undefined" &&
+        window.matchMedia(TALL_MEDIA_QUERY).matches;
+      const pool = tall ? HeroYoutubeShorts : HeroYoutubeVideos;
+      pickedRef.current = pool[Math.floor(Math.random() * pool.length)] ?? null;
     }
     setVideoId(pickedRef.current);
   }, []);
@@ -86,6 +102,7 @@ export function HomepageHeroSection() {
         <motion.div
           style={{ y: videoTranslate, willChange: "transform" }}
           className="absolute top-[-25%] -z-1 flex h-[150%] w-full items-center justify-center"
+          aria-hidden="true"
         >
           <YouTubePlayer
             videoId={videoId}
@@ -95,6 +112,7 @@ export function HomepageHeroSection() {
             hideControls
             disableKeyboard
             loading="eager"
+            title="Ambient ISATech showcase video (decorative, no controls)"
             onLoad={() => setPlayerReady(true)}
             className="pointer-events-none absolute top-1/2 left-1/2 aspect-video h-full max-w-none min-w-full -translate-x-1/2 -translate-y-1/2"
           />
@@ -134,11 +152,14 @@ export function HomepageHeroSection() {
                 Est. {SITE_CONFIG.foundingYear} · ISAT U
               </p>
             </div>
-            <Link href="/membership" className="text-caption">
-              <Button variant={"secondary"} size={"lg"}>
-                Join ISATech
-              </Button>
-            </Link>
+            <Button
+              asChild
+              variant={"secondary"}
+              size={"lg"}
+              className="text-caption"
+            >
+              <Link href="/membership">Join ISATech</Link>
+            </Button>
           </motion.div>
         </div>
       </div>
@@ -146,7 +167,7 @@ export function HomepageHeroSection() {
       {/* In-hero stats — one continuous glass band (bottom → top) with thin
           divider lines between columns; no per-card glass pills. */}
       <div className="relative z-10 w-full bg-linear-to-t from-black/50 to-transparent px-6 pb-10 md:px-16">
-        <div className="relative mx-auto flex w-full max-w-7xl flex-col overflow-hidden sm:flex-row sm:divide-x">
+        <div className="relative mx-auto flex w-full max-w-7xl flex-row divide-x overflow-hidden">
           {HERO_STATS.map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -157,13 +178,17 @@ export function HomepageHeroSection() {
                 duration: 0.5,
                 ease: "easeOut",
               }}
-              className="relative flex flex-1 flex-col items-center justify-center gap-1.5 px-2 py-5 sm:py-6"
+              className="relative flex flex-1 flex-col items-center justify-center gap-1 px-1 py-4 text-center sm:gap-1.5 sm:px-2 sm:py-6"
             >
-              <p className="text-secondary text-2xl leading-none font-bold tabular-nums md:text-4xl">
+              <p className="text-secondary text-xl leading-none font-bold tabular-nums sm:text-2xl md:text-4xl">
                 <CountUpComponent from={0} to={stat.quantity} />+
               </p>
               <p className="text-caption leading-tight text-white/80">
-                {stat.label}
+                {stat.label.split(" ").slice(0, 1)}
+                <span className="hidden sm:inline">
+                  {" "}
+                  {stat.label.split(" ").slice(1).join(" ")}
+                </span>
               </p>
             </motion.div>
           ))}

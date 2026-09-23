@@ -11,6 +11,8 @@ import AboutHeroLockup from "./hero-lockup";
 import AboutUsAdvisersSection, { AdviserProps } from "./carousel";
 import AboutDescriptionBand from "./description-band";
 import { SITE_CONFIG } from "@/lib/constants/site";
+import { createBlobConfig } from "@/components/ui/blobs-config";
+import { BlobsAnimatedBackground } from "@/components/ui/blobs";
 
 /**
  * ################################################################################
@@ -49,6 +51,9 @@ export const metadata: Metadata = {
       },
     ],
     type: "website",
+  },
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/about`,
   },
 };
 
@@ -113,10 +118,10 @@ const advisers: AdviserProps[] = [
 function AboutUsHeroSection() {
   return (
     <section
-      className="flex w-full items-center justify-center px-4 py-12 sm:px-6 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
+      className="relative flex w-full items-center justify-center overflow-hidden px-4 py-8 sm:px-6 sm:py-12 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="hero"
     >
-      <div className="grid w-full max-w-7xl grid-cols-1 items-center gap-8 py-8 sm:grid-cols-2 lg:gap-12 lg:py-16">
+      <div className="grid w-full max-w-7xl grid-cols-1 items-center gap-6 py-6 sm:grid-cols-2 sm:gap-8 sm:py-8 lg:gap-12 lg:py-16">
         {/* Text Content */}
         <div className="flex w-full gap-4 md:gap-8">
           {/* Divider — bolder brand accent */}
@@ -135,12 +140,12 @@ function AboutUsHeroSection() {
             height={329}
             className="h-32 w-fit md:h-64"
             sizes="(min-width: 780px) 217px, 109px"
-            priority
+            preload
             brandPlaceholder
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute -z-1 aspect-306/466 h-auto w-32 bg-[#203C90] mask-center md:w-40 lg:w-64"
+            className="pointer-events-none absolute top-1/2 left-1/2 -z-1 aspect-306/466 h-auto w-32 -translate-x-1/2 -translate-y-1/2 bg-[#203C90] mask-center md:w-40 lg:w-64"
           />
         </div>
       </div>
@@ -154,21 +159,17 @@ function AboutUsDescriptionSection() {
       className="relative flex w-full flex-col items-center py-6 md:py-10"
       id="description"
     >
-      <div className="pointer-events-none absolute inset-0 flex justify-center">
+      <div className="pointer-events-none absolute inset-0 flex justify-center overflow-clip">
         {/* Decorations */}
         <div
           aria-hidden
-          className="absolute top-0 left-0 hidden aspect-364/527 h-auto w-[min(364px,100%)] bg-current mask-left opacity-10 lg:block"
-        />
-        <div
-          aria-hidden
-          className="absolute right-0 bottom-0 aspect-320/528 h-auto w-[min(320px,100%)] bg-current mask-right opacity-10"
+          className="absolute bottom-0 left-0 hidden aspect-364/527 h-full w-auto bg-current mask-left opacity-10 lg:block"
         />
       </div>
       {/* Full-bleed description photo band (parallax) */}
       <AboutDescriptionBand />
       {/* Mission and Vision */}
-      <div className="grid w-full max-w-7xl grid-cols-1 gap-6 px-6 py-5 md:px-16 lg:grid-cols-2 lg:py-8">
+      <div className="grid w-full max-w-7xl grid-cols-1 gap-6 px-6 pt-10 pb-5 md:px-16 lg:grid-cols-2 lg:pt-14 lg:pb-8">
         <RevealOnView className="flex flex-col justify-start gap-4">
           <TargetIcon size={42} className="text-primary" />
           <div className="flex flex-col gap-2">
@@ -205,7 +206,7 @@ function AboutUsDescriptionSection() {
 function AboutUsEmpowermentSection() {
   return (
     <section
-      className="bg-primary relative flex w-full items-center justify-center px-4 py-14 sm:px-6 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
+      className="bg-primary relative flex w-full items-center justify-center px-4 py-10 sm:px-6 sm:py-14 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="empowerment"
     >
       <div
@@ -223,14 +224,14 @@ function AboutUsEmpowermentSection() {
             ISAT U’s technology business incubator, Kwadra TBI.
           </h5>
         </div>
-        <div className="flex w-full items-center justify-center">
+        <div className="flex w-full items-center justify-start lg:justify-center">
           <OptimizedImage
             src="/assets/decorations/poststamp-sticker.png"
             alt="ISATech Society Research Hub Stamp"
             width={436}
             height={346}
-            sizes="(min-width: 1040px) 403px, (min-width: 540px) 448px, calc(89.09vw - 15px)"
-            className="z-1 h-auto w-full max-w-md lg:h-80 lg:w-auto"
+            sizes="(min-width: 1040px) 256px, (min-width: 540px) 220px, calc(89.09vw - 15px)"
+            className="z-1 h-auto w-full max-w-55 lg:h-64 lg:w-auto"
             brandPlaceholder
           />
         </div>
@@ -240,20 +241,40 @@ function AboutUsEmpowermentSection() {
 }
 
 function AboutUsInitiativesSection() {
+  const blobsConfig = [
+    createBlobConfig({
+      id: "default-blob-2",
+      top: "-10rem",
+      left: "-10rem",
+      animateX: [0, -30, 0],
+      animateY: [0, -40, 0],
+      duration: 6,
+      colorClass: "bg-secondary/60",
+    }),
+  ];
+
   return (
     <section
-      className="flex w-full items-center justify-center px-4 py-14 sm:px-6 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
+      className="relative flex w-full items-center justify-center overflow-clip px-4 py-10 sm:px-6 sm:py-14 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="initiatives"
     >
+      <BlobsAnimatedBackground
+        className="absolute h-full w-full"
+        blobs={blobsConfig}
+      />
+      <div
+        aria-hidden
+        className="absolute right-0 bottom-0 aspect-320/528 h-full w-auto bg-current mask-right opacity-10"
+      />
       <div className="flex w-full max-w-7xl flex-col gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
-        <div className="flex w-full items-center justify-center">
+        <div className="flex w-full items-center justify-start lg:justify-center">
           <OptimizedImage
             src="/assets/decorations/tagline-sticker.png"
             alt="Dream Innovate Succeed Sticker"
             width={436}
             height={303}
-            sizes="(min-width: 540px) 448px, calc(89.09vw - 15px)"
-            className="z-1 h-auto w-full max-w-md lg:h-80 lg:w-auto"
+            sizes="(min-width: 540px) 220px, calc(89.09vw - 15px)"
+            className="z-1 h-auto w-full max-w-55 lg:h-64 lg:w-auto"
             brandPlaceholder
           />
         </div>

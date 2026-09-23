@@ -59,8 +59,10 @@ export const metadata: Metadata = {
 export default function Homepage() {
   return (
     <div className="flex w-full flex-col items-center justify-center">
-      {/* Hero section - critical, no error boundary needed as it's simple */}
-      <HomepageHeroSection />
+      {/* Hero (YouTube player) isolated so a player failure can't take the page */}
+      <SectionErrorBoundary sectionName="Hero">
+        <HomepageHeroSection />
+      </SectionErrorBoundary>
 
       {/* About section with error boundary */}
       <SectionErrorBoundary sectionName="About">
@@ -82,9 +84,9 @@ export default function Homepage() {
         <HomepageTeamSection />
       </SectionErrorBoundary>
 
-      {/* Scroll velocity - decorative, compact error handling */}
+      {/* Scroll velocity - decorative, hidden on mobile to avoid lag */}
       <SectionErrorBoundary compact>
-        <div className="flex w-full items-center justify-center overflow-hidden">
+        <div className="hidden w-full items-center justify-center overflow-hidden md:flex">
           <ScrollVelocityComponent
             texts={["DREAM • INNOVATE • SUCCEED •"]}
             velocity={50}

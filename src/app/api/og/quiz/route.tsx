@@ -35,7 +35,7 @@ const archetypePairs = COLORS.quiz.archetypes as Record<
   { from: string; to: string }
 >;
 
-// Icon filenames derived from the canonical icon map (quiz-data → TEAM_4H),
+// Icon filenames derived from the canonical icon map (lib/quiz/data + TEAM_4H),
 // so the asset paths live in exactly one place.
 const ARCHETYPE_ICON: Record<string, string> = Object.fromEntries(
   Object.entries(archetypeIcons).map(([key, fullPath]) => [
@@ -67,11 +67,28 @@ function loadFonts(): Promise<{ regular: Buffer; bold: Buffer }> {
 
 /** Local archetype icon PNGs as data URIs — same art as the in-app result (FR-010). */
 const iconCache = new Map<string, Promise<string>>();
+function mimeForIcon(name: string): string {
+  const ext = name.split(".").pop()?.toLowerCase();
+  switch (ext) {
+    case "jpg":
+    case "jpeg":
+      return "image/jpeg";
+    case "webp":
+      return "image/webp";
+    case "svg":
+      return "image/svg+xml";
+    case "avif":
+      return "image/avif";
+    default:
+      return "image/png";
+  }
+}
 function iconDataUri(name: string): Promise<string> {
   let pending = iconCache.get(name);
   if (!pending) {
     pending = readFile(path.join(ICON_DIR, name)).then(
-      (buffer) => `data:image/png;base64,${buffer.toString("base64")}`,
+      (buffer) =>
+        `data:${mimeForIcon(name)};base64,${buffer.toString("base64")}`,
       (error: unknown) => {
         // Don't cache rejections — a transient read failure should not
         // permanently break this icon.
@@ -106,12 +123,20 @@ export async function GET(request: NextRequest) {
   }
 
   const displayRole = role ?? "4H Personality Quiz";
-  const isGeneralist = displayRole === GENERALIST_ROLE || isGeneralistParam;
-
-  const archetype =
-    isGeneralist || !isArchetypeKey(archetypeParam)
-      ? (deriveArchetype(displayRole) ?? "Hustler")
-      : archetypeParam;
+  // Cross-validate the pair: a canonical non-Generalist role owns its
+  // archetype, so a mismatched `archetype` param (or `generalist=true` on
+  // such a role) can't mix a Hustler title with Hacker colors. The invite
+  // (no role) and Generalist keep the legacy param behavior.
+  const derived = role !== null ? deriveArchetype(role) : null;
+  const roleOwnsArchetype = derived !== null;
+  const isGeneralist =
+    displayRole === GENERALIST_ROLE ||
+    (!roleOwnsArchetype && isGeneralistParam);
+  const archetype = roleOwnsArchetype
+    ? derived
+    : isArchetypeKey(archetypeParam)
+      ? archetypeParam
+      : "Hustler";
 
   const pair = isGeneralist
     ? COLORS.quiz.generalist
@@ -122,8 +147,23 @@ export async function GET(request: NextRequest) {
   const iconName = isGeneralist
     ? "4h-vertical.png"
     : (ARCHETYPE_ICON[archetype] ?? "hustler.png");
-  const iconUri = await iconDataUri(iconName);
-  const { regular, bold } = await loadFonts();
+  const isInviteRequest = role === null;
+  let iconUri: string | null = null;
+  let regular: Buffer | null = null;
+  let bold: Buffer | null = null;
+  try {
+    iconUri = await iconDataUri(iconName);
+    ({ regular, bold } = await loadFonts());
+  } catch (error) {
+    // Transient asset read failure → invite banner, never a 500 (same
+    // posture as non-canonical roles above). Never redirect when already
+    // serving the invite: its own assets are what just failed, so a
+    // redirect would loop. Fall through to the asset-free fallback below.
+    console.error("[og/quiz] asset load failed, serving invite banner:", error);
+    if (!isInviteRequest) {
+      return NextResponse.redirect(new URL("/api/og/quiz", request.url), 302);
+    }
+  }
 
   const ogResponse = new ImageResponse(
     <div
@@ -163,7 +203,9 @@ export async function GET(request: NextRequest) {
           zIndex: 10,
         }}
       >
-        {/* Archetype icon badge — same art as the in-app result (FR-010) */}
+        {/* Archetype icon badge — same art as the in-app result (FR-010).
+            Omitted when the asset read failed (invite fallback): an empty
+            gradient badge keeps the layout without needing the PNG. */}
         <div
           style={{
             display: "flex",
@@ -178,12 +220,14 @@ export async function GET(request: NextRequest) {
             overflow: "hidden",
           }}
         >
-          {/* oxlint-disable-next-line next/no-img-element -- Satori/ImageResponse requires a raw <img>; next/image cannot render inside server-generated OG images */}
-          <img
-            src={iconUri}
-            alt=""
-            style={{ width: "132px", height: "132px", objectFit: "contain" }}
-          />
+          {iconUri ? (
+            /* oxlint-disable-next-line next/no-img-element -- Satori/ImageResponse requires a raw <img>; next/image cannot render inside server-generated OG images */
+            <img
+              src={iconUri}
+              alt=""
+              style={{ width: "132px", height: "132px", objectFit: "contain" }}
+            />
+          ) : null}
         </div>
 
         {/* "I am a..." text */}
@@ -257,10 +301,15 @@ export async function GET(request: NextRequest) {
     {
       width: 1200,
       height: 630,
-      fonts: [
-        { name: "Poppins", data: regular, weight: 400, style: "normal" },
-        { name: "Poppins", data: bold, weight: 700, style: "normal" },
-      ],
+      // Asset-free invite fallback carries no custom fonts — Satori falls
+      // back to system fonts instead of throwing on null data.
+      fonts:
+        regular && bold
+          ? [
+              { name: "Poppins", data: regular, weight: 400, style: "normal" },
+              { name: "Poppins", data: bold, weight: 700, style: "normal" },
+            ]
+          : undefined,
     },
   );
 
