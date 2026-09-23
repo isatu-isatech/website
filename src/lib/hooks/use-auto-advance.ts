@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "motion/react";
+import { useMountedReducedMotion } from "./use-mounted-reduced-motion";
 
 /**
  * Runs `onTick` on a fixed interval while `enabled`.
@@ -20,7 +20,7 @@ export function useAutoAdvance(
   enabled = true,
 ) {
   const onTickRef = useRef(onTick);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMountedReducedMotion();
 
   // Keep the ref pointing at the latest callback without restarting the
   // interval. Written in an effect (not during render) per react-hooks/refs.

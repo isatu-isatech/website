@@ -4,10 +4,10 @@ import { useEffect, useRef } from "react";
 import {
   useInView,
   useMotionValue,
-  useReducedMotion,
   useSpring,
   type MotionValue,
-} from "framer-motion";
+} from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 
 interface CountUpProps {
   to: number;
@@ -35,7 +35,7 @@ export default function CountUpComponent({
   onEnd,
 }: CountUpProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMountedReducedMotion();
   const motionValue = useMotionValue(direction === "down" ? to : from);
 
   const damping = 20 + 40 * (1 / duration);

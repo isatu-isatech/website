@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FocusEvent } from "react";
 import { FormProvider, useForm } from "react-hook-form";
-import { useReducedMotion } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { membershipFormSchema, type MembershipFormValues } from "../schema";
 import { submitMembershipApplication } from "../actions";
@@ -118,7 +118,7 @@ export function MembershipWizard({
   // (tokens are single-use — the server consumes one on every submit attempt).
   const [turnstileEpoch, setTurnstileEpoch] = useState(0);
   const totalSteps = 7;
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMountedReducedMotion();
   const wizardTopRef = useRef<HTMLDivElement>(null);
   // Focus target for step changes — keyboard/SR users must land on the new
   // step, not on the unmounted Next/Submit button. `tabIndex={-1}` allows

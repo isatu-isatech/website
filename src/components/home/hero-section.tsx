@@ -1,12 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "motion/react";
+import { motion, useScroll, useTransform } from "motion/react";
+import { useMountedReducedMotion } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import YouTubePlayer from "@/components/ui/youtube-player";
 import Link from "next/link";
@@ -34,7 +30,7 @@ const HeroYoutubeShorts: readonly string[] = ["krwS02Di0PA"];
 const TALL_MEDIA_QUERY = "(max-aspect-ratio: 3/4)";
 
 export function HomepageHeroSection() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMountedReducedMotion();
 
   // Parallax: the video translates up slower than the content does on scroll, so
   // it appears to stay in place while the foreground rolls over it. The wrapper

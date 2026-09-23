@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useMemo, useEffect, useRef } from "react";
-import { AnimatePresence, useReducedMotion } from "motion/react";
+import { AnimatePresence } from "motion/react";
 import {
   questions,
   tieBreakers,
@@ -22,7 +22,7 @@ import {
 } from "@/lib/quiz";
 import { toast } from "sonner";
 import { COLORS } from "@/lib/constants/design-tokens";
-import { useQuizLeaveGuard } from "@/lib/hooks";
+import { useMountedReducedMotion, useQuizLeaveGuard } from "@/lib/hooks";
 import { IdleCountdown } from "./idle-countdown";
 import { IntroScreen } from "./intro-screen";
 import { QuestionScreen } from "./question-screen";
@@ -370,7 +370,7 @@ export function QuizContainer() {
     answerLockRef.current = false;
   }, []);
 
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMountedReducedMotion();
 
   useEffect(() => {
     if (state.phase === "result" && result && !result.needsTieBreaker) {
