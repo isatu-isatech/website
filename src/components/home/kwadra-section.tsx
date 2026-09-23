@@ -24,14 +24,14 @@ export function HomepageKwadraSection() {
       id="kwadra"
     >
       {/* Decorations */}
-      <div className="absolute -z-1 flex h-full w-full items-center justify-center">
+      <div className="absolute -z-1 flex h-full w-full items-center justify-center overflow-clip">
         <BlobsAnimatedBackground
           className="absolute h-full w-full"
           blobs={blobsConfig}
         />
         <div
           aria-hidden
-          className="absolute top-0 left-0 aspect-[364/527] h-auto w-full bg-current mask-left opacity-10 md:h-full md:w-auto"
+          className="absolute top-0 left-0 aspect-[364/527] h-full w-auto bg-current mask-left opacity-10"
         />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-6 md:flex-row">

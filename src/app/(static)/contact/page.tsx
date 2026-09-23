@@ -100,14 +100,14 @@ function ContactUsHeroSection() {
       className="relative flex w-full items-center justify-center px-4 py-12 sm:px-6 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="contact-hero"
     >
-      <div className="pointer-events-none absolute inset-0 flex justify-center">
+      <div className="pointer-events-none absolute inset-0 flex justify-center overflow-clip">
         <div
           aria-hidden
-          className="absolute top-0 left-0 hidden aspect-364/527 h-auto w-[min(300px,100%)] bg-current mask-left opacity-5 md:block"
+          className="absolute top-0 left-0 hidden aspect-364/527 h-full w-auto bg-current mask-left opacity-5 md:block"
         />
         <div
           aria-hidden
-          className="absolute right-0 bottom-0 aspect-320/528 h-auto w-[min(260px,100%)] bg-current mask-right opacity-5"
+          className="absolute right-0 bottom-0 aspect-320/528 h-full w-auto bg-current mask-right opacity-5"
         />
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-8 py-8 lg:py-16">

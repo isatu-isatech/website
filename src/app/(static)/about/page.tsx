@@ -159,11 +159,11 @@ function AboutUsDescriptionSection() {
       className="relative flex w-full flex-col items-center py-6 md:py-10"
       id="description"
     >
-      <div className="pointer-events-none absolute inset-0 flex justify-center">
+      <div className="pointer-events-none absolute inset-0 flex justify-center overflow-clip">
         {/* Decorations */}
         <div
           aria-hidden
-          className="absolute bottom-0 left-0 hidden aspect-364/527 h-auto w-[min(300px,100%)] bg-current mask-left opacity-10 lg:block"
+          className="absolute bottom-0 left-0 hidden aspect-364/527 h-full w-auto bg-current mask-left opacity-10 lg:block"
         />
       </div>
       {/* Full-bleed description photo band (parallax) */}
@@ -255,7 +255,7 @@ function AboutUsInitiativesSection() {
 
   return (
     <section
-      className="relative flex w-full items-center justify-center px-4 py-10 sm:px-6 sm:py-14 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
+      className="relative flex w-full items-center justify-center overflow-clip px-4 py-10 sm:px-6 sm:py-14 md:px-8 md:py-6 lg:px-12 xl:px-16 2xl:px-20"
       id="initiatives"
     >
       <BlobsAnimatedBackground
@@ -264,7 +264,7 @@ function AboutUsInitiativesSection() {
       />
       <div
         aria-hidden
-        className="absolute right-0 bottom-0 aspect-320/528 h-auto w-[min(260px,100%)] bg-current mask-right opacity-10"
+        className="absolute right-0 bottom-0 aspect-320/528 h-full w-auto bg-current mask-right opacity-10"
       />
       <div className="flex w-full max-w-7xl flex-col gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
         <div className="flex w-full items-center justify-center">

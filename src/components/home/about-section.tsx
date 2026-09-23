@@ -24,7 +24,7 @@ export function HomepageAboutSection() {
       id="about"
     >
       {/* Decorations */}
-      <div className="absolute -z-1 flex h-full w-full items-center justify-center">
+      <div className="absolute -z-1 flex h-full w-full items-center justify-center overflow-clip">
         <BlobsAnimatedBackground
           className="absolute h-full w-full"
           blobs={blobsConfig}
