@@ -231,7 +231,7 @@ function AboutUsEmpowermentSection() {
             width={436}
             height={346}
             sizes="(min-width: 1040px) 256px, (min-width: 540px) 220px, calc(89.09vw - 15px)"
-            className="z-1 h-auto w-full max-w-55 lg:h-64 lg:w-auto"
+            className="z-1 h-auto w-full max-w-55 lg:h-64 lg:w-auto lg:max-w-none"
             brandPlaceholder
           />
         </div>
@@ -274,7 +274,7 @@ function AboutUsInitiativesSection() {
             width={436}
             height={303}
             sizes="(min-width: 540px) 220px, calc(89.09vw - 15px)"
-            className="z-1 h-auto w-full max-w-55 lg:h-64 lg:w-auto"
+            className="z-1 h-auto w-full max-w-55 lg:h-64 lg:w-auto lg:max-w-none"
             brandPlaceholder
           />
         </div>
