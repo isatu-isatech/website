@@ -27,6 +27,7 @@ import {
   makeApplyVersion,
   saveDraft,
 } from "@/lib/membership-apply";
+import { useKiosk } from "@/components/kiosk";
 import { SOCIAL_LINKS } from "@/lib/constants/site";
 import {
   MEMBERSHIP_FALLBACK,
@@ -168,6 +169,11 @@ export function MembershipWizard({
   const [turnstileEpoch, setTurnstileEpoch] = useState(0);
   const totalSteps = APPLY_TOTAL_STEPS;
   const reduceMotion = useMountedReducedMotion();
+  // Shared/kiosk devices turn over between visitors on the same tab, so an
+  // abandoned draft (full PII) must never auto-resume for the next visitor.
+  // While kiosk display is enforced the wizard neither restores nor persists
+  // a draft — every visitor starts clean on the intro.
+  const { isKioskEnforced } = useKiosk();
   const wizardTopRef = useRef<HTMLDivElement>(null);
   // Focus target for step changes — keyboard/SR users must land on the new
   // step, not on the unmounted Next/Submit button. `tabIndex={-1}` allows
@@ -247,8 +253,15 @@ export function MembershipWizard({
   // Session persistence (quiz FR-008 parity): restore an in-progress draft
   // on mount so a refresh or back/forward resumes at the same step with
   // entered values intact. Stale/cross-campaign records are discarded by
-  // `loadDraft`, leaving the visitor on the intro.
+  // `loadDraft`, leaving the visitor on the intro. Skipped entirely on
+  // kiosk displays (see above) — any pre-existing record is dropped so it
+  // can never leak into the next visitor's form.
   useEffect(() => {
+    if (isKioskEnforced) {
+      clearDraft();
+      setRestored(true);
+      return;
+    }
     const saved = loadDraft(activeCampaign?.id ?? null);
     if (saved) {
       // Mount-time hydration from sessionStorage is a legitimate external
@@ -268,18 +281,26 @@ export function MembershipWizard({
     // Mount-only, mirroring the quiz restore effect.
   }, []);
 
+  // If kiosk display is enabled mid-form (staff toggle), drop whatever was
+  // persisted so far. The in-memory form is left untouched — only storage
+  // is cleared and future saves stop (see `persistDraft`).
+  useEffect(() => {
+    if (isKioskEnforced) clearDraft();
+  }, [isKioskEnforced]);
+
   // Draft saver — reads are always fresh: field edits bubble `change` events
   // to the form (after RHF updates its own state), and step/phase
-  // transitions re-run the effect below.
+  // transitions re-run the effect below. Never persists on kiosk displays.
   const persistDraft = useCallback(() => {
     if (!restored || !activeCampaign || phase !== "form") return;
+    if (isKioskEnforced) return;
     saveDraft({
       version: makeApplyVersion(),
       campaignId: activeCampaign.id,
       step,
       values: { ...form.getValues() },
     });
-  }, [restored, activeCampaign, phase, step, form]);
+  }, [restored, activeCampaign, phase, step, form, isKioskEnforced]);
 
   // Save the draft on step/phase changes; clear on intro/success so the
   // next visit always starts fresh (quiz save-effect parity).
