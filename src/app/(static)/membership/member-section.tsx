@@ -358,11 +358,14 @@ export default function MembershipPageMemberSection() {
             })}
           </div>
         </div>
-        <Link href="/membership/apply" className="text-caption">
-          <Button variant={"default"} size={"lg"}>
-            Apply as Member
-          </Button>
-        </Link>
+        <Button
+          asChild
+          variant={"default"}
+          size={"lg"}
+          className="text-caption"
+        >
+          <Link href="/membership/apply">Apply as Member</Link>
+        </Button>
       </div>
     </section>
   );

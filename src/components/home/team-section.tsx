@@ -55,11 +55,14 @@ export function HomepageTeamSection() {
               </div>
             ))}
           </div>
-          <Link href="/quiz" className="text-caption z-1">
-            <Button variant={"secondary"} size={"lg"}>
-              Take the Quiz
-            </Button>
-          </Link>
+          <Button
+            asChild
+            variant={"secondary"}
+            size={"lg"}
+            className="text-caption z-1"
+          >
+            <Link href="/quiz">Take the Quiz</Link>
+          </Button>
         </div>
       </div>
     </section>

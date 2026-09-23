@@ -52,11 +52,14 @@ export function HomepageAboutSection() {
             </h5>
           </div>
           <div className="flex w-full items-center justify-start md:justify-end">
-            <Link href="/about" className="text-caption">
-              <Button variant={"default"} size={"lg"}>
-                Learn More
-              </Button>
-            </Link>
+            <Button
+              asChild
+              variant={"default"}
+              size={"lg"}
+              className="text-caption"
+            >
+              <Link href="/about">Learn More</Link>
+            </Button>
           </div>
         </div>
       </div>

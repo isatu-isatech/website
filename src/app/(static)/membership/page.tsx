@@ -127,16 +127,22 @@ function MembershipPageHeroSection() {
               </h5>
             </div>
             <div className="flex w-full justify-center gap-2 md:justify-start">
-              <Link href="/membership/apply" className="text-caption">
-                <Button variant={"default"} size={"lg"}>
-                  Apply Now
-                </Button>
-              </Link>
-              <Link href="/quiz" className="text-caption">
-                <Button variant={"ghost"} size={"lg"}>
-                  Take the Quiz
-                </Button>
-              </Link>
+              <Button
+                asChild
+                variant={"default"}
+                size={"lg"}
+                className="text-caption"
+              >
+                <Link href="/membership/apply">Apply Now</Link>
+              </Button>
+              <Button
+                asChild
+                variant={"ghost"}
+                size={"lg"}
+                className="text-caption"
+              >
+                <Link href="/quiz">Take the Quiz</Link>
+              </Button>
             </div>
           </div>
 

@@ -60,15 +60,20 @@ export function HomepageKwadraSection() {
             </h5>
           </div>
           <div className="flex w-full items-center justify-start md:justify-start">
-            <Link
-              href="https://www.facebook.com/KwadraTBI"
-              target="_blank"
+            <Button
+              asChild
+              variant={"default"}
+              size={"lg"}
               className="text-caption"
             >
-              <Button variant={"default"} size={"lg"}>
+              <Link
+                href="https://www.facebook.com/KwadraTBI"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Learn More
-              </Button>
-            </Link>
+              </Link>
+            </Button>
           </div>
         </div>
       </div>

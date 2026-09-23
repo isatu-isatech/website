@@ -152,11 +152,14 @@ export function HomepageHeroSection() {
                 Est. {SITE_CONFIG.foundingYear} · ISAT U
               </p>
             </div>
-            <Link href="/membership" className="text-caption">
-              <Button variant={"secondary"} size={"lg"}>
-                Join ISATech
-              </Button>
-            </Link>
+            <Button
+              asChild
+              variant={"secondary"}
+              size={"lg"}
+              className="text-caption"
+            >
+              <Link href="/membership">Join ISATech</Link>
+            </Button>
           </motion.div>
         </div>
       </div>
