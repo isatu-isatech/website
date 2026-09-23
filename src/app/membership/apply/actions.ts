@@ -285,7 +285,20 @@ export async function submitMembershipApplication(formData: unknown) {
 
     return { success: true };
   } catch (error) {
-    console.error("Membership submission Notion write failed:", error);
+    console.error("[membership] submission Notion write failed:", error);
+    const msg = (error as { message?: string })?.message ?? "";
+    // Officer action: `Mobile Number` must be a text/phone column. A stale
+    // number column rejects `+63` / leading zeros with a validation error.
+    if (
+      /mobile\s?number/i.test(msg) ||
+      /number.*format|invalid.*number/i.test(msg)
+    ) {
+      return {
+        success: false,
+        error:
+          "We couldn't save your mobile number — please check the format and try again. If this persists, contact us at isatech@isatu.edu.ph.",
+      };
+    }
     return {
       success: false,
       error: "Something went wrong on our end. Please try again in a moment.",

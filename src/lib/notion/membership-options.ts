@@ -54,13 +54,24 @@ function toOptionNames(prop: unknown): string[] | null {
   if (
     prop &&
     typeof prop === "object" &&
-    "type" in (prop as Record<string, unknown>) &&
-    (prop as { type: string }).type === "select" &&
-    "select" in (prop as Record<string, unknown>)
+    "type" in (prop as Record<string, unknown>)
   ) {
-    const select = (prop as { select: { options: { name: string }[] } }).select;
-    if (Array.isArray(select?.options)) {
-      return select.options.map((o) => o.name).filter(Boolean);
+    const typed = prop as {
+      type: string;
+      select?: { options: { name: string }[] };
+      multi_select?: { options: { name: string }[] };
+      status?: { options: { name: string }[] };
+    };
+    const options =
+      typed.type === "select"
+        ? typed.select?.options
+        : typed.type === "multi_select"
+          ? typed.multi_select?.options
+          : typed.type === "status"
+            ? typed.status?.options
+            : undefined;
+    if (Array.isArray(options)) {
+      return options.map((o) => o.name).filter(Boolean);
     }
   }
   return null;
@@ -82,7 +93,10 @@ export async function getMembershipOptions(
   if (hit && now - hit.at < CACHE_TTL_MS) return hit.value;
 
   const put = (value: MembershipOptions): MembershipOptions => {
-    cache.set(cacheKey, { value, at: Date.now() });
+    // Don't cache the unconfigured fallback — env may be fixed within the TTL.
+    if (cacheKey !== "<unconfigured>") {
+      cache.set(cacheKey, { value, at: Date.now() });
+    }
     return value;
   };
 
@@ -140,6 +154,27 @@ export async function getMembershipOptions(
     const secondaryRole = toOptionNames(props["Secondary Role Preference"]) ?? [
       ...FALLBACK.role,
     ];
+    // `Availability` is a text column in the live schema (written as
+    // rich_text) — a null here is expected, not a misconfig. Other nulls
+    // mean the column is missing/renamed or Notion changed types.
+    if (!toOptionNames(props["Availability"])) {
+      console.warn(
+        "[membership] Availability options fell back to static bands (expected for text column)",
+      );
+    }
+    for (const key of [
+      "College",
+      "Year Level",
+      "Sex",
+      "Primary Role Preference",
+      "Secondary Role Preference",
+    ] as const) {
+      if (!toOptionNames(props[key])) {
+        console.warn(
+          `[membership] options fallback used for "${key}" — check Notion column type/name`,
+        );
+      }
+    }
     const availability = toOptionNames(props["Availability"]) ?? [
       ...FALLBACK.availability,
     ];
@@ -155,6 +190,7 @@ export async function getMembershipOptions(
   } catch {
     // Notion unreachable at build or tests — use fallback so the form can still render
     // Server validation will re-attempt live fetch on submit.
+    console.warn("[membership] options fetch failed — serving static fallback");
     return put({
       college: [...FALLBACK.college],
       yearLevel: [...FALLBACK.yearLevel],
