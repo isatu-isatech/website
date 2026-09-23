@@ -13,6 +13,7 @@ import {
   saveProgress,
   clearProgress,
   makeProgressVersion,
+  getQuizProgressFraction,
   buildShareUrl,
   type ArchetypeKey,
   type Question,
@@ -55,6 +56,8 @@ interface QuizState {
   shuffledTieBreakers: Question[];
   usedTieBreakers: number;
   answers: Choice[];
+  /** Per-answer index into the shuffled choices (exact highlight restore). */
+  answerIndexes: number[];
   /** Shuffle permutations — kept so session persistence round-trips exactly. */
   questionOrder: number[];
   tieBreakerOrder: number[];
@@ -71,6 +74,7 @@ export function QuizContainer() {
     shuffledTieBreakers: [],
     usedTieBreakers: 0,
     answers: [],
+    answerIndexes: [],
     questionOrder: [],
     tieBreakerOrder: [],
     choiceOrders: [],
@@ -133,6 +137,7 @@ export function QuizContainer() {
       shuffledTieBreakers: shuffledTB,
       usedTieBreakers: 0,
       answers: [],
+      answerIndexes: [],
       questionOrder,
       tieBreakerOrder,
       choiceOrders,
@@ -158,22 +163,22 @@ export function QuizContainer() {
   // Derived highlight for the current question (supports Undo/back without
   // an effect-driven setState). Main answers occupy `answers[0..N)` in order;
   // tiebreaker answers append after them, so the tiebreaker slot is
-  // `answers[shuffledQuestions.length + usedTieBreakers]`.
+  // `answers[shuffledQuestions.length + usedTieBreakers]`. Indexes are stored
+  // at answer time — exact even when two choices share the same text.
   const selectedChoice = useMemo(() => {
     if (!currentQuestion) return null;
     const answerIndex =
       state.phase === "tiebreaker"
         ? state.shuffledQuestions.length + state.usedTieBreakers
         : state.currentQuestionIndex;
-    const previousAnswer = state.answers[answerIndex];
-    if (!previousAnswer) return null;
-    const index = currentQuestion.choices.findIndex(
-      (c) => c.choice === previousAnswer.choice,
-    );
-    return index !== -1 ? index : null;
+    const previousIndex = state.answerIndexes[answerIndex];
+    if (previousIndex === undefined) return null;
+    return previousIndex < currentQuestion.choices.length
+      ? previousIndex
+      : null;
   }, [
     currentQuestion,
-    state.answers,
+    state.answerIndexes,
     state.phase,
     state.shuffledQuestions.length,
     state.currentQuestionIndex,
@@ -204,6 +209,7 @@ export function QuizContainer() {
         })),
         usedTieBreakers: saved.usedTieBreakers,
         answers: saved.answers,
+        answerIndexes: saved.answerIndexes,
         questionOrder: saved.questionOrder,
         tieBreakerOrder: saved.tieBreakerOrder,
         choiceOrders: saved.choiceOrders,
@@ -224,6 +230,7 @@ export function QuizContainer() {
         usedTieBreakers: state.usedTieBreakers,
         scores: state.scores,
         answers: state.answers,
+        answerIndexes: state.answerIndexes,
         questionOrder: state.questionOrder,
         tieBreakerOrder: state.tieBreakerOrder,
         choiceOrders: state.choiceOrders,
@@ -273,6 +280,7 @@ export function QuizContainer() {
           ...prev,
           scores: nextScores,
           answers: [...prev.answers, choice],
+          answerIndexes: [...prev.answerIndexes, choiceIndex],
         };
 
         if (prev.phase === "quiz") {
@@ -351,6 +359,7 @@ export function QuizContainer() {
         ...prev,
         scores: revertedScores,
         answers: prev.answers.slice(0, -1),
+        answerIndexes: prev.answerIndexes.slice(0, -1),
         phase: newPhase,
         currentQuestionIndex: newIndex,
         usedTieBreakers: newUsedTieBreakers,
@@ -413,19 +422,13 @@ export function QuizContainer() {
   }, [state.phase, result, reduceMotion]);
 
   const progress = useMemo(() => {
-    if (state.phase === "quiz") {
-      return (
-        ((state.currentQuestionIndex + 1) / state.shuffledQuestions.length) *
-        100
-      );
-    } else if (state.phase === "tiebreaker") {
-      return (
-        ((state.usedTieBreakers + 1) /
-          (state.shuffledQuestions.length + state.shuffledTieBreakers.length)) *
-        100
-      );
-    }
-    return 0;
+    return getQuizProgressFraction({
+      phase: state.phase,
+      currentQuestionIndex: state.currentQuestionIndex,
+      usedTieBreakers: state.usedTieBreakers,
+      mainLen: state.shuffledQuestions.length,
+      tieTotal: state.shuffledTieBreakers.length,
+    });
   }, [
     state.phase,
     state.currentQuestionIndex,
@@ -446,6 +449,7 @@ export function QuizContainer() {
       shuffledTieBreakers: [],
       usedTieBreakers: 0,
       answers: [],
+      answerIndexes: [],
       questionOrder: [],
       tieBreakerOrder: [],
       choiceOrders: [],
@@ -614,7 +618,7 @@ export function QuizContainer() {
         {(state.phase === "quiz" || state.phase === "tiebreaker") &&
           currentQuestion && (
             <QuestionScreen
-              key={`question-${state.currentQuestionIndex}-${state.phase}`}
+              key={`question-${state.phase}-${state.phase === "tiebreaker" ? state.usedTieBreakers : state.currentQuestionIndex}`}
               question={currentQuestion}
               shuffledChoices={currentQuestion.choices}
               selectedChoice={selectedChoice}

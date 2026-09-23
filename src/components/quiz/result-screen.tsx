@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Share2, RotateCcw, ArrowRight } from "lucide-react";
 import {
   archetypeIcons,
+  sortScores,
   type ArchetypeKey,
   type FinalResult,
 } from "@/lib/quiz";
@@ -120,48 +121,44 @@ export const ResultScreen = memo(function ResultScreen({
             Your Archetype Breakdown
           </h3>
           <div className="divide-border divide-y">
-            {(Object.entries(result.breakdown) as [ArchetypeKey, number][])
-              .toSorted(([, a], [, b]) => b - a)
-              .map(([archetype, percentage]) => (
-                <div
-                  key={archetype}
-                  className="flex items-center gap-2 py-1 first:pt-0.5 last:pb-0.5 md:py-1.5"
-                >
-                  <div className="relative h-4 w-4 shrink-0 md:h-5 md:w-5">
-                    <Image
-                      src={archetypeIcons[archetype as ArchetypeKey]}
-                      alt={archetype}
-                      fill
-                      sizes="20px"
-                      className="object-contain"
+            {sortScores(result.breakdown).map(([archetype, percentage]) => (
+              <div
+                key={archetype}
+                className="flex items-center gap-2 py-1 first:pt-0.5 last:pb-0.5 md:py-1.5"
+              >
+                <div className="relative h-4 w-4 shrink-0 md:h-5 md:w-5">
+                  <Image
+                    src={archetypeIcons[archetype as ArchetypeKey]}
+                    alt={archetype}
+                    fill
+                    sizes="20px"
+                    className="object-contain"
+                  />
+                </div>
+                <div className="flex-1">
+                  <div className="mb-0.5 flex justify-between text-xs md:text-sm">
+                    <span className="font-medium">{archetype}</span>
+                    <span className="text-muted-foreground">{percentage}%</span>
+                  </div>
+                  <div className="bg-muted h-1 overflow-hidden rounded-full">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${percentage}%` }}
+                      transition={
+                        reduceMotion
+                          ? { duration: 0 }
+                          : { duration: 0.8, delay: 0.9 }
+                      }
+                      className={cn(
+                        "h-full rounded-full bg-linear-to-r",
+                        COLORS.quiz.archetypes[archetype as ArchetypeKey]
+                          .gradient,
+                      )}
                     />
                   </div>
-                  <div className="flex-1">
-                    <div className="mb-0.5 flex justify-between text-xs md:text-sm">
-                      <span className="font-medium">{archetype}</span>
-                      <span className="text-muted-foreground">
-                        {percentage}%
-                      </span>
-                    </div>
-                    <div className="bg-muted h-1 overflow-hidden rounded-full">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${percentage}%` }}
-                        transition={
-                          reduceMotion
-                            ? { duration: 0 }
-                            : { duration: 0.8, delay: 0.9 }
-                        }
-                        className={cn(
-                          "h-full rounded-full bg-linear-to-r",
-                          COLORS.quiz.archetypes[archetype as ArchetypeKey]
-                            .gradient,
-                        )}
-                      />
-                    </div>
-                  </div>
                 </div>
-              ))}
+              </div>
+            ))}
           </div>
         </motion.div>
       )}

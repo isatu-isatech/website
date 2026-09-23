@@ -122,10 +122,25 @@ export function deriveResult(
     role = `True ${top1[0]}` as CanonicalRole;
   }
 
+  // Largest-remainder rounding so the displayed shares always sum to 100.
+  const exact = sortedScores.map(
+    ([key, value]) => [key, (value / total) * 100] as const,
+  );
   const breakdown = {} as Record<ArchetypeKey, number>;
-  for (const [key, value] of sortedScores) {
-    breakdown[key] = Math.round((value / total) * 100);
+  let assigned = 0;
+  let largestIdx = 0;
+  let largestRemainder = -1;
+  for (let i = 0; i < exact.length; i++) {
+    const floored = Math.floor(exact[i]![1]);
+    breakdown[exact[i]![0]] = floored;
+    assigned += floored;
+    const remainder = exact[i]![1] - floored;
+    if (remainder > largestRemainder) {
+      largestRemainder = remainder;
+      largestIdx = i;
+    }
   }
+  breakdown[exact[largestIdx]![0]]! += 100 - assigned;
 
   return {
     needsTieBreaker: false,
