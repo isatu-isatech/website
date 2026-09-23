@@ -10,50 +10,78 @@
  * mechanism itself is documented in the feature spec as P5 requires.
  */
 
-export const RATE_LIMIT_COOKIE_NAME = "contact_rate_limit";
-/** Rolling window: 1 hour. */
-export const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000;
-/** Max successful submissions per window (unchanged from the previous policy). */
-export const RATE_LIMIT_MAX_SUBMISSIONS = 5;
-/** Cap the stored payload so the cookie stays small. */
-const RATE_LIMIT_MAX_STORED = 64;
+export interface CookieRateLimitPolicy {
+  cookieName: string;
+  windowMs: number;
+  maxSubmissions: number;
+  maxStored?: number;
+}
+
+export interface CookieRateLimiter {
+  cookieName: string;
+  windowMs: number;
+  maxSubmissions: number;
+  parseSubmissionTimes(raw: string | undefined): number[];
+  isRateLimited(timestamps: number[]): boolean;
+  appendSubmissionTimestamp(timestamps: number[], now?: number): number[];
+}
 
 /**
- * Parse a cookie payload into the successful-submission timestamps still inside
- * the rolling window. Malformed, non-array, or unreadable payloads are treated
- * as an empty record (first-time submitter).
+ * Factory for browser-cookie rate limiters. Each surface gets its own
+ * adapter (own cookie name) over the shared implementation so the two
+ * surfaces never count against each other.
  */
-export function parseSubmissionTimes(raw: string | undefined): number[] {
-  if (!raw) return [];
+export function createCookieRateLimit(
+  policy: CookieRateLimitPolicy,
+): CookieRateLimiter {
+  const maxStored = policy.maxStored ?? 64;
+  return {
+    cookieName: policy.cookieName,
+    windowMs: policy.windowMs,
+    maxSubmissions: policy.maxSubmissions,
+    parseSubmissionTimes(raw: string | undefined): number[] {
+      if (!raw) return [];
 
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(raw);
-  } catch {
-    return [];
-  }
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(raw);
+      } catch {
+        return [];
+      }
 
-  if (!Array.isArray(parsed)) return [];
+      if (!Array.isArray(parsed)) return [];
 
-  const now = Date.now();
-  return parsed
-    .filter(
-      (entry): entry is number =>
-        typeof entry === "number" && Number.isFinite(entry),
-    )
-    .filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS)
-    .toSorted((a, b) => a - b);
+      const now = Date.now();
+      return parsed
+        .filter(
+          (entry): entry is number =>
+            typeof entry === "number" && Number.isFinite(entry),
+        )
+        .filter((timestamp) => now - timestamp < policy.windowMs)
+        .toSorted((a, b) => a - b);
+    },
+    isRateLimited(timestamps: number[]): boolean {
+      return timestamps.length >= policy.maxSubmissions;
+    },
+    appendSubmissionTimestamp(
+      timestamps: number[],
+      now: number = Date.now(),
+    ): number[] {
+      return [...timestamps, now].slice(-maxStored);
+    },
+  };
 }
 
-/** True when the rolling window already holds the maximum number of submissions. */
-export function isRateLimited(timestamps: number[]): boolean {
-  return timestamps.length >= RATE_LIMIT_MAX_SUBMISSIONS;
-}
+/** Contact surface adapter: 5 successful submissions per rolling 60-min window. */
+export const contactRateLimit = createCookieRateLimit({
+  cookieName: "contact_rate_limit",
+  windowMs: 60 * 60 * 1000,
+  maxSubmissions: 5,
+});
 
-/** Append a successful-submission timestamp and cap the stored payload. */
-export function appendSubmissionTimestamp(
-  timestamps: number[],
-  now: number = Date.now(),
-): number[] {
-  return [...timestamps, now].slice(-RATE_LIMIT_MAX_STORED);
-}
+/** Membership surface adapter: isolated cookie, identical policy. */
+export const membershipRateLimit = createCookieRateLimit({
+  cookieName: "membership_rate_limit",
+  windowMs: 60 * 60 * 1000,
+  maxSubmissions: 5,
+});

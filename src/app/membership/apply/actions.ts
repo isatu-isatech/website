@@ -6,15 +6,7 @@ import { env } from "@/lib/env";
 import { cookies } from "next/headers";
 import { getMembershipOptions } from "@/lib/notion/membership-options";
 import { getActiveCampaign } from "@/lib/notion/membership-campaigns";
-import {
-  appendMembershipSubmissionTimestamp,
-  isMembershipRateLimited,
-  MEMBERSHIP_RATE_LIMIT_COOKIE_NAME,
-  MEMBERSHIP_RATE_LIMIT_WINDOW_MS,
-  parseMembershipSubmissionTimes,
-} from "@/lib/services/membership-rate-limit";
-
-const cloudflareTurnstileSecretKey = env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
+import { membershipRateLimit } from "@/lib/services/cookie-rate-limit";
 
 /**
  * Notion property names for the Form Submissions DB.
@@ -45,10 +37,10 @@ const MEMBERSHIP_PROPERTIES = {
 export async function submitMembershipApplication(formData: unknown) {
   // 1. Rate limit (browser-cookie, isolated)
   const cookieStore = await cookies();
-  const submissionTimes = parseMembershipSubmissionTimes(
-    cookieStore.get(MEMBERSHIP_RATE_LIMIT_COOKIE_NAME)?.value,
+  const submissionTimes = membershipRateLimit.parseSubmissionTimes(
+    cookieStore.get(membershipRateLimit.cookieName)?.value,
   );
-  if (isMembershipRateLimited(submissionTimes)) {
+  if (membershipRateLimit.isRateLimited(submissionTimes)) {
     return {
       success: false,
       error:
@@ -288,13 +280,15 @@ export async function submitMembershipApplication(formData: unknown) {
 
     // Record successful submission in the rate-limit cookie
     cookieStore.set(
-      MEMBERSHIP_RATE_LIMIT_COOKIE_NAME,
-      JSON.stringify(appendMembershipSubmissionTimestamp(submissionTimes)),
+      membershipRateLimit.cookieName,
+      JSON.stringify(
+        membershipRateLimit.appendSubmissionTimestamp(submissionTimes),
+      ),
       {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        maxAge: Math.ceil((2 * MEMBERSHIP_RATE_LIMIT_WINDOW_MS) / 1000),
+        maxAge: Math.ceil((2 * membershipRateLimit.windowMs) / 1000),
         secure: process.env.NODE_ENV === "production",
       },
     );

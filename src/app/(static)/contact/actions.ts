@@ -4,15 +4,9 @@ import { createPage } from "@/lib/notion/helpers";
 import { contactFormSchema } from "./schema";
 import { env } from "@/lib/env";
 import { cookies } from "next/headers";
-import {
-  appendSubmissionTimestamp,
-  isRateLimited,
-  parseSubmissionTimes,
-  RATE_LIMIT_COOKIE_NAME,
-  RATE_LIMIT_WINDOW_MS,
-} from "@/lib/services/cookie-rate-limit";
+import { contactRateLimit } from "@/lib/services/cookie-rate-limit";
+import { verifyTurnstile } from "@/lib/services/turnstile";
 
-const cloudflareTurnstileSecretKey = env.CLOUDFLARE_TURNSTILE_SECRET_KEY;
 const contactFormDatabaseID = env.NOTION_CONTACT_FORM_DATABASE_ID;
 
 /**
@@ -33,11 +27,11 @@ export async function submitMessage(formData: unknown) {
   // without a readable record are treated as first-time submitters; only
   // successful submissions are recorded, so failed attempts never count.
   const cookieStore = await cookies();
-  const submissionTimes = parseSubmissionTimes(
-    cookieStore.get(RATE_LIMIT_COOKIE_NAME)?.value,
+  const submissionTimes = contactRateLimit.parseSubmissionTimes(
+    cookieStore.get(contactRateLimit.cookieName)?.value,
   );
 
-  if (isRateLimited(submissionTimes)) {
+  if (contactRateLimit.isRateLimited(submissionTimes)) {
     return {
       success: false,
       error:
@@ -58,29 +52,15 @@ export async function submitMessage(formData: unknown) {
 
   const { name, email, message, turnstileToken } = parsed.data;
 
-  // Verify the Turnstile token
-  try {
-    const response = await fetch(
-      "https://challenges.cloudflare.com/turnstile/v0/siteverify",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          secret: cloudflareTurnstileSecretKey,
-          response: turnstileToken,
-        }),
-      },
-    );
-
-    const data = await response.json();
-    if (!data.success) {
+  // Verify the Turnstile token (shared verifier with timeout).
+  const turnstile = await verifyTurnstile(turnstileToken);
+  if (!turnstile.ok) {
+    if (turnstile.reason === "failed") {
       return {
         success: false,
         error: "The security check didn't go through — please try once more.",
       };
     }
-  } catch (error) {
-    console.error("Turnstile verification error:", error);
     return {
       success: false,
       error:
@@ -116,15 +96,17 @@ export async function submitMessage(formData: unknown) {
     // Record the successful submission in the browser-held record so later
     // submissions within the rolling window count against the limit.
     cookieStore.set(
-      RATE_LIMIT_COOKIE_NAME,
-      JSON.stringify(appendSubmissionTimestamp(submissionTimes)),
+      contactRateLimit.cookieName,
+      JSON.stringify(
+        contactRateLimit.appendSubmissionTimestamp(submissionTimes),
+      ),
       {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
         // Keep the cookie past the window so recent activity survives idle
         // periods; stale entries are pruned on read.
-        maxAge: Math.ceil((2 * RATE_LIMIT_WINDOW_MS) / 1000),
+        maxAge: Math.ceil((2 * contactRateLimit.windowMs) / 1000),
         secure: process.env.NODE_ENV === "production",
       },
     );
