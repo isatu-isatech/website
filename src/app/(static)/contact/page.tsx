@@ -176,6 +176,7 @@ function ContactUsSocialMapSection() {
           <iframe
             title="ISATech Society location map"
             src="https://www.openstreetmap.org/export/embed.html?bbox=122.56649672985077%2C10.716133510188474%2C122.56900727748872%2C10.717925599031416&amp;layer=mapnik&amp;marker=10.717029555936012%2C122.56775200366974"
+            loading="lazy"
             className="absolute inset-0 h-full w-full border-0"
           />
           {/* Info card — upper-left corner of the map */}
@@ -191,7 +192,7 @@ function ContactUsSocialMapSection() {
                 </p>
                 <a
                   href={`mailto:${SOCIAL_LINKS.email}`}
-                  className="text-secondary text-sm font-medium underline underline-offset-4"
+                  className="text-sm font-medium text-white underline underline-offset-4"
                 >
                   {SOCIAL_LINKS.email}
                 </a>

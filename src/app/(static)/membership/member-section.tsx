@@ -297,27 +297,35 @@ export default function MembershipPageMemberSection() {
           </h5>
         </div>
         <div className="grid w-full items-stretch gap-4 lg:grid-cols-2">
-          {/* Benefit list — hover or keyboard-focus a card to focus it;
-              idle auto-advances */}
+          {/* Benefit list — hover, focus, or activate a card to focus it;
+              idle auto-advances. Buttons so Enter/Space work; the live
+              region below announces auto-advance to screen readers. */}
           <div className="flex w-full flex-col gap-1">
             {benefits.map((benefit, key) => (
-              <div
+              <button
                 key={benefit.title}
-                tabIndex={0}
+                type="button"
                 onMouseEnter={() => focusBenefit(key)}
                 onMouseLeave={resumeAutoAdvance}
                 onFocus={() => focusBenefit(key)}
                 onBlur={resumeAutoAdvance}
+                onClick={() => focusBenefit(key)}
+                aria-pressed={activeIndex === key}
                 className={cn(
-                  "border-border/60 bg-accent/50 flex w-full cursor-default flex-col gap-1 rounded-2xl border px-4 py-2 backdrop-blur-md transition-colors duration-300",
+                  "border-border/60 bg-accent/50 flex w-full cursor-pointer flex-col gap-1 rounded-2xl border px-4 py-2 text-left backdrop-blur-md transition-colors duration-300",
                   activeIndex === key && "border-secondary/60 bg-accent",
                 )}
               >
-                <p className="text-body-bold">{benefit.title}</p>
-                <p className="text-label lg:line-clamp-3">{benefit.subtitle}</p>
-              </div>
+                <span className="text-body-bold">{benefit.title}</span>
+                <span className="text-label lg:line-clamp-3">
+                  {benefit.subtitle}
+                </span>
+              </button>
             ))}
           </div>
+          <p aria-live="polite" className="sr-only">
+            {benefits[activeIndex]?.title}
+          </p>
           {/* Focused benefit's image — crossfades on switch. Only the
               active + next images are mounted so 4× ~1MB originals are
               never all downloaded at once; the rest mount on advance. */}
@@ -325,6 +333,10 @@ export default function MembershipPageMemberSection() {
             {images.map((image, key) => {
               const nextIndex = (activeIndex + 1) % images.length;
               if (key !== activeIndex && key !== nextIndex) return null;
+              // Next.js forbids priority + loading on the same image:
+              // priority only for the first paint (key 0 while active),
+              // everything else lazy-loads when offscreen.
+              const isFirstPaint = key === 0 && activeIndex === 0;
               return (
                 <OptimizedImage
                   key={image.src}
@@ -332,8 +344,10 @@ export default function MembershipPageMemberSection() {
                   alt={image.alt}
                   fill
                   sizes="(min-width: 1280px) 640px, 100vw"
-                  priority={key === 0}
-                  loading={key === activeIndex ? undefined : "lazy"}
+                  priority={isFirstPaint}
+                  loading={
+                    isFirstPaint || key === activeIndex ? undefined : "lazy"
+                  }
                   className={cn(
                     "object-cover transition-opacity duration-500",
                     activeIndex === key ? "opacity-100" : "opacity-0",

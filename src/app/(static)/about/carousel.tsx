@@ -12,6 +12,7 @@ import {
 import { ArrowLeftIcon, ArrowRightIcon } from "lucide-react";
 import Image from "next/image";
 import { useAutoAdvance } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
 /**
@@ -163,6 +164,7 @@ export default function AboutUsAdvisersSection({
             <Button
               size={"icon"}
               className="lg:hidden"
+              aria-label="Previous slides"
               onClick={() => scrollToIndex(currentIndex - 1)}
             >
               <ArrowLeftIcon />
@@ -171,19 +173,23 @@ export default function AboutUsAdvisersSection({
               {Array.from({ length: totalItems }).map((_, index) => (
                 <button
                   key={index}
+                  type="button"
                   aria-label={`Go to adviser ${index + 1}`}
+                  aria-current={currentIndex === index ? "true" : undefined}
                   onClick={() => scrollToIndex(index)}
-                  className={`h-3 w-3 rounded-full ${
+                  className={cn(
+                    "h-3 w-3 rounded-full",
                     currentIndex === index
                       ? "bg-primary/80"
-                      : "bg-foreground/25"
-                  }`}
+                      : "bg-foreground/25",
+                  )}
                 />
               ))}
             </div>
             <Button
               size={"icon"}
               className="lg:hidden"
+              aria-label="Next slides"
               onClick={() => scrollToIndex(currentIndex + 1)}
             >
               <ArrowRightIcon />
