@@ -14,6 +14,7 @@ function enumWithFallback(options: readonly string[]) {
 function optionalText(max: number, label: string) {
   return z
     .string()
+    .trim()
     .max(max, `${label} must be at most ${max} characters`)
     .optional()
     .or(z.literal(""));
@@ -21,8 +22,8 @@ function optionalText(max: number, label: string) {
 
 // ISAT-U student email — strict: dotted alphanumeric local part
 // (at least one dot, no leading/trailing/consecutive dots) plus the
-// `@students.isatu.edu.ph` domain. Case-insensitive; the server action
-// normalizes to lowercase before writing to Notion.
+// `@students.isatu.edu.ph` domain. Trimmed and lowercased by the schema
+// before validation, so the stored value is already normalized.
 export const STUDENT_EMAIL_REGEX =
   /^[a-z0-9]+(\.[a-z0-9]+)+@students\.isatu\.edu\.ph$/i;
 export const STUDENT_EMAIL_MESSAGE =
@@ -46,8 +47,7 @@ export function isFacebookProfileUrl(value: string): boolean {
     host === "facebook.com" ||
     host.endsWith(".facebook.com") ||
     host === "fb.com" ||
-    host === "www.fb.com" ||
-    host === "m.fb.com"
+    host.endsWith(".fb.com")
   );
 }
 
@@ -56,21 +56,27 @@ export const membershipFormSchema = z
     // Personal Information
     fullName: z
       .string()
+      .trim()
       .min(2, "Full Name must be at least 2 characters")
       .max(100, "Full Name must be at most 100 characters"),
     nickname: optionalText(50, "Nickname"),
     studentId: z
       .string()
+      .trim()
       .regex(
         /^\d{4}-\d{4}-[A-Z]$/,
         "Student ID must follow the format XXXX-XXXX-X",
       ),
     email: z
-      .email("Invalid email address")
-      .refine((v) => STUDENT_EMAIL_REGEX.test(v.trim()), STUDENT_EMAIL_MESSAGE),
+      .string()
+      .trim()
+      .toLowerCase()
+      .pipe(z.email("Invalid email address"))
+      .refine((v) => STUDENT_EMAIL_REGEX.test(v), STUDENT_EMAIL_MESSAGE),
     // Notion `Mobile Number` is a text/phone column. Accept digits, +, spaces, dashes, parentheses; stored verbatim.
     mobileNumber: z
       .string()
+      .trim()
       .min(7, "Mobile Number must be at least 7 characters")
       .max(20, "Mobile Number must be at most 20 characters")
       .regex(
@@ -79,6 +85,7 @@ export const membershipFormSchema = z
       ),
     birthdate: z
       .string()
+      .trim()
       .min(1, "Birthdate is required")
       .refine((v) => !Number.isNaN(Date.parse(v)), "Invalid birthdate")
       .refine((v) => {
@@ -90,14 +97,16 @@ export const membershipFormSchema = z
     sex: enumWithFallback(fallback.sex),
     facebookUrl: z
       .string()
+      .trim()
       .refine(
-        (v) => !v || v === "" || isFacebookProfileUrl(v.trim()),
+        (v) => !v || v === "" || isFacebookProfileUrl(v),
         "Facebook URL must be a facebook.com profile link",
       ),
     // Academic
     college: enumWithFallback(fallback.college),
     program: z
       .string()
+      .trim()
       .min(1, "Program is required")
       .max(100, "Program must be at most 100 characters"),
     yearLevel: enumWithFallback(fallback.yearLevel),
