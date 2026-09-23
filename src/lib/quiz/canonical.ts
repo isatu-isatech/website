@@ -16,7 +16,7 @@ import {
 } from "./data";
 import { SITE_CONFIG } from "@/lib/constants/site";
 
-/** The 17 canonical shareable outcomes, derived from quiz-data. */
+/** The 17 canonical shareable outcomes, derived from the quiz data. */
 export const CANONICAL_ROLES: readonly CanonicalRole[] = Object.keys(
   archetypes,
 ) as CanonicalRole[];

@@ -4,7 +4,7 @@
  * An in-progress quiz survives an accidental page refresh or back/forward
  * navigation within the same browser session: the record lives in
  * `sessionStorage` (per-tab, discarded when the tab closes). A stored record
- * whose quiz-data version no longer matches is discarded, so a restored quiz
+ * whose quiz data version no longer matches is discarded, so a restored quiz
  * is never inconsistent with the current questions.
  */
 
@@ -41,7 +41,7 @@ export interface SavedQuizProgress {
 }
 
 /**
- * Version token derived from the quiz-data shape plus the persistence schema
+ * Version token derived from the quiz data shape plus the persistence schema
  * version (v3: `choiceOrders` keyed by original index, answers appended
  * sequentially, `answerIndexes` for exact highlight restore). Any weight,
  * copy, threshold, or structure retune invalidates stale records so restored
@@ -52,6 +52,13 @@ export function makeProgressVersion(): string {
   const sig = JSON.stringify({
     choices: questions.map((q) => q.choices.length),
     tieChoices: tieBreakers.map((q) => q.choices.length),
+    // Copy is part of the hash: same counts/weights with edited wording must
+    // not restore stale answerIndexes/questionOrder against new text.
+    copy: questions.map((q) => [q.question, q.choices.map((c) => c.choice)]),
+    tieCopy: tieBreakers.map((q) => [
+      q.question,
+      q.choices.map((c) => c.choice),
+    ]),
     weights: questions.flatMap((q) => q.choices.map((c) => c.weight)),
     tieWeights: tieBreakers.flatMap((q) => q.choices.map((c) => c.weight)),
     adjectives,
@@ -162,7 +169,10 @@ export function loadProgress(): SavedQuizProgress | null {
       (record.phase === "tiebreaker" &&
         (record.currentQuestionIndex >= questions.length ||
           record.usedTieBreakers < 0 ||
-          record.usedTieBreakers >= tieBreakers.length))
+          // Allow == length: all mains + all tiebreakers answered but the
+          // result screen not yet reached is still restorable (the
+          // expectedAnswers guard below keeps it consistent).
+          record.usedTieBreakers > tieBreakers.length))
     ) {
       return null;
     }
