@@ -36,22 +36,22 @@ export function HomepageAboutSection() {
       </div>
       <div className="flex w-full max-w-7xl flex-col items-center justify-center gap-6 md:flex-row-reverse">
         {/* Main Image Container */}
-        <div className="flex w-full items-center justify-center md:w-1/2">
-          <ISATechLogoMark className="z-1 h-37.5 w-25 md:h-67.5 md:w-46.25" />
+        <div className="flex w-full items-center justify-start md:w-1/2 md:justify-center">
+          <ISATechLogoMark className="z-1 h-25 w-auto md:h-67.5 md:w-46.25" />
         </div>
         {/* Section Content Container */}
-        <div className="flex w-full flex-col items-center justify-center gap-4 md:w-1/2 md:gap-6">
-          <div className="flex w-full flex-col items-center justify-center gap-2 text-center md:items-end md:text-end">
+        <div className="flex w-full flex-col items-start justify-center gap-4 md:w-1/2 md:items-center md:gap-6">
+          <div className="flex w-full flex-col items-start justify-center gap-2 text-start md:items-end md:text-end">
             <h2 className="text-secondary-dark dark:text-secondary">
               What is ISATech Society?
             </h2>
-            <h5 className="text-center md:text-end">
+            <h5 className="text-start md:text-end">
               ISATech is a special interest organization operating under the
               Intellectual Property Management Office (IPMO) and the Kwadra
               Technology Business Incubator (Kwadra-TBI).
             </h5>
           </div>
-          <div className="flex w-full items-center justify-center md:justify-end">
+          <div className="flex w-full items-center justify-start md:justify-end">
             <Link href="/about" className="text-caption">
               <Button variant={"default"} size={"lg"}>
                 Learn More
