@@ -18,7 +18,8 @@ const chivo = Chivo({
   variable: "--font-chivo",
   subsets: ["latin"],
   weight: ["400", "700"],
-  preload: true,
+  // Single preloaded family (Poppins) to cut render-blocking font requests.
+  preload: false,
 });
 
 /**

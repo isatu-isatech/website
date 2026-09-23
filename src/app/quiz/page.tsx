@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { QuizContainer } from "@/components/quiz/quiz-container";
+import { SectionErrorBoundary } from "@/components/common";
 import { BlobsAnimatedBackground } from "@/components/ui/blobs";
 import { SITE_CONFIG } from "@/lib/constants/site";
 
@@ -81,7 +82,9 @@ export default function QuizPage() {
           overflow guard; the card's auto margins center on landscape and
           eye-level nudge on portrait */}
       <div className="relative z-10 flex h-full w-full overflow-y-auto px-4 py-6 md:py-8">
-        <QuizContainer />
+        <SectionErrorBoundary sectionName="Quiz">
+          <QuizContainer />
+        </SectionErrorBoundary>
       </div>
     </main>
   );

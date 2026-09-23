@@ -34,7 +34,7 @@ export default function Error({
 }) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error(error);
+    console.error("[app] unhandled route error:", error);
   }, [error]);
 
   return (
@@ -57,6 +57,11 @@ export default function Error({
             We apologize for the inconvenience. An unexpected error has
             occurred.
           </p>
+          {error.digest && (
+            <p className="text-muted-foreground/70 max-w-md font-mono text-xs">
+              Reference: {error.digest}
+            </p>
+          )}
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-4">

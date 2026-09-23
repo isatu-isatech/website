@@ -57,7 +57,7 @@ export class SectionErrorBoundary extends Component<
     const { sectionName, onError } = this.props;
 
     console.error(
-      `SectionErrorBoundary${sectionName ? ` (${sectionName})` : ""} caught an error:`,
+      `[app] SectionErrorBoundary${sectionName ? ` (${sectionName})` : ""} caught an error:`,
       error,
     );
 
