@@ -13,7 +13,9 @@ import Image from "next/image";
 import Link from "next/link";
 import MembershipPageMemberSection from "./member-section";
 
-const MembershipPageReasonSection = dynamic(() => import("./lanyard-section"));
+const MembershipPageReasonSection = dynamic(() => import("./lanyard-section"), {
+  loading: () => <div className="min-h-[60svh] w-full" aria-hidden="true" />,
+});
 
 /**
  * ################################################################################

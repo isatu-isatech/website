@@ -22,11 +22,22 @@ const withSerwist = withSerwistInit({
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  poweredByHeader: false,
 
   images: {
     formats: ["image/avif", "image/webp"],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    // Capped at 1920: 2048/3840 variants × SWR image cache blew up encode
+    // cost on 1.4MB sources with no visible gain on this layout.
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    remotePatterns: [
+      { protocol: "https", hostname: "www.notion.so" },
+      {
+        protocol: "https",
+        hostname: "prod-files-secure.s3.us-west-2.amazonaws.com",
+      },
+      { protocol: "https", hostname: "images.unsplash.com" },
+    ],
   },
 
   logging: {
@@ -41,6 +52,9 @@ const nextConfig: NextConfig = {
       "motion",
       "@react-three/drei",
       "@react-three/fiber",
+      "three",
+      "@react-three/rapier",
+      "meshline",
     ],
   },
 };
