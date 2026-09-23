@@ -169,7 +169,7 @@ function AboutUsDescriptionSection() {
       {/* Full-bleed description photo band (parallax) */}
       <AboutDescriptionBand />
       {/* Mission and Vision */}
-      <div className="grid w-full max-w-7xl grid-cols-1 gap-6 px-6 py-5 md:px-16 lg:grid-cols-2 lg:py-8">
+      <div className="grid w-full max-w-7xl grid-cols-1 gap-6 px-6 pt-10 pb-5 md:px-16 lg:grid-cols-2 lg:pt-14 lg:pb-8">
         <RevealOnView className="flex flex-col justify-start gap-4">
           <TargetIcon size={42} className="text-primary" />
           <div className="flex flex-col gap-2">
@@ -224,14 +224,14 @@ function AboutUsEmpowermentSection() {
             ISAT U’s technology business incubator, Kwadra TBI.
           </h5>
         </div>
-        <div className="flex w-full items-center justify-center">
+        <div className="flex w-full items-center justify-start lg:justify-center">
           <OptimizedImage
             src="/assets/decorations/poststamp-sticker.png"
             alt="ISATech Society Research Hub Stamp"
             width={436}
             height={346}
-            sizes="(min-width: 1040px) 403px, (min-width: 540px) 448px, calc(89.09vw - 15px)"
-            className="z-1 h-auto w-full max-w-md lg:h-80 lg:w-auto"
+            sizes="(min-width: 1040px) 256px, (min-width: 540px) 220px, calc(89.09vw - 15px)"
+            className="z-1 h-auto w-full max-w-55 lg:h-64 lg:w-auto"
             brandPlaceholder
           />
         </div>
@@ -267,14 +267,14 @@ function AboutUsInitiativesSection() {
         className="absolute right-0 bottom-0 aspect-320/528 h-full w-auto bg-current mask-right opacity-10"
       />
       <div className="flex w-full max-w-7xl flex-col gap-6 py-5 lg:grid lg:grid-cols-2 lg:py-8">
-        <div className="flex w-full items-center justify-center">
+        <div className="flex w-full items-center justify-start lg:justify-center">
           <OptimizedImage
             src="/assets/decorations/tagline-sticker.png"
             alt="Dream Innovate Succeed Sticker"
             width={436}
             height={303}
-            sizes="(min-width: 540px) 448px, calc(89.09vw - 15px)"
-            className="z-1 h-auto w-full max-w-md lg:h-80 lg:w-auto"
+            sizes="(min-width: 540px) 220px, calc(89.09vw - 15px)"
+            className="z-1 h-auto w-full max-w-55 lg:h-64 lg:w-auto"
             brandPlaceholder
           />
         </div>
