@@ -20,6 +20,12 @@ export const metadata: Metadata = {
   },
 };
 
+// Campaign status must be re-checked on every visit: officers flip Status in
+// Notion (e.g. to Draft to close applications) and the next load has to
+// reflect it. Without this the page is eligible for static prerender /
+// cached fetch and a stale campaign would keep serving the form.
+export const dynamic = "force-dynamic";
+
 export default async function MembershipApplyPage() {
   // Server-side campaign gating: one Notion round-trip before first paint,
   // streamed behind `loading.tsx` so Notion latency never blocks the shell.
