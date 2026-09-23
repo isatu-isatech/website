@@ -87,20 +87,29 @@ export const membershipFormSchema = z
       .string()
       .trim()
       .min(1, "Birthdate is required")
+      // Strict ISO first so non-`type=date` values fail here — before the
+      // single-use Turnstile token is spent in the action.
+      .refine(
+        (v) => /^\d{4}-\d{2}-\d{2}$/.test(v),
+        "Invalid birthdate — please use the YYYY-MM-DD format",
+      )
       .refine((v) => !Number.isNaN(Date.parse(v)), "Invalid birthdate")
       .refine((v) => {
         const d = new Date(v);
         const now = new Date();
         // Compare as date only (ignore time)
+        d.setHours(0, 0, 0, 0);
+        now.setHours(0, 0, 0, 0);
         return d.getTime() <= now.getTime();
       }, "Birthdate cannot be in the future"),
     sex: enumWithFallback(fallback.sex),
     facebookUrl: z
       .string()
       .trim()
+      .max(2048, "Facebook URL must be at most 2048 characters")
       .refine(
         (v) => !v || v === "" || isFacebookProfileUrl(v),
-        "Facebook URL must be a facebook.com profile link",
+        "Facebook URL must be a facebook.com or fb.com profile link",
       ),
     // Academic
     college: enumWithFallback(fallback.college),

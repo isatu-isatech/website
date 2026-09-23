@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTransition, useState } from "react";
 import { useForm } from "react-hook-form";
-import z from "zod";
+import { z } from "zod";
 import { submitMessage } from "./actions";
 import { toast } from "sonner";
 import {
@@ -61,7 +61,7 @@ export default function ContactUsForm() {
           setWidgetKey((k) => k + 1); // Remount the Turnstile widget by bumping the key so it resets
         } catch (err) {
           // In the unlikely case resetting throws, log it but continue
-          console.error("Error resetting contact form:", err);
+          console.error("[contact] error resetting contact form:", err);
         }
         toast.success("Message sent successfully!");
       } else {
@@ -71,7 +71,12 @@ export default function ContactUsForm() {
         contactForm.setValue("turnstileToken", "");
         contactForm.clearErrors("turnstileToken");
         setWidgetKey((k) => k + 1);
-        toast.error("Failed to send message. Try again later.");
+        // Surface the server's message (rate-limit / Turnstile guidance).
+        toast.error(
+          "error" in res && typeof res.error === "string"
+            ? res.error
+            : "Failed to send message. Try again later.",
+        );
       }
     });
   }
