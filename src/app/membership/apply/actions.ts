@@ -7,7 +7,10 @@ import { cookies } from "next/headers";
 import { getMembershipOptions } from "@/lib/notion/membership-options";
 import { getActiveCampaign } from "@/lib/notion/membership-campaigns";
 import { membershipRateLimit } from "@/lib/services/cookie-rate-limit";
-import { verifyTurnstile } from "@/lib/services/turnstile";
+import {
+  verifyTurnstile,
+  turnstileErrorMessage,
+} from "@/lib/services/turnstile";
 
 /**
  * Notion property names for the Form Submissions DB.
@@ -124,17 +127,7 @@ export async function submitMembershipApplication(formData: unknown) {
   // stalls never hang to the Vercel limit).
   const turnstile = await verifyTurnstile(turnstileToken);
   if (!turnstile.ok) {
-    if (turnstile.reason === "failed") {
-      return {
-        success: false,
-        error: "The security check didn't go through — please try once more.",
-      };
-    }
-    return {
-      success: false,
-      error:
-        "We couldn't reach the security check just now. Please retry in a moment.",
-    };
+    return { success: false, error: turnstileErrorMessage(turnstile) };
   }
 
   // 5. Live Notion option validation (source of truth) — against the active campaign's submissions DB

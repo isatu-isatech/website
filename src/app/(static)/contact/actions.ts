@@ -5,7 +5,10 @@ import { contactFormSchema } from "./schema";
 import { env } from "@/lib/env";
 import { cookies } from "next/headers";
 import { contactRateLimit } from "@/lib/services/cookie-rate-limit";
-import { verifyTurnstile } from "@/lib/services/turnstile";
+import {
+  verifyTurnstile,
+  turnstileErrorMessage,
+} from "@/lib/services/turnstile";
 
 /**
  * Contact-form database property names (the Notion schema keys). The
@@ -56,17 +59,7 @@ export async function submitMessage(formData: unknown) {
   // Verify the Turnstile token (shared verifier with timeout).
   const turnstile = await verifyTurnstile(turnstileToken);
   if (!turnstile.ok) {
-    if (turnstile.reason === "failed") {
-      return {
-        success: false,
-        error: "The security check didn't go through — please try once more.",
-      };
-    }
-    return {
-      success: false,
-      error:
-        "We couldn't reach the security check just now. Please retry in a moment.",
-    };
+    return { success: false, error: turnstileErrorMessage(turnstile) };
   }
 
   try {

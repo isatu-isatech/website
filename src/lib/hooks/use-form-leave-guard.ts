@@ -31,6 +31,7 @@ export function useFormLeaveGuard(armed: boolean, onDiscard?: () => void) {
   const allowNavigation = useRef(false);
   /** Number of our duplicate same-URL sentinels currently in the stack. */
   const sentinelCount = useRef(0);
+  const allowTimeoutRef = useRef<number | undefined>(undefined);
 
   const cancelLeave = useCallback(() => {
     pending.current = null;
@@ -53,7 +54,8 @@ export function useFormLeaveGuard(armed: boolean, onDiscard?: () => void) {
       window.history.go(-depth);
       // If no popstate follows (traversal out of range), don't leave the
       // allow-flag set and swallow a later legitimate back press.
-      window.setTimeout(() => {
+      window.clearTimeout(allowTimeoutRef.current);
+      allowTimeoutRef.current = window.setTimeout(() => {
         allowNavigation.current = false;
       }, 1000);
     } else if (action.href.startsWith("/")) {
@@ -152,6 +154,11 @@ export function useFormLeaveGuard(armed: boolean, onDiscard?: () => void) {
     window.history.go(-sentinelCount.current);
     sentinelCount.current = 0;
   }, [armed]);
+
+  // Cleanup: never leave a pending allow-flag reset after unmount.
+  useEffect(() => {
+    return () => window.clearTimeout(allowTimeoutRef.current);
+  }, []);
 
   return { open, triggerLeave, continueLeave, cancelLeave };
 }

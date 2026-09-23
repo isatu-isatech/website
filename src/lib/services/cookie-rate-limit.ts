@@ -67,7 +67,10 @@ export function createCookieRateLimit(
       timestamps: number[],
       now: number = Date.now(),
     ): number[] {
-      return [...timestamps, now].slice(-maxStored);
+      // Prune expired entries before appending so the cookie never carries
+      // up to maxStored stale timestamps.
+      const fresh = timestamps.filter((t) => now - t < policy.windowMs);
+      return [...fresh, now].slice(-maxStored);
     },
   };
 }
