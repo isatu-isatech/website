@@ -192,14 +192,17 @@ export async function getMembershipOptions(
   } catch {
     // Notion unreachable at build or tests — use fallback so the form can still render
     // Server validation will re-attempt live fetch on submit.
+    // Deliberately NOT cached: caching the fallback would pin every caller
+    // to stale values for the full TTL even after Notion recovers. The next
+    // request retries live.
     console.warn("[membership] options fetch failed — serving static fallback");
-    return put({
+    return {
       college: [...FALLBACK.college],
       yearLevel: [...FALLBACK.yearLevel],
       sex: [...FALLBACK.sex],
       primaryRole: [...FALLBACK.role],
       secondaryRole: [...FALLBACK.role],
       availability: [...FALLBACK.availability],
-    });
+    };
   }
 }

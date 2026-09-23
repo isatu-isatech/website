@@ -27,16 +27,27 @@ export type MembershipCampaign = {
  * active. Throws on infrastructure failures (unreachable Notion, unshared
  * or misconfigured database) so callers can tell an outage apart from a
  * genuinely closed campaign. If multiple are `In progress` (admin
- * misconfiguration), picks the most recently created (by `created_time`
- * desc) and logs a warning.
+ * misconfiguration), picks the latest Academic Year and logs a warning.
  */
+// Wide enough that a multi-way admin misconfiguration can't hide the latest
+// campaign outside the fetched window (the pick below is lex-max Academic
+// Year, not fetch order, so every `In progress` row must be visible).
+const ACTIVE_CAMPAIGN_PAGE_SIZE = 10;
 export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
   try {
     const notion = getNotionClient();
     const databaseId = env.NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID;
     // Contact/quiz-only builds may omit the campaigns DB: treat as closed
-    // rather than throwing at import/request time.
+    // rather than throwing at import/request time. In Vercel production the
+    // variable is required — a missing value there is a misconfiguration,
+    // so throw (callers render a loud error state) instead of silently
+    // reporting "applications are closed".
     if (!databaseId) {
+      if (process.env.VERCEL_ENV === "production") {
+        throw new Error(
+          "[membership-campaigns] NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID is not configured in Vercel production.",
+        );
+      }
       console.warn(
         "[membership-campaigns] NOTION_MEMBERSHIP_CAMPAIGNS_DATABASE_ID is not configured — treating applications as closed",
       );
@@ -59,7 +70,7 @@ export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
             status: { equals: "In progress" },
           },
           sorts: [{ timestamp: "created_time", direction: "descending" }],
-          page_size: 2,
+          page_size: ACTIVE_CAMPAIGN_PAGE_SIZE,
         },
       });
     } catch (err) {
@@ -99,7 +110,7 @@ export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
                 status: { equals: "In progress" },
               },
               sorts: [{ timestamp: "created_time", direction: "descending" }],
-              page_size: 2,
+              page_size: ACTIVE_CAMPAIGN_PAGE_SIZE,
             },
           });
         } catch (inner) {
