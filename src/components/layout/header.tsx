@@ -142,7 +142,7 @@ export default function HeaderComponent() {
                       className={cn(
                         "active:bg-accent/50 w-full px-2 py-3 transition-colors",
                         currentPath === link.href &&
-                          "text-secondary font-semibold",
+                          "text-secondary-dark dark:text-secondary font-semibold",
                       )}
                       aria-current={
                         currentPath === link.href ? "page" : undefined

@@ -64,7 +64,7 @@ export const QuestionScreen = memo(function QuestionScreen({
         <div className="mb-1 flex items-center justify-between">
           <span className="text-muted-foreground text-xs font-medium md:text-sm">
             {isTieBreaker ? (
-              <span className="text-secondary">
+              <span className="text-secondary-dark dark:text-secondary">
                 <span aria-hidden="true">⚡</span> Tiebreaker Round
               </span>
             ) : (

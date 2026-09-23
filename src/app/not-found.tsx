@@ -34,7 +34,9 @@ export default function NotFound() {
           <h1 className="text-primary text-8xl leading-24 font-bold md:text-9xl">
             404
           </h1>
-          <h2 className="text-secondary">Page Not Found</h2>
+          <h2 className="text-secondary-dark dark:text-secondary">
+            Page Not Found
+          </h2>
         </div>
         <p className="max-w-md">
           Sorry, the page you are looking for does not exist or has been moved.

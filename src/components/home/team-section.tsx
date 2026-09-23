@@ -20,6 +20,7 @@ export function HomepageTeamSection() {
         <div className="flex w-full flex-col items-center justify-center gap-6">
           {/* Header Container */}
           <div className="flex w-full flex-col items-center justify-center gap-2 text-center">
+            {/* Intentional on-dark gold: parent is bg-primary, not a light surface */}
             <h2 className="text-secondary">Are You One of the 4H?</h2>
             <h5 className="text-primary-foreground lg:w-5/6 xl:w-2/3">
               At ISATech Society, we believe every great innovation starts with
