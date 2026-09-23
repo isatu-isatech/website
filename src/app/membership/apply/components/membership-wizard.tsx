@@ -580,9 +580,20 @@ export function MembershipWizard({
                   Membership Application
                 </h1>
                 <p className="text-muted-foreground max-w-xl text-sm">
-                  {activeCampaign
-                    ? "7 short steps · about 3 minutes. Your answers are checked as you go — please submit from this tab when you finish."
-                    : "There is no active membership campaign at the moment. Please check back when the next campaign opens."}
+                  {activeCampaign ? (
+                    <>
+                      Need help? Reach us at{" "}
+                      <a
+                        href={`mailto:${SOCIAL_LINKS.email}`}
+                        className="text-primary underline"
+                      >
+                        {SOCIAL_LINKS.email}
+                      </a>
+                      .
+                    </>
+                  ) : (
+                    "There is no active membership campaign at the moment. Please check back when the next campaign opens."
+                  )}
                 </p>
               </div>
               {activeCampaign && (

@@ -6,7 +6,6 @@ import { useMountedReducedMotion } from "@/lib/hooks";
 import { Button } from "@/components/ui/button";
 import { ClipboardList, Sparkles } from "lucide-react";
 import { SOCIAL_LINKS } from "@/lib/constants/site";
-import { APPLY_TOTAL_STEPS } from "@/lib/membership-apply";
 
 /**
  * Entry gate for the membership application (quiz `IntroScreen` parity).
@@ -75,11 +74,7 @@ export const ApplyIntroScreen = memo(function ApplyIntroScreen({
       </Button>
 
       <p className="text-muted-foreground mt-3 text-xs md:text-sm">
-        {APPLY_TOTAL_STEPS} short steps · about 3 minutes · checked as you go
-      </p>
-      <p className="text-muted-foreground mt-1 max-w-md text-xs">
-        Your answers stay in this tab until you submit — nothing is sent until
-        the final step. Need help? Reach us at{" "}
+        Need help? Reach us at{" "}
         <a
           href={`mailto:${SOCIAL_LINKS.email}`}
           className="text-primary underline"
