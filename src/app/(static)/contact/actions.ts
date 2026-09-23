@@ -51,6 +51,9 @@ export async function submitMessage(formData: unknown) {
       success: false,
       error:
         "A couple of details need another look — please double-check the form and resubmit.",
+      // Additive field detail for API callers; the RHF UI already shows
+      // per-field messages inline.
+      issues: parsed.error.flatten().fieldErrors,
     };
   }
 

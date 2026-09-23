@@ -120,13 +120,35 @@ export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
     const results = (res as { results?: unknown[] })?.results ?? [];
     if (!results || results.length === 0) return null;
 
-    if (results.length > 1) {
+    type CampaignRow = {
+      id: string;
+      url: string;
+      created_time: string;
+      properties: Record<string, unknown>;
+    };
+    const rows = results as CampaignRow[];
+    const academicYearOf = (row: CampaignRow): string => {
+      const prop = row.properties["Academic Year"] as
+        { type: string; title?: { plain_text: string }[] } | undefined;
+      return prop?.title?.[0]?.plain_text ?? "";
+    };
+    // Contract: pick the most recent Academic Year (titles sort
+    // lexicographically, e.g. "2025-2026"). created_time order is only the
+    // initial fetch order, not the tiebreak.
+    const ordered =
+      rows.length > 1
+        ? [...rows].sort((a, b) =>
+            academicYearOf(b).localeCompare(academicYearOf(a)),
+          )
+        : rows;
+
+    if (rows.length > 1) {
       console.warn(
-        "[membership-campaigns] Multiple 'In progress' campaigns found; using most recent.",
+        "[membership-campaigns] Multiple 'In progress' campaigns found; using most recent Academic Year.",
       );
     }
 
-    const page = results[0] as {
+    const page = ordered[0] as {
       id: string;
       url: string;
       created_time: string;
@@ -227,7 +249,12 @@ export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
                 type === "column_list" ||
                 type === "column" ||
                 type === "toggle" ||
-                type === "quote"
+                type === "quote" ||
+                type === "heading_1" ||
+                type === "heading_2" ||
+                type === "heading_3" ||
+                type === "synced_block" ||
+                type === "child_page"
               ) {
                 if (typeof b["id"] === "string") {
                   return fetchBlocks(b["id"] as string);
@@ -244,6 +271,11 @@ export async function getActiveCampaign(): Promise<MembershipCampaign | null> {
       }
     } catch {
       // ignore — fallback to env var
+    }
+    if (!submissionsDataSourceId) {
+      console.warn(
+        "[membership-campaigns] No inline Form Submissions DB found on campaign page; falling back to env var",
+      );
     }
 
     return {

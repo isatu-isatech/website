@@ -59,6 +59,9 @@ export async function submitMembershipApplication(formData: unknown) {
       success: false,
       error:
         "A couple of details need another look — please double-check the form and resubmit.",
+      // Additive field detail for API callers; the wizard UI already shows
+      // per-field messages inline.
+      issues: parsed.error.flatten().fieldErrors,
     };
   }
 
@@ -151,7 +154,9 @@ export async function submitMembershipApplication(formData: unknown) {
     }
   } catch (error) {
     console.error("[membership] live option validation failed:", error);
-    // Fail open: if Notion is unreachable, proceed with fallback validation already done.
+    // Fail open (accepted tradeoff, like P5 cookie rate limiting): if Notion
+    // is unreachable, proceed with fallback validation already done. A stale
+    // value that Notion then rejects surfaces as a generic write error below.
   }
 
   // 6. Notion write
