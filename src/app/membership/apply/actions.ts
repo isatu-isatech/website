@@ -52,7 +52,9 @@ export async function submitMembershipApplication(formData: unknown) {
     };
   }
 
-  // 2. Zod validation (fallback enums)
+  // 2. Zod validation (shape + live-deferred option fields — enum
+  // membership is enforced against Notion in step 5, so new options are
+  // never blocked by a stale static list)
   const parsed = membershipFormSchema.safeParse(formData);
   if (!parsed.success) {
     return {
@@ -165,8 +167,8 @@ export async function submitMembershipApplication(formData: unknown) {
   // action) — the old number column dropped leading zeros and `+63`.
   // Free text arrives trimmed (and email lowercased) from the schema, so the
   // action consumes parsed values directly with no second normalization pass.
-  // Birthdate stays intentionally split: the schema is lenient at entry
-  // (`Date.parse` + future check) while the write requires strict ISO
+  // Birthdate stays intentionally split: the schema enforces a real
+  // calendar date + future check while the write requires strict ISO
   // (Notion `date` needs YYYY-MM-DD).
   const nicknameValue = nickname ?? "";
   const facebookUrlValue = facebookUrl ?? "";

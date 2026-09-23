@@ -1,14 +1,35 @@
 import { z } from "zod";
-import { MEMBERSHIP_FALLBACK } from "@/lib/constants/membership";
 
-// Client-safe fallback for initial Zod shape — server re-validates against
-// live Notion options (fetched via `getMembershipOptions(submissionsDataSourceId)`)
-// before writing, so stale fallback values are rejected on submit.
-const fallback = MEMBERSHIP_FALLBACK;
+/**
+ * Option fields accept any non-empty string at the Zod layer so newly added
+ * Notion options are never rejected by a stale static enum. Membership in
+ * the live option set is enforced server-side in `actions.ts` against
+ * `getMembershipOptions(submissionsDataSourceId)` (the source of truth),
+ * and the UI renders the live lists it receives from the server (falling
+ * back to `MEMBERSHIP_FALLBACK` only when Notion is unreachable).
+ */
+function optionField(label: string) {
+  return z
+    .string()
+    .trim()
+    .min(1, `${label} is required`)
+    .max(200, `${label} must be at most 200 characters`);
+}
 
-function enumWithFallback(options: readonly string[]) {
-  // z.enum requires a non-empty tuple; fallback guarantees at least one.
-  return z.enum(options as unknown as [string, ...string[]]);
+/** True only for real calendar dates (rejects overflow like 2024-02-30). */
+export function isValidCalendarDate(value: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (month < 1 || month > 12 || day < 1 || day > 31) return false;
+  const utc = new Date(Date.UTC(year, month - 1, day));
+  return (
+    utc.getUTCFullYear() === year &&
+    utc.getUTCMonth() === month - 1 &&
+    utc.getUTCDate() === day
+  );
 }
 
 function optionalText(max: number, label: string) {
@@ -88,21 +109,22 @@ export const membershipFormSchema = z
       .trim()
       .min(1, "Birthdate is required")
       // Strict ISO first so non-`type=date` values fail here — before the
-      // single-use Turnstile token is spent in the action.
+      // single-use Turnstile token is spent in the action. The calendar
+      // check rejects overflow dates (e.g. 2024-02-30) that `Date.parse`
+      // silently rolls over to March.
       .refine(
-        (v) => /^\d{4}-\d{2}-\d{2}$/.test(v),
-        "Invalid birthdate — please use the YYYY-MM-DD format",
+        (v) => /^\d{4}-\d{2}-\d{2}$/.test(v) && isValidCalendarDate(v),
+        "Invalid birthdate — please enter a real date in YYYY-MM-DD format",
       )
-      .refine((v) => !Number.isNaN(Date.parse(v)), "Invalid birthdate")
       .refine((v) => {
-        const d = new Date(v);
+        const d = new Date(`${v}T00:00:00`);
         const now = new Date();
         // Compare as date only (ignore time)
         d.setHours(0, 0, 0, 0);
         now.setHours(0, 0, 0, 0);
         return d.getTime() <= now.getTime();
       }, "Birthdate cannot be in the future"),
-    sex: enumWithFallback(fallback.sex),
+    sex: optionField("Sex"),
     facebookUrl: z
       .string()
       .trim()
@@ -112,21 +134,21 @@ export const membershipFormSchema = z
         "Facebook URL must be a facebook.com or fb.com profile link",
       ),
     // Academic
-    college: enumWithFallback(fallback.college),
+    college: optionField("College"),
     program: z
       .string()
       .trim()
       .min(1, "Program is required")
       .max(100, "Program must be at most 100 characters"),
-    yearLevel: enumWithFallback(fallback.yearLevel),
+    yearLevel: optionField("Year Level"),
     // Role Preferences
-    primaryRole: enumWithFallback(fallback.primaryRole),
-    secondaryRole: enumWithFallback(fallback.secondaryRole),
+    primaryRole: optionField("Primary role"),
+    secondaryRole: optionField("Secondary role"),
     relatedSkills: optionalText(1000, "Related Skills"),
     relatedExperiences: optionalText(1000, "Related Experiences"),
     // Availability & Commitment
     // Notion `Availability` is text; UI collects a commitment-band select
-    availability: enumWithFallback(fallback.availability),
+    availability: optionField("Availability"),
     eventAttendanceWillingness: z.literal(true, {
       error: "Please confirm you're willing to attend events",
     }),

@@ -32,3 +32,18 @@ export const MEMBERSHIP_FALLBACK = {
   // Notion-owned hours-commitment options (Availability select column)
   availability: MEMBERSHIP_AVAILABILITY_BANDS,
 } as const;
+
+/**
+ * Live option lists threaded from the server (`page.tsx` fetches via
+ * `getMembershipOptions`) down to the wizard steps. Client-safe structural
+ * type — the server module itself imports server-only env and must never be
+ * bundled into client components.
+ */
+export type MembershipLiveOptions = {
+  college: string[];
+  yearLevel: string[];
+  sex: string[];
+  primaryRole: string[];
+  secondaryRole: string[];
+  availability: string[];
+};

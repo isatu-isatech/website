@@ -13,7 +13,11 @@ import type { MembershipFormValues } from "../../schema";
 import { MEMBERSHIP_FALLBACK } from "@/lib/constants/membership";
 import { MEMBERSHIP_SELECT_CLASS } from "../membership-select";
 
-export function IdentityStep() {
+export function IdentityStep({
+  sexes = [...MEMBERSHIP_FALLBACK.sex],
+}: {
+  sexes?: string[];
+}) {
   const form = useFormContext<MembershipFormValues>();
 
   return (
@@ -74,7 +78,7 @@ export function IdentityStep() {
               <FormControl>
                 <select className={MEMBERSHIP_SELECT_CLASS} {...field}>
                   <option value="">Select</option>
-                  {MEMBERSHIP_FALLBACK.sex.map((opt) => (
+                  {sexes.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
                     </option>

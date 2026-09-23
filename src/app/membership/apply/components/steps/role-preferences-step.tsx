@@ -24,11 +24,12 @@ const ROLE_ICONS = Object.fromEntries(
 function RolePicker({
   value,
   onChange,
+  roles,
 }: {
   value: string;
   onChange: (value: string) => void;
+  roles: string[];
 }) {
-  const roles = MEMBERSHIP_FALLBACK.primaryRole;
   const firstRole: string = roles[0] ?? "";
   const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
   // Roving tabindex: the selected option (or the first) is the tab stop.
@@ -106,7 +107,13 @@ function RolePicker({
   );
 }
 
-export function RolePreferencesStep() {
+export function RolePreferencesStep({
+  primaryRoles = [...MEMBERSHIP_FALLBACK.primaryRole],
+  secondaryRoles = [...MEMBERSHIP_FALLBACK.secondaryRole],
+}: {
+  primaryRoles?: string[];
+  secondaryRoles?: string[];
+}) {
   const form = useFormContext<MembershipFormValues>();
   return (
     <div className="flex flex-col gap-4">
@@ -118,7 +125,11 @@ export function RolePreferencesStep() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Primary 4H Role *</FormLabel>
-              <RolePicker value={field.value} onChange={field.onChange} />
+              <RolePicker
+                value={field.value}
+                onChange={field.onChange}
+                roles={primaryRoles}
+              />
               <FormMessage />
             </FormItem>
           )}
@@ -129,7 +140,11 @@ export function RolePreferencesStep() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Secondary 4H Role *</FormLabel>
-              <RolePicker value={field.value} onChange={field.onChange} />
+              <RolePicker
+                value={field.value}
+                onChange={field.onChange}
+                roles={secondaryRoles}
+              />
               <FormMessage />
             </FormItem>
           )}

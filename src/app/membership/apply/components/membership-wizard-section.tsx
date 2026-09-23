@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { MembershipWizard } from "./membership-wizard";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
+import type { MembershipLiveOptions } from "@/lib/constants/membership";
 import type { MembershipCampaign } from "@/lib/notion/membership-campaigns";
 
 type Campaign = Pick<
@@ -25,9 +26,11 @@ function ApplyHeading({ subtitle }: { subtitle: string }) {
 export function MembershipWizardSection({
   campaign,
   loadError,
+  liveOptions,
 }: {
   campaign: Campaign;
   loadError: boolean;
+  liveOptions?: MembershipLiveOptions | null;
 }) {
   const router = useRouter();
 
@@ -66,7 +69,7 @@ export function MembershipWizardSection({
     >
       {/* Title + nav render inside the wizard (single nav instance);
           success and closed states bring their own headings. */}
-      <MembershipWizard activeCampaign={campaign} />
+      <MembershipWizard activeCampaign={campaign} liveOptions={liveOptions} />
     </section>
   );
 }

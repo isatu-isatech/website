@@ -16,7 +16,11 @@ import {
   MEMBERSHIP_SELECT_CLASS,
 } from "../membership-select";
 
-export function AvailabilityStep() {
+export function AvailabilityStep({
+  bands = [...MEMBERSHIP_FALLBACK.availability],
+}: {
+  bands?: string[];
+}) {
   const form = useFormContext<MembershipFormValues>();
   return (
     <div className="flex flex-col gap-4">
@@ -34,7 +38,7 @@ export function AvailabilityStep() {
               <FormControl>
                 <select className={MEMBERSHIP_SELECT_CLASS} {...field}>
                   <option value="">Select commitment</option>
-                  {MEMBERSHIP_FALLBACK.availability.map((opt) => (
+                  {bands.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
                     </option>

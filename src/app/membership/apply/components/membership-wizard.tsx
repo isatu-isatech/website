@@ -28,6 +28,10 @@ import {
   saveDraft,
 } from "@/lib/membership-apply";
 import { SOCIAL_LINKS } from "@/lib/constants/site";
+import {
+  MEMBERSHIP_FALLBACK,
+  type MembershipLiveOptions,
+} from "@/lib/constants/membership";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -118,11 +122,34 @@ void _stepFieldsCovered;
 
 export function MembershipWizard({
   activeCampaign,
+  liveOptions,
   onSubmittedChange,
 }: {
   activeCampaign: ActiveCampaign;
+  liveOptions?: MembershipLiveOptions | null;
   onSubmittedChange?: (submitted: boolean) => void;
 }) {
+  // Live Notion lists win when the server could reach them; the static
+  // fallback only covers offline/error renders (server re-validates live).
+  const pick = (live: string[] | undefined, fb: readonly string[]): string[] =>
+    live && live.length > 0 ? live : [...fb];
+  const options: MembershipLiveOptions = {
+    college: pick(liveOptions?.college, MEMBERSHIP_FALLBACK.college),
+    yearLevel: pick(liveOptions?.yearLevel, MEMBERSHIP_FALLBACK.yearLevel),
+    sex: pick(liveOptions?.sex, MEMBERSHIP_FALLBACK.sex),
+    primaryRole: pick(
+      liveOptions?.primaryRole,
+      MEMBERSHIP_FALLBACK.primaryRole,
+    ),
+    secondaryRole: pick(
+      liveOptions?.secondaryRole,
+      MEMBERSHIP_FALLBACK.secondaryRole,
+    ),
+    availability: pick(
+      liveOptions?.availability,
+      MEMBERSHIP_FALLBACK.availability,
+    ),
+  };
   const [step, setStep] = useState(1);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -713,11 +740,23 @@ export function MembershipWizard({
                       </div>
                     )}
 
-                    {step === 1 && <IdentityStep />}
+                    {step === 1 && <IdentityStep sexes={options.sex} />}
                     {step === 2 && <ContactStep />}
-                    {step === 3 && <AcademicStep />}
-                    {step === 4 && <RolePreferencesStep />}
-                    {step === 5 && <AvailabilityStep />}
+                    {step === 3 && (
+                      <AcademicStep
+                        colleges={options.college}
+                        yearLevels={options.yearLevel}
+                      />
+                    )}
+                    {step === 4 && (
+                      <RolePreferencesStep
+                        primaryRoles={options.primaryRole}
+                        secondaryRoles={options.secondaryRole}
+                      />
+                    )}
+                    {step === 5 && (
+                      <AvailabilityStep bands={options.availability} />
+                    )}
                     {step === 6 && <ConsentStep />}
                     {step === 7 && (
                       <ReviewStep

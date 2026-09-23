@@ -13,7 +13,13 @@ import type { MembershipFormValues } from "../../schema";
 import { MEMBERSHIP_FALLBACK } from "@/lib/constants/membership";
 import { MEMBERSHIP_SELECT_CLASS } from "../membership-select";
 
-export function AcademicStep() {
+export function AcademicStep({
+  colleges = [...MEMBERSHIP_FALLBACK.college],
+  yearLevels = [...MEMBERSHIP_FALLBACK.yearLevel],
+}: {
+  colleges?: string[];
+  yearLevels?: string[];
+}) {
   const form = useFormContext<MembershipFormValues>();
   return (
     <div className="flex flex-col gap-4">
@@ -28,7 +34,7 @@ export function AcademicStep() {
               <FormControl>
                 <select className={MEMBERSHIP_SELECT_CLASS} {...field}>
                   <option value="">Select college</option>
-                  {MEMBERSHIP_FALLBACK.college.map((opt) => (
+                  {colleges.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
                     </option>
@@ -61,7 +67,7 @@ export function AcademicStep() {
               <FormControl>
                 <select className={MEMBERSHIP_SELECT_CLASS} {...field}>
                   <option value="">Select year</option>
-                  {MEMBERSHIP_FALLBACK.yearLevel.map((opt) => (
+                  {yearLevels.map((opt) => (
                     <option key={opt} value={opt}>
                       {opt}
                     </option>
