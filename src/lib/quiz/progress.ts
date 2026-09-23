@@ -169,10 +169,12 @@ export function loadProgress(): SavedQuizProgress | null {
       (record.phase === "tiebreaker" &&
         (record.currentQuestionIndex >= questions.length ||
           record.usedTieBreakers < 0 ||
-          // Allow == length: all mains + all tiebreakers answered but the
-          // result screen not yet reached is still restorable (the
-          // expectedAnswers guard below keeps it consistent).
-          record.usedTieBreakers > tieBreakers.length))
+          // `usedTieBreakers` must index a remaining tiebreaker to render:
+          // an exhausted set (== length) has no next question, so the
+          // restore would land on a blank screen. Such a record means every
+          // question was already answered — discard it and let the visitor
+          // start fresh instead of resuming into nothing.
+          record.usedTieBreakers >= tieBreakers.length))
     ) {
       return null;
     }
