@@ -20,14 +20,6 @@ import { ReviewStep } from "./steps/review-step";
 import { MembershipConfirmation } from "./confirmation";
 import { LeaveApplyDialog } from "./leave-apply-dialog";
 import { useFormLeaveGuard } from "@/lib/hooks/use-form-leave-guard";
-import {
-  APPLY_TOTAL_STEPS,
-  clearDraft,
-  loadDraft,
-  makeApplyVersion,
-  saveDraft,
-} from "@/lib/membership-apply";
-import { useKiosk } from "@/components/kiosk";
 import { SOCIAL_LINKS } from "@/lib/constants/site";
 import {
   MEMBERSHIP_FALLBACK,
@@ -38,6 +30,9 @@ import { RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import type { MembershipCampaign } from "@/lib/notion/membership-campaigns";
+
+/** Fixed step count for the application wizard. */
+const APPLY_TOTAL_STEPS = 7;
 
 /** Idle reset budget on the success screen (quiz result-phase parity). */
 const SUCCESS_IDLE_MS = 60 * 1000;
@@ -155,11 +150,9 @@ export function MembershipWizard({
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   // Entry/exit phases (quiz parity): the wizard opens on `intro` and only
-  // enters `form` via Start; every reset lands back on `intro`.
+  // enters `form` via Start; every reset lands back on `intro`. No draft is
+  // persisted — every arrival starts clean on the intro by design.
   const [phase, setPhase] = useState<"intro" | "form" | "success">("intro");
-  // Whether the mount-time draft restore has been applied (guards the save
-  // effect so empty defaults can't clobber a stored draft on first paint).
-  const [restored, setRestored] = useState(false);
   // Explicit "Start over" confirmation (separate from the navigation leave
   // guard below — confirming returns to intro instead of navigating).
   const [confirmReset, setConfirmReset] = useState(false);
@@ -169,11 +162,6 @@ export function MembershipWizard({
   const [turnstileEpoch, setTurnstileEpoch] = useState(0);
   const totalSteps = APPLY_TOTAL_STEPS;
   const reduceMotion = useMountedReducedMotion();
-  // Shared/kiosk devices turn over between visitors on the same tab, so an
-  // abandoned draft (full PII) must never auto-resume for the next visitor.
-  // While kiosk display is enforced the wizard neither restores nor persists
-  // a draft — every visitor starts clean on the intro.
-  const { isKioskEnforced, isKioskReady } = useKiosk();
   const wizardTopRef = useRef<HTMLDivElement>(null);
   // Focus target for step changes — keyboard/SR users must land on the new
   // step, not on the unmounted Next/Submit button. `tabIndex={-1}` allows
@@ -249,74 +237,6 @@ export function MembershipWizard({
     },
     mode: "onChange",
   });
-
-  // Session persistence (quiz FR-008 parity): restore an in-progress draft
-  // on mount so a refresh or back/forward resumes at the same step with
-  // entered values intact. Stale/cross-campaign records are discarded by
-  // `loadDraft`, leaving the visitor on the intro. Skipped entirely on
-  // kiosk displays (see above) — any pre-existing record is dropped so it
-  // can never leak into the next visitor's form.
-  //
-  // Waits for `isKioskReady`: on a kiosk reload the pre-resolution kiosk
-  // flag is always false, so restoring earlier would resurrect the previous
-  // visitor's draft before kiosk enforcement is known.
-  useEffect(() => {
-    if (!isKioskReady || restored) return;
-    if (isKioskEnforced) {
-      clearDraft();
-      setRestored(true);
-      return;
-    }
-    const saved = loadDraft(activeCampaign?.id ?? null);
-    if (saved) {
-      // Mount-time hydration from sessionStorage is a legitimate external
-      // system sync; lazy state init would break SSR hydration of the intro.
-      // oxlint-disable-next-line react/set-state-in-effect
-      form.reset({
-        ...form.getValues(),
-        ...saved.values,
-        turnstileToken: "",
-      } as MembershipFormValues);
-      // oxlint-disable-next-line react/set-state-in-effect
-      setStep(saved.step);
-      // oxlint-disable-next-line react/set-state-in-effect
-      setPhase("form");
-    }
-    // oxlint-disable-next-line react/set-state-in-effect
-    setRestored(true);
-  }, [isKioskReady, isKioskEnforced, restored, activeCampaign, form]);
-
-  // If kiosk display is enabled mid-form (staff toggle), drop whatever was
-  // persisted so far. The in-memory form is left untouched — only storage
-  // is cleared and future saves stop (see `persistDraft`).
-  useEffect(() => {
-    if (isKioskEnforced) clearDraft();
-  }, [isKioskEnforced]);
-
-  // Draft saver — reads are always fresh: field edits bubble `change` events
-  // to the form (after RHF updates its own state), and step/phase
-  // transitions re-run the effect below. Never persists on kiosk displays.
-  const persistDraft = useCallback(() => {
-    if (!restored || !activeCampaign || phase !== "form") return;
-    if (isKioskEnforced) return;
-    saveDraft({
-      version: makeApplyVersion(),
-      campaignId: activeCampaign.id,
-      step,
-      values: { ...form.getValues() },
-    });
-  }, [restored, activeCampaign, phase, step, form, isKioskEnforced]);
-
-  // Save the draft on step/phase changes; clear on intro/success so the
-  // next visit always starts fresh (quiz save-effect parity).
-  useEffect(() => {
-    if (!restored || !activeCampaign) return;
-    if (phase !== "form") {
-      clearDraft();
-      return;
-    }
-    persistDraft();
-  }, [restored, phase, step, activeCampaign, persistDraft]);
 
   const focusFirstError = () => {
     const first = Object.keys(form.formState.errors)[0];
@@ -405,7 +325,6 @@ export function MembershipWizard({
     if (result.success) {
       setSubmittedEmail(values.email);
       setPhase("success");
-      clearDraft();
       onSubmittedChange?.(true);
       toast.success("Application submitted!");
     } else {
@@ -419,8 +338,7 @@ export function MembershipWizard({
   };
 
   // Entry from the intro screen (quiz `startQuiz` parity): always a clean
-  // step 1 — drafts auto-resume on mount, so reaching the intro means
-  // there is nothing to resume.
+  // step 1 on a pristine form.
   const handleStart = () => {
     setError(null);
     setStep(1);
@@ -433,11 +351,10 @@ export function MembershipWizard({
     });
   };
 
-  // Every reset lands back on the intro with a clean form and no stored
-  // draft (quiz `resetQuiz` parity). Used by "Submit another application",
+  // Every reset lands back on the intro with a clean form (quiz
+  // `resetQuiz` parity). Used by "Submit another application",
   // "Start over", and the leave guard's Continue.
   const handleResetToIntro = useCallback(() => {
-    clearDraft();
     form.reset();
     setStep(1);
     setPhase("intro");
@@ -469,8 +386,8 @@ export function MembershipWizard({
 
   // Arm the leave guard only while the form phase holds entered data (quiz
   // parity: the guard is silent on intro and on the submitted screen).
-  // Continue discards the draft and resets to intro, so a blocked/failed
-  // navigation still honors the dialog's promise.
+  // Continue resets to intro, so a blocked/failed navigation still honors
+  // the dialog's promise.
   const { isDirty: formDirtyFlag } = form.formState;
   const formDirty = formDirtyFlag && phase === "form" && !!activeCampaign;
   const {
@@ -478,20 +395,6 @@ export function MembershipWizard({
     continueLeave,
     cancelLeave,
   } = useFormLeaveGuard(formDirty, handleResetToIntro);
-
-  // bfcache reconcile (quiz parity): a restore showing the form with no
-  // stored draft means the visitor confirmed leaving earlier — fall back to
-  // the intro instead of a stale UI.
-  useEffect(() => {
-    if (phase !== "form" || !activeCampaign) return;
-    const onPageShow = (event: PageTransitionEvent) => {
-      if (event.persisted && !loadDraft(activeCampaign.id)) {
-        handleResetToIntro();
-      }
-    };
-    window.addEventListener("pageshow", onPageShow);
-    return () => window.removeEventListener("pageshow", onPageShow);
-  }, [phase, activeCampaign, handleResetToIntro]);
 
   // Idle reset for the success screen only (quiz result-phase parity):
   // after 60s of inactivity return to a clean intro so the next visitor
@@ -728,7 +631,6 @@ export function MembershipWizard({
                   ref={formScrollRef}
                   onScroll={updatePaneChrome}
                   onFocusCapture={handlePaneFocus}
-                  onChange={persistDraft}
                   onSubmit={(e) => {
                     e.preventDefault();
                   }}
