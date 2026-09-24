@@ -8,9 +8,3 @@ export const MEMBERSHIP_SELECT_CLASS = cn(
   "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none",
   "aria-invalid:border-destructive aria-invalid:ring-destructive/20",
 );
-
-/** Shared native-checkbox styling for the apply wizard. */
-export const MEMBERSHIP_CHECKBOX_CLASS = cn(
-  "border-input h-4 w-4 shrink-0 rounded border accent-primary",
-  "focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-none",
-);

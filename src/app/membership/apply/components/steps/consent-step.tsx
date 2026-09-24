@@ -9,8 +9,7 @@ import {
 } from "@/components/ui/form";
 import { useFormContext } from "react-hook-form";
 import type { MembershipFormValues } from "../../schema";
-import { MEMBERSHIP_CHECKBOX_CLASS } from "../membership-select";
-import { cn } from "@/lib/utils";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function ConsentStep() {
   const form = useFormContext<MembershipFormValues>();
@@ -24,14 +23,13 @@ export function ConsentStep() {
           <FormItem>
             <div className="flex items-start gap-2">
               <FormControl>
-                <input
-                  type="checkbox"
-                  checked={field.value === true}
-                  onChange={(e) =>
-                    field.onChange(e.target.checked ? true : false)
-                  }
-                  className={cn(MEMBERSHIP_CHECKBOX_CLASS, "mt-1")}
+                <Checkbox
                   id="privacyConsent"
+                  name={field.name}
+                  checked={field.value === true}
+                  onCheckedChange={(v) => field.onChange(v === true)}
+                  onBlur={field.onBlur}
+                  className="border-primary/60 bg-card dark:bg-card mt-0.5 size-5 border-2 [&_svg]:size-4"
                 />
               </FormControl>
               <FormLabel htmlFor="privacyConsent" className="font-normal">
@@ -55,14 +53,13 @@ export function ConsentStep() {
           <FormItem>
             <div className="flex items-start gap-2">
               <FormControl>
-                <input
-                  type="checkbox"
-                  checked={field.value === true}
-                  onChange={(e) =>
-                    field.onChange(e.target.checked ? true : false)
-                  }
-                  className={cn(MEMBERSHIP_CHECKBOX_CLASS, "mt-1")}
+                <Checkbox
                   id="declarationConsent"
+                  name={field.name}
+                  checked={field.value === true}
+                  onCheckedChange={(v) => field.onChange(v === true)}
+                  onBlur={field.onBlur}
+                  className="border-primary/60 bg-card dark:bg-card mt-0.5 size-5 border-2 [&_svg]:size-4"
                 />
               </FormControl>
               <FormLabel htmlFor="declarationConsent" className="font-normal">

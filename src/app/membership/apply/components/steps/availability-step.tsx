@@ -11,10 +11,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useFormContext } from "react-hook-form";
 import type { MembershipFormValues } from "../../schema";
 import { MEMBERSHIP_FALLBACK } from "@/lib/constants/membership";
-import {
-  MEMBERSHIP_CHECKBOX_CLASS,
-  MEMBERSHIP_SELECT_CLASS,
-} from "../membership-select";
+import { MEMBERSHIP_SELECT_CLASS } from "../membership-select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export function AvailabilityStep({
   bands = [...MEMBERSHIP_FALLBACK.availability],
@@ -62,11 +60,12 @@ export function AvailabilityStep({
               </FormLabel>
               <FormControl>
                 <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={field.value}
-                    onChange={(e) => field.onChange(e.target.checked)}
-                    className={MEMBERSHIP_CHECKBOX_CLASS}
+                    onCheckedChange={(v) => field.onChange(v === true)}
+                    name={field.name}
+                    onBlur={field.onBlur}
+                    className="border-primary/60 bg-card dark:bg-card size-5 border-2 [&_svg]:size-4"
                   />
                   <span className="text-sm">Yes, I am willing</span>
                 </label>
